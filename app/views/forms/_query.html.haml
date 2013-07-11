@@ -1,0 +1,40 @@
+.form-query
+  = search_form_for form.resource_filter, as: :f, url: form.path,
+         html: {method: :post, id: 'filter-form', class: 'form-horizontal form-search'} do |f|
+    .modal-header
+      = render 'forms/buttons/modal_close'
+      %h3 Filtry
+
+    .modal-body
+      = form_display_base_errors form.resource_filter
+      - if content_for? :query
+        = yield(:query)
+      - else
+        .input-append
+          = text_field_tag 'query', form.query, autofocus: true, placeholder: 'Filtrovat', class: "search-query"
+          %button{type: "submit", class: "btn", title: 'Filtrovat', 'data-disable-with' => "<i class='icon-search'></i>"}
+            %i.icon-search
+      #complex-filters-menu.dropdown.pull-right
+        %a.btn.dropdown-toggle{href: "#", "data-toggle" => "dropdown"}
+          Přidat pravidlo
+          %span.caret
+        = render "forms/query_menu", form: form
+      .clearfix
+      #complex-filters-box
+        .filters
+
+    :javascript
+      jQuery(function($) {
+        new Lepidlo.QueryForm($("#complex-filters-box"), $("#complex-filters-menu")).setup(#{form.setup.to_json});
+      });
+
+    .modal-footer
+      = render 'forms/buttons/modal_cancel'
+      - if content_for? :query_actions
+        = yield(:query_actions)
+      - unless form.edit_ql
+        = button_tag class: 'btn', name: 'edit_ql', data: {"remote-form" => "parent=form", "remote-target" => "parent=.form-query"} do
+          %i.icon-pencil
+          Upravit dotaz
+      = render 'forms/buttons/refresh'
+

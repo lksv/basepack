@@ -1,0 +1,8 @@
+= render 'forms/inputs/form_field', :form => form, :field => field
+- field_id = form_field_id(form, field)
+
+= javascript_include_tag "rich/base.js"
+:javascript
+  var instance = CKEDITOR.instances['#{field_id}'];
+  if(instance) { CKEDITOR.remove(instance); }
+  CKEDITOR.replace('#{field_id}', #{Rich.options(field.config, field.scope_type, field.scope_id).to_json.html_safe});

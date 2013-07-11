@@ -1,0 +1,21 @@
+- fields = form.visible_fields
+
+%table.table.table-striped
+  %thead
+    %tr
+      - fields.each do |field|
+        %th{class: "#{field.css_class} #{field.type_css_class}"}
+          = form.render_sort_link(field)
+      %th.last.shrink
+  %tbody
+    - form.collection_each do
+      = form.render_row do
+        - fields.each do |field|
+          - value = field.pretty_value
+          %td{class: "#{field.css_class} #{field.type_css_class}", title: strip_tags(value.to_s)}= value
+        %td.last.links
+          .btn-group.btn-mini
+            = form.render_actions
+
+= render "forms/pagination", collection: form.collection
+

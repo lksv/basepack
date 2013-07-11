@@ -1,0 +1,2 @@
+- input_html = field.html_attributes.reverse_merge(:data => { :richtext => false, :options => {}.to_json })
+= form.input field.method_name, as: :text, label: field.label, hint: field.help, required: field.required?, input_html: input_html

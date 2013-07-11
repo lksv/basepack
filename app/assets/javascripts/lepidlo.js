@@ -1,0 +1,16 @@
+//= require jquery
+//= require jquery_ujs
+//= require jquery.ui.datepicker
+//= require jquery.ui.widget
+//= require jquery_nested_form
+//= require rails_admin/jquery.ui.timepicker
+//= require rails_admin/ra.datetimepicker
+//= require rails_admin/jquery.colorpicker
+//= require select2
+//= require bootstrap
+//= require bootbox
+//= require bootstrap-modal
+//= require bootstrap-modalmanager
+//= require underscore
+//= require underscore.string
+//= require_tree ./lepidlo

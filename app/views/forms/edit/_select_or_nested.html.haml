@@ -1,0 +1,11 @@
+- switch_class = "#{form.builder.object_name}-#{field.method_name}-show-one"
+%div{class: "btn-group", "data-toggle" => "buttons-radio"}
+  %button{type: "button", class: "btn btn-primary active", data: { toggle: 'show-one-remove-others', group: ".#{switch_class}", target: ".filtering_select"} } Vybrat existujiciho
+  %button{type: "button", class: "btn btn-primary", data: { toggle: 'show-one-remove-others', group: ".#{switch_class}", target: ".nested_form"} } Zadat nový
+
+%div{class: [switch_class, 'hide']}
+  %div{class: "filtering_select"}
+    = render 'forms/edit/form_filtering_select', form: form, field: field.copy(nested_form: false)
+  %div{class: "nested_form"}
+    = render 'forms/edit/form_nested_one', form: form, field: field
+

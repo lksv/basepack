@@ -1,0 +1,15 @@
+@media all {
+  .page-break { display: none; }
+}
+
+@media print {
+  form, .navbar, .sidebar-span, footer, .page-toolbar, .pagination-container {
+    display: none !important; 
+  }
+  .content-span {
+    width: 100% !important;
+  }
+
+  .page-break { display: block; page-break-before: always; }
+}
+

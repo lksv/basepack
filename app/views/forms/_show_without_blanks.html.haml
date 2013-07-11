@@ -1,0 +1,12 @@
+.form-show
+  - form.visible_groups.each do |group|
+    - if (fields = group.visible_fields).present?
+      - if (values = group.values_without_blank).present?
+        - unless group.name == :default 
+          %h4= group.label
+        - if group.help
+          %p= group.help
+        %dl.dl-horizontal
+          - fields.each do |field|
+            - unless values[field.name].nil?
+              = field.render

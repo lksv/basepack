@@ -1,0 +1,21 @@
+.btn-group.span4.pull-right.text-right
+  - if content_for?(:page_actions)
+    = yield(:page_actions)
+  - else
+    - case action_name.to_sym
+    - when :index, :query
+      = render "forms/buttons/create", url: new_resource_path if can? :create, resource_class
+      = render "forms/buttons/query",  url: polymorphic_path([:query,  association_chain, resource_class].flatten), url_params: query_params if can? :query, resource_class
+      = render "forms/buttons/export", url: polymorphic_path([:export, association_chain, resource_class].flatten, query_params) if can? :export, resource_class
+      = render "forms/buttons/import", url: polymorphic_path([:import, association_chain, resource_class].flatten) if can? :import, resource_class
+    - when :show
+      = render "forms/buttons/edit",   url: edit_resource_path if can? :edit, resource
+      -#= render "forms/buttons/create", url: new_resource_path if can? :create, resource_class
+      = render "forms/buttons/delete", url: resource_path if can? :destroy, resource
+    - when :create, :new
+      = render "forms/buttons/cancel", url: return_to_path || collection_path
+    - when :edit, :update
+      = render "forms/buttons/cancel", url: return_to_path || resource_path
+      = render "forms/buttons/delete", url: resource_path if can? :destroy, resource
+    - else
+      = render "forms/buttons/cancel", url: return_to_path || (collection_action? ? collection_path : resource_path)

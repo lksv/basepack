@@ -1,0 +1,15 @@
+<div class="filter form-search filter-<%= index %>">
+  <a href="#" class="delete btn btn-mini btn-danger pull-right"><i class="icon-trash icon-white"></i></a>
+  <% if (name_control) { %>
+    <%= name_control %>
+  <% } else { %>
+    <input type="hidden" name="<%- condition_name %>" value="<%- field_name %>"/>
+  <% } %>
+  <div class="control-group">
+    <label class="control-label"><%- field_label %></label>
+    <div class="controls">
+      <%= control %>  <%= additional_control %>
+      <input type="hidden" name="<%- value_name %>" value="1" disabled="disabled" class="boolean-value"/>
+    </div>
+  </div>
+</div>
