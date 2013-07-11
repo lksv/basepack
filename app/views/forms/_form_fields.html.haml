@@ -1,0 +1,12 @@
+.form-inputs
+  - form.visible_groups.each do |group|
+    - if (fields = group.visible_fields).present?
+      %fieldset
+        - unless group.name == :default
+          %h4= group.label
+        - if group.help.present?
+          %p= group.help
+        - fields.each do |field|
+          - unless form.inverse_of_nested_in?(field) # do not show nested field if the target is the origin
+            = field.render
+

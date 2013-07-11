@@ -1,0 +1,130 @@
+.dropdown-menu {
+  /* doesn't work with submenus */
+  /* overflow-x: visible;
+   max-height: 400px;
+   overflow-y: auto;*/
+}
+
+.form-show {
+  .dl-horizontal > dt {
+    width: 200px;
+    /* white-space: normal; */
+    /* font-size: 85%; */
+    color: $grayLight;
+    font-weight: normal;
+    line-height: $baseLineHeight + 5;
+  }
+
+  .dl-horizontal > dd {
+    margin-left: 220px;
+    line-height: $baseLineHeight + 5;
+  }
+
+  .diff-value {
+    width: 50%;
+    float: left;
+  }
+
+  h4 {
+    border-bottom: 1px solid $grayLighter;
+  }
+}
+
+.form-edit {
+  .controls img.preview {
+    max-height: 100px;
+    max-width: 100px;
+  }
+  input[type=file] {
+    display: block;
+  }
+}
+
+.form-query {
+  .modal-body {
+    overflow: visible !important;  /* fix of "auto" from bootstrap-modal.css */
+  }
+
+  form {
+    margin: 0px;
+  }
+
+  #complex-filters-box {
+    padding-top: 20px;
+    display: none;
+    max-height: 400px;
+	  overflow: auto;
+  }
+}
+
+.form-horizontal {
+  /* hide hidden fields controls by default */
+  .control-group .hidden_type {
+    display:none;
+  }
+
+  h4 {
+    border-bottom: 1px solid $grayLighter;
+  }
+  
+  legend {
+    cursor:pointer;
+    i {
+      vertical-align: inherit !important;
+    }
+  } 
+    
+  &.denser {
+    .controls .nav {
+      margin-bottom: 5px;
+    }
+    .remove_nested_fields {
+      position:absolute;
+    }
+    margin: 0px;
+    p {
+      font-size: 12px;
+      line-height: 16px;
+    } 
+    .help-block {
+      margin-top: 0px;
+    }   
+    .input-prepend, .input-append {
+      margin-bottom: 0px;
+      label {
+        margin-bottom: 0px;
+      }
+    }
+    .control-group {
+      margin:  0px;
+      padding-top: 15px;
+    }
+    legend {
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.select2-container[class*="span"] {
+  float: none !important;
+  margin-left: 0 !important;
+}
+
+input[type="checkbox"][class*="span"] {
+  width: auto !important;
+}
+
+.breadcrumb {
+  margin-bottom: 0px;
+  @include text-overflow();
+  
+  small {
+    text-transform: uppercase;
+    color: #999999;
+    margin-right: 5px;
+    a {
+      color: #999999;
+    }
+  }
+}
+

@@ -1,0 +1,25 @@
+- content_for :page_toolbar do
+  - if association_chain.empty? and action_name == 'index'
+    = render 'page_actions'
+  - else
+    .row-fluid
+      %ul.breadcrumb.span8
+        - association_chain.each_with_index do |obj, i|
+          %li
+            %small= link_to model_name_pluralize(obj.class),
+                      url_for(association_chain[0...i] << association_chain[i].class)
+            %span.divider /
+          %li
+            = link_to obj.to_label, url_for(association_chain[0..i])
+            %span.divider /
+        %li
+          %small= link_to model_name_pluralize(resource_class), collection_path
+          %span.divider /
+        - unless collection_action?
+          %li.active
+            = link_to resource.to_label, resource_path
+            %span.divider /
+      = render 'page_actions'
+
+-#= render 'home/sidebar' if sidebar
+= title *Array.wrap(title_params)

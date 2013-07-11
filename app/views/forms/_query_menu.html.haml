@@ -1,0 +1,23 @@
+/%div{id: 'query_data', 'data-meta' => query_menu2metadata(form).to_json }
+%ul.dropdown-menu
+  - form.visible_groups.each do |group|
+    - fields = group.visible_fields.select {|f| f.filterable? }
+    - if fields.present?
+      - unless group.name == :default
+        %li.nav-header= group.label
+      - fields.each do |field|
+        - if field.association?
+          - # only one level of nesting
+          - unless form.nested_in or form.inverse_of_nested_in?(field) or field.polymorphic? # TODO - polymorphic
+            %li.dropdown-submenu
+              %a{tabindex: "-1", href: "#"}= field.label
+              = render "forms/query_menu", form: field.nform
+        - else
+          %li
+            %a{:href    => '#',
+               :tabindex => "-1",
+               :"data-field-label"    => field.nested_label,
+               :"data-field-name"     => form.field_nested_name(field),
+               :"data-field-type"     => field.type,
+               :"data-field-template" => field.render,
+               :"data-field-value"    => "" }= field.label

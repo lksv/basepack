@@ -1,0 +1,5 @@
+- classes = 'btn'
+- classes << ' btn-danger' if url_params.present? and (url_params.keys != ["f"] or url_params["f"].keys != ["s"]) # "f[s]" is OK
+= link_to url, class: classes, data: { toggle: "ajax-modal", params: url_params, width: "600px", backdrop: "static", "modal-overflow" => true } do
+  %i.icon-search
+  Filtrovat

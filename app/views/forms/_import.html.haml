@@ -1,0 +1,18 @@
+.form-import
+  - unless form.show_form.new_record?
+    %legend Podrobnosti o importu
+    = form.show_form.render
+
+    - case form.show_form.resource.state
+    - when "not_configured"
+      = form.render_configuration
+    - when "not_started", "processing"
+      = form.render_form do
+        .pull-right
+          = render "forms/buttons/refresh"
+
+  %legend Nový import
+  = form.edit_form.render
+
+  %legend Seznam importů
+  = form.list_form.render
