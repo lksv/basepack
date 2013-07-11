@@ -167,7 +167,7 @@ module Lepidlo
       end
 
       def permit_params(params)
-        sanitize_params(params).permit!.edump
+        sanitize_params(params).permit!
       end
 
       def sanitize_params(params)
