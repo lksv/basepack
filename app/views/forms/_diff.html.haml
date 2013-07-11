@@ -1,0 +1,35 @@
+.form-show
+  %dl.dl-horizontal
+    %dt
+      = check_box_tag("merge_all", "1", params[:merge_all], class: "pull-left", 
+          data: {toggle: "checkboxes", target: "input[name='merge[]']"})
+    %dd
+      .diff-value
+        %h1
+          %small= form.resource.to_label
+      .diff-value
+        %h1
+          %small= form.resource2.to_label
+
+  - form.visible_groups.each do |group|
+    - changes = group.changes
+    - unless changes.empty?
+      %h4= group.label
+      - if group.help
+        %p= group.help
+
+      - changes.each do |field1, field2|
+        %dl.dl-horizontal{class: "#{field1.type_css_class} #{field1.css_class}"}
+          %dt{title: field1.label}
+            = check_box_tag("merge[]", field1.method_name, params[field1.name], class: "pull-left")
+            %span.label.label-important
+              = field1.label
+          %dd
+            %span{"data-toggle" => "tooltip", "data-placement" => "top", "data-delay" => "500",
+                  title: field1.help.present? ? "#{field1.label} (#{field1.help})" : field1.label}
+              .diff-value
+                = field1.pretty_value
+              .diff-value
+                = field2.pretty_value
+            .clearfix
+

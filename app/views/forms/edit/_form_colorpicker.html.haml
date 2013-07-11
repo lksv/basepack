@@ -1,0 +1,7 @@
+= form.input field.method_name, 
+    as: :string,
+    label: field.label, 
+    hint: field.help, 
+    required: field.required?, 
+    input_html: field.html_attributes.reverse_merge({:style => "background-color: #{field.color}", :data => {:color => true}})
+

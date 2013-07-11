@@ -1,0 +1,7 @@
+<select class="input-medium predicate <%- klass %>" name="<%- name %>">
+  <% $.each(options, function(i, o) { %>
+    <option value="<%= o %>"  <%= o == selected ? 'selected="selected"' : '' %> data-type="<%- predicates[o].type %>">
+      <%- predicates[o].label %>
+    </option>
+  <% }) %>
+</select>

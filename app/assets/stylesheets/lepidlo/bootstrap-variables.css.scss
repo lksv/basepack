@@ -1,0 +1,42 @@
+// Custom variables
+
+$inverseTextColor: #f5f5f5;
+
+$linkColor: #8C0A00;
+
+
+// Buttons
+// -------------------------
+$btnBackground:                     $white;
+$btnBackgroundHighlight:            darken($white, 10%);
+$btnBorder:                         #ccc;
+
+$btnPrimaryBackgroundHighlight:     #711810;
+$btnPrimaryBackground:              lighten($btnPrimaryBackgroundHighlight, 20%);
+
+$btnInfoBackground:                 #82C55B;
+$btnInfoBackgroundHighlight:        darken($btnInfoBackground, 20%);
+
+$btnSuccessBackground:              #62c462;
+$btnSuccessBackgroundHighlight:     #51a351;
+
+$btnWarningBackground:              lighten($orange, 15%);
+$btnWarningBackgroundHighlight:     $orange;
+
+$btnDangerBackground:               #ee5f5b;
+$btnDangerBackgroundHighlight:      #bd362f;
+
+$btnInverseBackground:              #444;
+$btnInverseBackgroundHighlight:     $grayDarker;
+
+// Navbar
+// -------------------------
+$navbarInverseBackground:               #4b1b16; //#930d00; or #993522 or #4b1b16
+$navbarInverseBackgroundHighlight:      $navbarInverseBackground;
+$navbarInverseLinkColor:                $inverseTextColor;
+$navbarInverseLinkColorHover:           #ffeee2;
+$navbarInverseLinkBackgroundActive:     #750600;
+$navbarInverseSearchBackground:         #750600; //#900f05;
+$navbarInverseBrandColor:               $navbarInverseLinkColor;
+
+

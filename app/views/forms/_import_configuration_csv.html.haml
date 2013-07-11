@@ -1,0 +1,19 @@
+%legend Konfigurace CSV importu
+
+= form.render_form do
+  .form-inputs
+    = form.builder.input :col_sep, label: t('admin.export.csv.col_sep') do
+      %select{name: "import[configuration][col_sep]"}
+        = options_for_select({"<comma> ','" => ',', "<semicolon> ';'" => ';', '<tabs>' => "'\t'"}, configuration[:col_sep] || ',')
+    - mapping = configuration[:mapping] || []
+    - csv_cols.each_with_index do |col, i|
+      = form.builder.input :"col_#{i}", label: html_escape(col.presence || "Sloupec #{i + 1}") do
+        %select{name: "import[configuration][mapping][]"}
+          = options_for_select(select_options, select_options.find {|o| o[0] == col} || mapping[i])
+  .form-actions
+    .pull-right
+      = render "forms/buttons/refresh"
+      %button.btn.btn-primary{type: "submit", name: "import[state]", value: "not_started",
+          'data-disable-with' => "<i class='icon-white icon-ok'></i> #{t("admin.form.save")}"}
+        %i.icon-white.icon-ok
+        Spustit
