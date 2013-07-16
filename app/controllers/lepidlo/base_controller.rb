@@ -69,9 +69,9 @@ module Lepidlo
     end
     alias :destroy! :destroy
 
-    def options
+    def options(options={})
       primary_key = resource_class.primary_key
-      response = collection.map do |object|
+      response = (options[:collection] || collection).map do |object|
         {
           :id   => object.send(primary_key),
           :text => ERB::Util.html_escape(object.to_details_label),
@@ -79,6 +79,7 @@ module Lepidlo
       end
       render :json => response
     end
+    alias :options! :options
 
     # [GET,POST] /resources/query
     def query

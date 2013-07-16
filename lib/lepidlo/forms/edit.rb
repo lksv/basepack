@@ -88,23 +88,21 @@ module Lepidlo
       end
 
       render :filteringselect do |field, value = nil|
-        value ||= field.value
-        id = value && value.send(field.associated_primary_key || :id).to_s
+        value ||= Array.wrap(field.value)
+        p_key = field.associated_primary_key || :id
 
         options = (field.html_attributes || {}).dup
-        options[:value] = id.to_s
+        options[:value] = value.map {|v| v.send(p_key) }.join(',')
         options[:data] ||= {}
         options[:data].reverse_merge!(
           filteringselect: true,
           options: {
+            multiple:       field.multiple,
             placeholder:    I18n.t('admin.misc.search'),
             required:       field.required?,
             remote_source:  field.options_source,
             remote_source_params: field.options_source_params || {},
-            init: {
-              id:   id,
-              text: value && view.html_escape(value.to_label),
-            },
+            init:           Hash[value.map {|v| [v.send(p_key), view.html_escape(v.to_label)] }],
           }
         )
         options.reverse_merge!(@builder_default_options[:defaults][:input_html]) if @builder_default_options[:defaults]

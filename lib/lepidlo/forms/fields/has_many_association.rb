@@ -22,6 +22,14 @@ module Lepidlo
           # TODO - raise exception for `through' assoc: form.resource_class.reflect_on_association(name).nested?
           value.build
         end
+
+        def parse_input(params)
+          if params[method_name].is_a? String
+            params[method_name] = params[method_name].split ','
+          else
+            @delegate.parse_input(params) if @delegate
+          end
+        end
       end
     end
   end

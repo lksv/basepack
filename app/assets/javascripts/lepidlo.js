@@ -8,7 +8,6 @@
 //= require rails_admin/jquery.colorpicker
 //= require select2
 //= require bootstrap
-//= require bootbox
 //= require bootstrap-modal
 //= require bootstrap-modalmanager
 //= require underscore
