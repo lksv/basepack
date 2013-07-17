@@ -193,6 +193,14 @@ class Lepidlo.Form.Plugins.FilteringMultiSelect extends Lepidlo.Form.Plugin
       $(@).select2
         placeholder: $(@).data('placeholder')
 
+class Lepidlo.Form.Plugins.WysiwigHtml5 extends Lepidlo.Form.Plugin
+  bind: ->
+    @form.find('[data-richtext=bootstrap-wysihtml5]').not('.bootstrap-wysihtml5ed').each ->
+      $(@).addClass('bootstrap-wysihtml5ed')
+      $(@).closest('.controls').addClass('well')
+      $(@).wysihtml5() #TODO implement settings of config_options
+
+
 class Lepidlo.Form.Plugins.ShowOneRemoveOthers extends Lepidlo.Form.Plugin
   @priority: 1000
   bind: ->
