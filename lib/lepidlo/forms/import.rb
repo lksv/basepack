@@ -5,19 +5,19 @@ module Lepidlo
       attr_reader   :show_form
       attr_reader   :list_form
       attr_reader   :builder
-      attr_reader   :import_type
+      attr_reader   :action_name
       attr_accessor :builder_default_options
 
       def initialize(factory, chain, options = {})
         super(factory, chain, options)
+
+        @action_name = options[:action_name] || :import
 
         @builder_default_options = {
           as:       :import,
           html:     { multipart: true, class: 'form-horizontal denser' },
           defaults: { input_html: { class: 'span6'} }
         }
-
-        @import_type = :unknown
 
         if options[:show_form]
           @show_form = options[:show_form]
@@ -56,7 +56,7 @@ module Lepidlo
       end
 
       def path(params = {})
-        view.polymorphic_path([:import, association_chain, resource_class].flatten, params)
+        view.polymorphic_path([@action_name, association_chain, resource_class].flatten, params)
       end
 
       def with_builder(builder, &block)

@@ -51,8 +51,12 @@
       .control-group
         %label.control-label{:for => "csv_options_col_sep"}= t('admin.export.csv.col_sep')
         .controls
-          = select_tag 'csv_options[col_sep]', options_for_select({ '' => t('admin.export.csv.default_col_sep'), "<comma> ','" => ',', "<semicolon> ';'" => ';', '<tabs>' => "'\t'" })
-          %p.help-block= t('admin.export.csv.col_sep_help', :value => t('admin.export.csv.default_col_sep'))
+          = select_tag 'csv_options[col_sep]',
+              options_for_select({'' => Lepidlo::Settings.export.default_col_sep,
+                "<comma> ','"     => ',',
+                "<semicolon> ';'" => ';',
+                '<tabs>'          => "'\t'" })
+          %p.help-block= t('admin.export.csv.col_sep_help', :value => Lepidlo::Settings.export.default_col_sep)
 
     .form-actions
       .pull-right

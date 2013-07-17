@@ -130,6 +130,7 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
       placeholder: options.placeholder
       minimumInputLength: 0
       allowClear: !options.required
+      multiple: options.multiple
       escapeMarkup: (m) ->
         m
       ajax:
@@ -142,15 +143,49 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
         results: (data, page) ->
           { more: data.length == (options.remote_source_params.per || 20), results: data }
       initSelection: (element, callback) ->
-        if options.init && options.init.id == element.val()
-          callback(options.init)
+        if options.multiple
+          Lepidlo.Form.Plugins.FilteringSelect.select2InitSelectionMultiple(element, callback, options, $el)
         else
-          $.ajax(options.remote_source,
-            data: { f: { id_eq: element.val() }}
-            dataType: "json"
-          ).done (data) ->
-            $.each data, (i, val) ->
-              callback(val)
+          Lepidlo.Form.Plugins.FilteringSelect.select2InitSelection(element, callback, options, $el)
+
+  @select2InitSelection: (element, callback, options, $el) ->
+    id = element.val()
+    if options.init[id]
+      callback(
+        id:   id
+        text: options.init[id]
+      )
+    else
+      $.ajax(options.remote_source,
+        data: $.extend({ f: { id_eq: id }}, options.remote_source_params)
+        dataType: "json"
+      ).done (data) ->
+        if _.isEmpty(data)
+          $el.select2("val", "", true)
+        else
+          $.each data, (i, object) ->
+            callback(object)
+            $el.select2("data", object, true) if id != object.id
+
+  @select2InitSelectionMultiple: (element, callback, options, $el) ->
+    data = []
+    ids_for_ajax = []
+    $.each element.val().split(","), (i, id) ->
+      if options.init[id]
+        data.push
+          id:   id
+          text: options.init[id]
+      else
+        ids_for_ajax.push(id)
+
+     if _.isEmpty(ids_for_ajax)
+       callback(data)
+     else
+       $.ajax(options.remote_source,
+         data: $.extend({ f: { id_eq: ids_for_ajax }}, options.remote_source_params)
+         dataType: "json"
+       ).done (d) ->
+         callback(data.concat(d))
 
 class Lepidlo.Form.Plugins.FilteringMultiSelect extends Lepidlo.Form.Plugin
   bind: ->
@@ -178,13 +213,36 @@ class Lepidlo.Form.Plugins.DependantFilteringSelect extends Lepidlo.Form.Plugin
       that = $(@)
       dependsOn = that.findExtended(that.data('dependantFilteringselect'))
       dependsOn.on 'change', (e) ->
-        that.val(null).trigger('change')
         options = _.clone(that.data('options'))
         if e.val != "" and e.val?
           options.remote_source_params = _.clone(options.remote_source_params)
           options.remote_source_params[that.data('dependantParam')] = e.val
+        that.val(null) # to prevent "initSelection" query when select2 is redefined
         Lepidlo.Form.Plugins.FilteringSelect.select2 that, options
-  
+        that.val(that.data('dependantDefaultvalue')).trigger('change').trigger('remoteSourceParamsChange', options)
+
+class Lepidlo.Form.Plugins.HiddeningFilteringSelect extends Lepidlo.Form.Plugin
+  bind: ->
+    plugin = @
+    @form.find('[data-hiddening-filteringselect]').each ->
+      that = $(@)
+      group = that.parents('.control-group:first')
+      group.hide()
+      plugin.ajax that.data('options'), group
+
+      that.on 'remoteSourceParamsChange', (e, options) ->
+        plugin.ajax options, group
+
+  ajax: (options, group) ->
+    $.ajax(options.remote_source,
+      data: $.extend({}, options.remote_source_params, { per: 1 })
+      dataType: "json"
+    ).done (data) ->
+      if _.isEmpty(data)
+        group.hide()
+      else
+        group.show()
+
   #$('form [data-enumeration]').each ->
   #  if $(this).is('[multiple]')
   #    $(this).filteringMultiselect $(this).data('options')

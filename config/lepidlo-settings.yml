@@ -1,0 +1,27 @@
+defaults: &defaults
+  to_label_methods: [name, title]
+  image_mime_types: [image/jpg, image/jpeg, image/png, image/gif]
+  help:
+    title: false
+  export:
+    default_col_sep: ";"
+  import:
+    mime_types: [text/csv, text/plain]
+    state_types:
+    - - Čeká na konfiguraci
+      - not_configured
+    - - Čeká na spuštění
+      - not_started
+    - - Zpracovává se
+      - processing
+    - - Dokončeno
+      - finished
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

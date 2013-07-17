@@ -1,13 +1,13 @@
 module Lepidlo
-  module Controllers
-    class Import
+  module Import
+    class Actions
       attr_reader :params
       attr_reader :controller
       attr_reader :current_ability
       attr_reader :form
 
-      def initialize(params, controller, form)
-        @params = params
+      def initialize(controller, form)
+        @params = controller.params
         @controller = controller
         @current_ability = controller.current_ability
         @form = form
@@ -19,7 +19,6 @@ module Lepidlo
 
       def get(patch = false)
         import_params = params[:import]
-        @form.edit_form.resource.klass = resource_class.to_s
 
         if params[:import_id].present?
           # import selected
@@ -50,6 +49,8 @@ module Lepidlo
           form = @form.edit_form
           form.resource.assign_attributes(current_ability.attributes_for(:new, form.resource_class))
           form.resource.assign_attributes(form.permit_params(import_params))
+          form.resource.klass = resource_class.to_s
+          form.resource.action_name = @form.action_name
           current_ability.authorize!(:create, form.resource) # CanCan
           yield if form.resource.save
         end
@@ -68,7 +69,7 @@ module Lepidlo
         end
       end
 
-      def import_configuration_csv(form, import)
+      def import_configuration_csv(import)
         # separator
         unless import.configuration[:col_sep]
           col_sep = ','
@@ -99,49 +100,6 @@ module Lepidlo
         ]
       end
 
-      def self.import_data_csv(import, resource_class, current_ability)
-        mapping = import.configuration[:mapping] || []
-        skip_rows = import.num_imported + import.num_errors + 1 # 1==header, if > 1, then import failed and called repeatedly
-        idx = 0
-
-        import.open_report do |report|
-          if skip_rows == 1
-            report << CSV.generate_line(mapping + ["Chyby"], encoding: 'UTF-8')
-          end
-          import.open_file do |f|
-            CSV.new(f, col_sep: import.configuration[:col_sep] || ',').each do |row|
-              next if row.blank?
-              idx += 1
-              next if idx <= skip_rows
-
-              attrs = current_ability.attributes_for(:import, resource_class).dup
-              row.each_with_index do |data, i|
-                attr = mapping[i]
-                attrs[attr] = data if attr.present?
-              end
-              attrs = Rack::Utils.parse_nested_query(attrs.to_query)
-
-              if attrs.present?
-                import.transaction do
-                  object = resource_class.new(attrs)
-                  object.send(:import, import, current_ability) if object.respond_to? :import
-                  object.run_callbacks :import do
-                    if object.save
-                      import.num_imported += 1
-                    else
-                      import.num_errors += 1
-                      report << CSV.generate_line(row + [object.errors.full_messages.join('; ')], encoding: 'UTF-8')
-                    end
-                    import.save!
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-
     end
   end
 end
-

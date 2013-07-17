@@ -10,10 +10,10 @@ module Lepidlo
                   :chain, :title_params, :resource_filter,
                   :build_resource,
                   :query_params,
-                  :list_form, :show_form, :query_form, :edit_form, :export_form, :import_form,
-                  :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for, :import_form_for
+                  :list_form, :show_form, :query_form, :edit_form, :export_form,
+                  :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for
 
-    custom_actions collection: [:options, :query, :export, :import]
+    custom_actions collection: [:options, :query, :export]
 
     def index(options={}, &block)
       block ||= proc do |format|
@@ -42,7 +42,7 @@ module Lepidlo
           form = export_form
           fields = form.fields_from_params(params[:schema])
           csv_options = params[:csv_options] || {}
-          options = {encoding: 'UTF-8', col_sep: csv_options[:col_sep].presence || ','}
+          options = {encoding: 'UTF-8', col_sep: csv_options[:col_sep].presence || Lepidlo::Settings.export.default_col_sep}
           header = csv_options[:skip_header] == 'true' ? '' : CSV.generate_line(form.csv_header(fields), options)
 
           send_export_data(header: header) do |object, i|
@@ -69,9 +69,9 @@ module Lepidlo
     end
     alias :destroy! :destroy
 
-    def options
+    def options(options={})
       primary_key = resource_class.primary_key
-      response = collection.map do |object|
+      response = (options[:collection] || collection).map do |object|
         {
           :id   => object.send(primary_key),
           :text => ERB::Util.html_escape(object.to_details_label),
@@ -79,6 +79,7 @@ module Lepidlo
       end
       render :json => response
     end
+    alias :options! :options
 
     # [GET,POST] /resources/query
     def query
@@ -100,31 +101,6 @@ module Lepidlo
       end
     end
     alias :export! :export
-
-    # [GET,POST] /resources/import
-    def import
-      @import_controller = Lepidlo::Controllers::Import.new(params, self, import_form)
-      if request.get?
-        @import_controller.get
-      elsif request.patch?
-        @import_controller.patch do |import_resource|
-          # run import
-          import_resource.send("import_data_#{import_resource.file_type}", resource_class, current_ability) if
-            import_resource.state == "not_started"
-          redirect_to import_resources_path(import_id: import_resource.id), notice: message_edit_done(import_form.show_form.label)
-        end
-      elsif request.post?
-        @import_controller.post do
-          redirect_to import_resources_path(import_id: import_form.edit_form.resource.id), notice: message_new_done(import_form.edit_form.label)
-        end
-      elsif request.delete?
-        @import_controller.delete do
-          redirect_to import_resources_path, notice: message_destroy_done(import_form.edit_form.label)
-        end
-      end
-    end
-    alias :import! :import
-
 
     def list_form_for(query_form)
       form_factory_rails_admin(:list, Lepidlo::Forms::List, query_form.chain_with_class, query_form: query_form)
@@ -153,14 +129,6 @@ module Lepidlo
 
     def export_form_for(query_form)
       form_factory_rails_admin(:export, Lepidlo::Forms::Export, query_form.chain_with_class, query_form: query_form)
-    end
-
-    def import_form_for(class_or_chain)
-      klass = Array.wrap(class_or_chain).last
-      form_factory_rails_admin(:import, Lepidlo::Forms::Import, class_or_chain,
-                               edit_form: edit_form_for(Import),
-                               show_form: show_form_for(Import),
-                               list_form: list_form_for(query_form_for(Import, Import.where(klass: klass))))
     end
 
     protected
@@ -289,8 +257,6 @@ module Lepidlo
           resource
         when :export
           [[resource_class, "Export"]]
-        when :import
-          [[resource_class, "Import"]]
         else
           collection_action? ? resource_class : resource
         end
@@ -426,23 +392,6 @@ module Lepidlo
       @export_form ||= begin
         authorize!(:export, resource_class)
         form = export_form_for(query_form)
-        form.configure(&block) if block
-        form
-      end
-    end
-
-    def import_form
-      import_form!
-    end
-
-    def import_form!(&block)
-      @import_form ||= begin
-        authorize!(:import, resource_class) # CanCan
-        form = import_form_for(chain_with_class)
-        form.configuration_params do |frm, import|
-          method = "import_configuration_#{import.file_type}"
-          @import_controller.send(method, frm, import) if @import_controller.respond_to?(method)
-        end
         form.configure(&block) if block
         form
       end
