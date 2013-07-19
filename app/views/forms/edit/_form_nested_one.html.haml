@@ -1,5 +1,5 @@
 = form.render_nested_form field do |nform|
-  .well.well-small
+  .nested_fields.well.well-small
     - if field.nested_form[:allow_destroy] and nform.object.persisted?
-      = nform.link_to_remove '<span class="btn btn-small btn-danger"><i class="icon-trash icon-white"></i></span>'.html_safe
+      = nform.link_to_remove '<span class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i></span>'.html_safe
     = nform.render_fields

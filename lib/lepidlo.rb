@@ -6,57 +6,6 @@ require 'lepidlo/sections/import'
 module Lepidlo
   def self.setup
 
-    Object.class_eval do
-      # Backported #try from Rails 4
-      #
-      # Invokes the public method whose name goes as first argument just like
-      # +public_send+ does, except that if the receiver does not respond to it the
-      # call returns +nil+ rather than raising an exception.
-      #
-      # This method is defined to be able to write
-      #
-      #   @person.try(:name)
-      #
-      # instead of
-      #
-      #   @person ? @person.name : nil
-      #
-      # +try+ returns +nil+ when called on +nil+ regardless of whether it responds
-      # to the method:
-      #
-      #   nil.try(:to_i) # => nil, rather than 0
-      #
-      # Arguments and blocks are forwarded to the method if invoked:
-      #
-      #   @posts.try(:each_slice, 2) do |a, b|
-      #     ...
-      #   end
-      #
-      # The number of arguments in the signature must match. If the object responds
-      # to the method the call is attempted and +ArgumentError+ is still raised
-      # otherwise.
-      #
-      # If +try+ is called without arguments it yields the receiver to a given
-      # block unless it is +nil+:
-      #
-      #   @person.try do |p|
-      #     ...
-      #   end
-      #
-      # Please also note that +try+ is defined on +Object+, therefore it won't work
-      # with instances of classes that do not have +Object+ among their ancestors,
-      # like direct subclasses of +BasicObject+. For example, using +try+ with
-      # +SimpleDelegator+ will delegate +try+ to the target instead of calling it on
-      # delegator itself.
-      def try4(*a, &b)
-        if a.empty? && block_given?
-          yield self
-        else
-          public_send(*a, &b) if respond_to?(a.first)
-        end
-      end
-    end
-
     Array.class_eval do
       def to_csv(schema = {}, options = {})
         if all? {|o| o.respond_to?(:to_csv)}
@@ -68,8 +17,6 @@ module Lepidlo
     end
 
     ActiveRecord::Base.class_eval do
-      define_model_callbacks :import
-
       def to_label
         send(Lepidlo::Settings.to_label_methods.find {|m| respond_to?(m)} || :to_s)
       end
@@ -138,7 +85,17 @@ module Lepidlo
       end
 
       register_instance_option :options_source do
-        bindings[:view].url_for([:options, associated_model_config.abstract_model.model])
+        begin
+          bindings[:view].url_for([:options, associated_model_config.abstract_model.model])
+        rescue
+            Rails.logger.debug <<-MESSAGE.strip_heredoc
+
+
+            [Lepidlo] Please add routes for '#{associated_model_config.abstract_model.model}' - url_for([:options, #{associated_model_config.abstract_model.model}]) failed
+
+            MESSAGE
+          "/#{associated_model_config.abstract_model.model.name.parameterize}-options-url-not-exists"
+        end
       end
 
       register_instance_option :options_source_params do

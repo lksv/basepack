@@ -76,7 +76,7 @@ module FormHelper
   def form_sort_link(search, field, url_params = nil, html_options = {})
     raise TypeError, "First argument must be a Ransack::Search!" unless Ransack::Search === search
 
-    columns = field_sortable_columns(field)
+    columns = Lepidlo::Utils.field_sortable_columns(field)
     return field.label.to_s if columns.blank?
 
     current = Hash[search.sorts.map {|s| [ s.name, s.dir == 'desc' ] }]
@@ -137,37 +137,6 @@ module FormHelper
         label: group.label,
         type: 'query-menu-group'
       }
-    end.compact
-  end
-
-  private
-
-  def field_sortable_columns(field)
-    sort_reverse = field.sort_reverse
-    Array.wrap(field.sortable).map do |sort|
-      if sort == true
-        # use field for sorting
-        [ field.name.to_s, sort_reverse ]
-      elsif sort == false
-        # asked field is not sortable
-        nil
-      elsif (sort.is_a?(String) || sort.is_a?(Symbol)) and sort.to_s.include?('.')
-        # just provide sortable, don't do anything smart
-        [ sort.to_s, sort_reverse ]
-      elsif sort.is_a?(Hash)
-        # just join sortable hash, don't do anything smart
-        [ "#{sort.keys.first}_#{sort.values.first}", sort_reverse ]
-      else
-        if sort.is_a? Array
-          sort, order = sort
-        else
-          order = sort_reverse
-        end
-        [
-          field.association? ? "#{field.associated_model_config.abstract_model.table_name}_#{sort}" : sort.to_s,
-          order
-        ]
-      end
     end.compact
   end
 

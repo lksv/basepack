@@ -4,15 +4,36 @@ module Lepidlo
       extend ActiveSupport::Concern
 
       included do
-        attr_reader :current_import, :current_ability
+        association_name = Lepidlo::Settings.import.association_name
+        association_name_join_table = Lepidlo::Settings.import.association_name_join_table
+        if association_name
+          has_many association_name_join_table,
+                   as: :importable, inverse_of: :importable, dependent: :destroy, class_name: 'Lepidlo::ImportImportable'
+          has_many association_name, through: association_name_join_table
+        end
       end
 
-      def importing(import, current_ability)
-        @current_import = @import
-        @current_ability = current_ability
-        self.import_id = import.id if respond_to? :import_id= # TODO - move into Import, should be also in associations
+      module ClassMethods
+        def find_or_initialize_for_import(attrs)
+          Lepidlo::Import::Importable.find_or_initialize_for_import(self, attrs)
+        end
       end
-      alias :importing! :importing
+
+      def around_import(import, &block)
+        yield
+      end
+      alias :around_import! :around_import
+
+      def self.find_or_initialize_for_import(model, attrs, key = nil)
+        key ||= model.primary_key
+        if attrs[key]
+          object = model.where(key => attrs[key]).first_or_initialize
+          object.assign_attributes(attrs.except(key)) # TODO ActiveRecord::RecordNotFound for nested attributes
+          object
+        else
+          model.new(attrs)
+        end
+      end
     end
   end
 end

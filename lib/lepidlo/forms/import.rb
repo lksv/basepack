@@ -91,14 +91,12 @@ module Lepidlo
         @association = []
 
         visible_fields.each do |field|
-          next if field.name == :id
           if !field.association?
             @normal << [field.label.to_s, field.method_name.to_s]
           elsif nform = field.nform
             # nested form
             next if field.multiple? or !field.nested_form
             nform.visible_fields.each do |f|
-              next if f.name == :id
               @association << [f.nested_label, field_nested_name(f)]
             end
           end

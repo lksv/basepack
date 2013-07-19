@@ -53,7 +53,7 @@
     padding-top: 20px;
     display: none;
     max-height: 400px;
-	  overflow: auto;
+    overflow: auto;
   }
 }
 
@@ -66,29 +66,34 @@
   h4 {
     border-bottom: 1px solid $grayLighter;
   }
-  
+
   legend {
     cursor:pointer;
     i {
       vertical-align: inherit !important;
     }
-  } 
-    
+  }
+
   &.denser {
     .controls .nav {
       margin-bottom: 5px;
     }
+    .nested_fields {
+      margin-top:    10px;
+      margin-bottom: 10px;
+    }
     .remove_nested_fields {
-      position:absolute;
+      float: right;
+      padding-left: 4px;
     }
     margin: 0px;
     p {
       font-size: 12px;
       line-height: 16px;
-    } 
+    }
     .help-block {
       margin-top: 0px;
-    }   
+    }
     .input-prepend, .input-append {
       margin-bottom: 0px;
       label {
@@ -117,7 +122,7 @@ input[type="checkbox"][class*="span"] {
 .breadcrumb {
   margin-bottom: 0px;
   @include text-overflow();
-  
+
   small {
     text-transform: uppercase;
     color: #999999;

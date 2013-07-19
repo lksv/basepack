@@ -7,6 +7,10 @@ defaults: &defaults
     default_col_sep: ";"
   import:
     mime_types: [text/csv, text/plain]
+    model_name: Import
+    default_action: :import
+    association_name: :imports # null to disable
+    association_name_join_table: :imports_importables
     state_types:
     - - Čeká na konfiguraci
       - not_configured

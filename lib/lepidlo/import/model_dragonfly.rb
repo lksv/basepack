@@ -4,6 +4,10 @@ module Lepidlo
       extend ActiveSupport::Concern
 
       included do
+        attr_accessor :current_ability
+
+        has_many :importables, inverse_of: :import, dependent: :destroy, class_name: 'Lepidlo::ImportImportable'
+
         image_accessor :file
         image_accessor :report
 
@@ -41,11 +45,13 @@ module Lepidlo
           configure :num_imported do
             pretty_value do
               if bindings[:object].klass
-                klass = bindings[:object].imported_class
-                if klass.column_names.include? "import_id"
+                klass = bindings[:object].importable_class
+                assoc_name = Lepidlo::Settings.import.association_name
+                if assoc_name and klass.reflect_on_association(assoc_name)
                   bindings[:view].link_to(
                     value,
-                    bindings[:view].polymorphic_path(klass, 'f[import_id_eq]' => bindings[:object].id)
+                    bindings[:view].main_app.polymorphic_path(klass,
+                      "f[#{assoc_name}_id_eq]" => bindings[:object].id)
                   )
                 else
                   value.to_s
@@ -54,6 +60,10 @@ module Lepidlo
                 value.to_s
               end
             end
+          end
+
+          query do
+            sort_by :created_at
           end
 
           show do
@@ -121,7 +131,7 @@ module Lepidlo
         end
       end
 
-      def imported_class
+      def importable_class
         klass.constantize
       end
 
@@ -144,13 +154,14 @@ module Lepidlo
 
       def import_data(current_ability)
         start_processing do |import|
-          import.send("import_data_#{import.file_type}", current_ability)
+          import.current_ability = current_ability
+          import.send("import_data_#{import.file_type}")
         end
       end
 
-      def import_data_csv(current_ability)
+      def import_data_csv
         import = self
-        resource_class = imported_class
+        ability_attributes = current_ability.attributes_for(:import, importable_class)
         mapping = import.configuration[:mapping] || []
         skip_rows = import.num_imported + import.num_errors + 1 # 1==header, if > 1, then import failed and called repeatedly
         idx = 0
@@ -165,31 +176,47 @@ module Lepidlo
               idx += 1
               next if idx <= skip_rows
 
-              attrs = current_ability.attributes_for(:import, resource_class).dup
+              attrs = ability_attributes.dup
               row.each_with_index do |data, i|
                 attr = mapping[i]
                 attrs[attr] = data if attr.present?
               end
-              attrs = Rack::Utils.parse_nested_query(attrs.to_query)
 
-              if attrs.present?
-                import.transaction do
-                  object = resource_class.new(attrs)
-                  object.send(:importing, import, current_ability) if object.respond_to? :importing
-                  object.run_callbacks :import do
-                    if object.save
-                      import.num_imported += 1
-                    else
-                      import.num_errors += 1
-                      report << CSV.generate_line(row + [object.errors.full_messages.join('; ')], encoding: 'UTF-8')
-                    end
-                    import.save!
-                  end
+              import_attributes(Rack::Utils.parse_nested_query(attrs.to_query)) do |object|
+                unless save_object(object)
+                  report << CSV.generate_line(row + [object.errors.full_messages.join('; ')], encoding: 'UTF-8')
                 end
               end
             end
           end
         end
+      end
+
+      def import_attributes(attrs, &block)
+        if attrs.present?
+          transaction do
+            model = importable_class
+            object = model.try(:find_or_initialize_for_import, attrs) ||
+                     Lepidlo::Import::Importable.find_or_initialize_for_import(model, attrs)
+            if object.respond_to?(:around_import)
+              object.around_import(self) { yield(object) }
+            else
+              yield(object)
+            end
+            save!
+          end
+        end
+      end
+
+      def save_object(object)
+        status = object.save
+        if status
+          self.num_imported += 1
+          self.importables.build(importable: object)
+        else
+          self.num_errors += 1
+        end
+        status
       end
     end
   end

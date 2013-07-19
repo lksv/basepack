@@ -1,10 +1,10 @@
 = form.render_nested_form field do |nform|
-  .well.well-small
+  .nested_fields.well.well-small
     - if field.nested_form[:allow_destroy] or nform.new_record?
-      = nform.link_to_remove '<span class="btn btn-small btn-danger"><i class="icon-trash icon-white"></i></span>'.html_safe
+      = nform.link_to_remove '<span class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i></span>'.html_safe
     = nform.render_fields
 
-.control-group
-  - unless field.nested_form[:update_only] # || !field.inline_add
+- unless field.nested_form[:update_only] # || !field.inline_add
+  .clearfix
     = form.link_to_add "<i class=\"icon-plus icon-white\"></i> #{field.associated_model_config.label}".html_safe,
-        field.name, { :class => 'btn btn-info offset7' }
+        field.name, { :class => 'btn btn-info pull-right' }

@@ -21,11 +21,12 @@ module Lepidlo
     end
 
     def self.query_from_params(scope, params, auth_object = nil, config = nil)
+      config ||= model_config(scope.klass)
       scope = paginate(query(scope, params, config), params)
-      filter(scope, params, auth_object)
+      filter(scope, params, config, auth_object)
     end
 
-    def self.filter(scope, params, auth_object = nil)
+    def self.filter(scope, params, config, auth_object = nil)
       filter = params[:f].is_a?(Hash) ? params[:f] : {}
       custom_filters = []
       error = nil
@@ -35,6 +36,20 @@ module Lepidlo
           filter = filter.merge(FilterQL.new.parse(params[:ql]))
         rescue FilterQL::ParseError => e
           error = e.message
+        end
+      end
+
+      # default sorting
+      #
+      if filter[:s].blank? and config.query.sort_by
+        sort_by = config.query.sort_by.to_sym
+        if field = config.query.fields.find {|f| f.name == sort_by }
+          columns = field_sortable_columns(field)
+          if columns.present?
+            filter = filter.merge(s: Hash[columns.map.with_index do |c, i|
+              [ i.to_s, { name: c[0], dir: c[1] ^ config.query.sort_reverse? ? 'desc' : 'asc' } ]
+            end])
+          end
         end
       end
 
@@ -80,12 +95,15 @@ module Lepidlo
       scope
     end
 
-    def self.query(scope, params, config = nil)
+    def self.sort(scope, params, config)
+      scope.order()
+    end
+
+    def self.query(scope, params, config)
       query = params[:query]
 
       if query.present?
         or_arel = []
-        config ||= model_config(scope.klass)
         model = config.abstract_model.model
         object = nil
         dquery = query.downcase
@@ -170,6 +188,34 @@ module Lepidlo
       scope
     end
 
+    def self.field_sortable_columns(field)
+      sort_reverse = field.sort_reverse
+      Array.wrap(field.sortable).map do |sort|
+        if sort == true
+          # use field for sorting
+          [ field.name.to_s, sort_reverse ]
+        elsif sort == false
+          # asked field is not sortable
+          nil
+        elsif (sort.is_a?(String) || sort.is_a?(Symbol)) and sort.to_s.include?('.')
+          # just provide sortable, don't do anything smart
+          [ sort.to_s, sort_reverse ]
+        elsif sort.is_a?(Hash)
+          # just join sortable hash, don't do anything smart
+          [ "#{sort.keys.first}_#{sort.values.first}", sort_reverse ]
+        else
+          if sort.is_a? Array
+            sort, order = sort
+          else
+            order = sort_reverse
+          end
+          [
+            field.association? ? "#{field.associated_model_config.abstract_model.table_name}_#{sort}" : sort.to_s,
+            order
+          ]
+        end
+      end.compact
+    end
   end
 end
 

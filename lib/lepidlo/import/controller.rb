@@ -6,8 +6,8 @@ module Lepidlo
       included do
         class_attribute :import_class
         helper_method :import_form_for
-        self.import_class ||= "Import".constantize rescue nil
-        import_action :import
+        self.import_class = Lepidlo::Settings.import.model_name.safe_constantize
+        import_action Lepidlo::Settings.import.default_action
       end
 
       module ClassMethods
@@ -51,7 +51,7 @@ module Lepidlo
 
           name_form = "#{name}_form"
           name_form_bang = "#{name}_form!"
-          var = "@#{name}_form".to_sym
+          var = :"@#{name}_form"
 
           define_method name_form_bang do |&block|
             unless form = instance_variable_get(var)
@@ -79,7 +79,7 @@ module Lepidlo
       def import_form_for(class_or_chain, options = {})
         klass = Array.wrap(class_or_chain).last
         form_factory_rails_admin(:import, Lepidlo::Forms::Import, class_or_chain,
-           action_name: options[:action_name] || action_name.to_sym,
+           action_name: options[:action_name] || Lepidlo::Settings.import.default_action,
            edit_form:   edit_form_for(import_class),
            show_form:   show_form_for(import_class),
            list_form:   list_form_for(query_form_for(import_class, import_class.where(klass: klass))))
