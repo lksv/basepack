@@ -1,0 +1,24 @@
+!!! 5
+%html
+  %head
+    %meta{content: "text/html; charset=utf-8", "http-equiv" => "Content-Type"}
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1.0"}
+    %title= t(:web_name)
+    %link{href: image_path("favicon.ico"), rel: "shortcut icon"}
+    = csrf_meta_tags
+    = stylesheet_link_tag "rails_admin/rails_admin.css", :media => :all
+    = javascript_include_tag "rails_admin/rails_admin.js"
+    = javascript_include_tag "shared.js"
+  %body.rails_admin
+    #loading.label.label-warning{:style => 'display:none; position:fixed; right:20px; bottom:20px; z-index:100000'} Loading...
+    = render 'layouts/navigation'
+    .container-fluid
+      .row-fluid
+        .span3
+          .well.sidebar-nav
+            %ul.nav.nav-list= main_navigation
+            %ul.nav.nav-list= static_navigation
+        .span9
+          .row-fluid
+            .content{:'data-pjax-container' => true}= render :template => 'layouts/rails_admin/pjax'
+    = render 'layouts/footer'

@@ -1,0 +1,18 @@
+!!! 5
+%html
+  = render 'layouts/head'
+  %body{class: "#{controller_name} #{action_name}"}
+    .page-container
+      = render 'layouts/header'
+      .container-fluid
+        .row-fluid
+          - if content_for?(:sidebar_nav)
+            .span3.sidebar-span
+              .well.sidebar-nav
+                = yield(:sidebar_nav)
+            .span9.content-span
+              = render 'layouts/content'
+          - else
+            .span12
+              = render 'layouts/content'
+      = render 'layouts/footer'
