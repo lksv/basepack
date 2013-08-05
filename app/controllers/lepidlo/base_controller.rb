@@ -83,6 +83,21 @@ module Lepidlo
 
     # [GET,POST] /resources/query
     def query
+      filter_class_name =  Lepidlo::Settings.filters.try(:model_name)
+      if filter_class_name.present? and params[:filter_name].present?
+        filter_class = filter_class_name.constantize
+        form = query_form
+        if form
+          filter = filter_class.new(name: params[:filter_name], filter: form.conditions_to_ql, filter_type: resource_class.to_s)
+          filter.assign_attributes(current_ability.attributes_for(:create, filter_class))
+          if filter.save
+            flash.now[:notice] = message_new_done(Lepidlo::Utils.model_config(filter_class).label)
+          else
+            flash.now[:error] = "Chyba při ukládání filtru: #{filter.errors.full_messages.join('. ')}"
+          end
+        end
+      end
+
       if request.xhr?
         render partial: "query"
       else
@@ -90,6 +105,7 @@ module Lepidlo
       end
     end
     alias :query! :query
+
 
     # [GET,POST] /resources/export
     def export
@@ -129,6 +145,11 @@ module Lepidlo
 
     def export_form_for(query_form)
       form_factory_rails_admin(:export, Lepidlo::Forms::Export, query_form.chain_with_class, query_form: query_form)
+    end
+
+    def filters
+      collection #just for authorize resource
+      redirect_to polymorphic_path(Filter, 'f[filter_type_eq]' => resource_class)
     end
 
     protected
@@ -173,10 +194,6 @@ module Lepidlo
         object = end_of_association_chain.send(method_for_build)
         set_resource_ivar(object) # must be first - edit_form (called from resource_params) depends on it
         object.assign_attributes(current_ability.attributes_for(action_name.to_sym, resource_class)) # CanCan TODO - also for nested forms
-
-        #FIXME - regression, prestal fungovat vytvoreni predplatneho (subscription_orders#new a vyplnit formular, vybrat existujiciho platce a odberatele)
-        resource_params.first.delete "recipient_attributes"
-        resource_params.first.delete "payer_attributes"
 
         object.assign_attributes(*resource_params)
         authorize!(action_name.to_sym, object)

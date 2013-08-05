@@ -10,6 +10,7 @@
 //= require bootstrap
 //= require bootstrap-modal
 //= require bootstrap-modalmanager
+//= require bootbox
 //= require underscore
 //= require underscore.string
 //= require_tree ./lepidlo

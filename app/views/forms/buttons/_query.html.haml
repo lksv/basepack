@@ -1,5 +1,22 @@
-- classes = 'btn'
+- classes = ''
 - classes << ' btn-danger' if url_params.present? and (url_params.keys != ["f"] or url_params["f"].keys != ["s"]) # "f[s]" is OK
-= link_to url, class: classes, data: { toggle: "ajax-modal", params: url_params, width: "600px", backdrop: "static", "modal-overflow" => true } do
-  %i.icon-search
-  Filtrovat
+
+- if Lepidlo::Settings.filters.try(:model_name) and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
+  %div{class: 'btn-group'}
+    %button{type: "button", class: ('btn' + classes + ' dropdown-toggle'), 'data-toggle' => "dropdown"}
+      %i.icon-search
+      Filtry
+      %span{class: "caret"}
+    %ul{class: "dropdown-menu text-left pull-left", role: "menu", 'aria-labelledby' => "dropdownMenu"}
+      %li
+        = link_to url, class: classes, data: { toggle: "ajax-modal", params: url_params, width: "600px", backdrop: "static", "modal-overflow" => true, :tabindex => "-1" } do
+          Upravit filtr
+      %li
+        %a{href: polymorphic_path([:filters, association_chain, resource_class].flatten), tabindex: '-1'} Seznam uložených filtrů
+      %li{class:'divider'}
+      - Lepidlo::Settings.filters.model_name.constantize.active.where(filter_type: resource_class.to_s).each do |filter|
+        %li{class: (filter.filter == url_params['ql'] ? 'active' : '')}
+          %a{href: polymorphic_path([association_chain, resource_class].flatten, ql: filter.filter), tabindex: '-1'}= filter.name
+- else
+  = link_to url, class: 'btn' + classes, data: { toggle: "ajax-modal", params: url_params, width: "600px", backdrop: "static", "modal-overflow" => true, :tabindex => "-1" } do
+    Upravit filtr

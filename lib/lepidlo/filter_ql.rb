@@ -41,6 +41,7 @@ module Lepidlo
       #rule(:and_cond)       { (condition.as(:left) >> and_op >> and_cond.as(:right)).as(:and) | condition }
       #rule(:or_cond)        { (and_cond.as(:left) >> or_op >> or_cond.as(:right)).as(:or) | and_cond }
       rule(:condition)      { expression | str_expression | blank_expr }
+      #rule(:query)          { spaces? >> or_cond >> spaces? }
       rule(:query)          { spaces? >> ( condition >> (and_op >> condition).repeat ).as(:query) >> spaces? }
 
       root :query

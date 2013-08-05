@@ -5,6 +5,8 @@ defaults: &defaults
     title: false
   export:
     default_col_sep: ";"
+  filters:
+    model_name: Filter  #null to disable
   import:
     mime_types: [text/csv, text/plain]
     model_name: Import

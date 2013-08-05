@@ -36,5 +36,24 @@
         = button_tag class: 'btn', name: 'edit_ql', data: {"remote-form" => "parent=form", "remote-target" => "parent=.form-query"} do
           %i.icon-pencil
           Upravit dotaz
+      - if Lepidlo::Settings.filters.try(:model_name) and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
+        = hidden_field_tag 'filter_name'
+        = button_tag class: 'btn', id: 'filter-add', title: "Uložit filtr" do
+          %i.icon-plus
+          Uložit filtr
+        :javascript
+          jQuery(function($) {
+            $("#filter-add").click(function(e) {
+              e.preventDefault();
+
+              bootbox.prompt("Zadejte prosím název filtru", function(result) {
+                if (result) {
+                  $('#filter-form input[name=filter_name]').val(result);
+                  $('#filter-form').submit();
+                }
+              });
+
+            });
+          });
       = render 'forms/buttons/refresh'
 
