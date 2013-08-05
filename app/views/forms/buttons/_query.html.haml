@@ -1,7 +1,7 @@
 - classes = ''
 - classes << ' btn-danger' if url_params.present? and (url_params.keys != ["f"] or url_params["f"].keys != ["s"]) # "f[s]" is OK
 
-- if Lepidlo::Settings.filters.try(:model_name) and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
+- if Lepidlo::Settings.filters.model_name and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
   %div{class: 'btn-group'}
     %button{type: "button", class: ('btn' + classes + ' dropdown-toggle'), 'data-toggle' => "dropdown"}
       %i.icon-search

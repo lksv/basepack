@@ -6,7 +6,7 @@ defaults: &defaults
   export:
     default_col_sep: ";"
   filters:
-    model_name: Filter  #null to disable
+    model_name: null  # for enabling saved filter set to 'Filter' model for instance
   import:
     mime_types: [text/csv, text/plain]
     model_name: Import

@@ -83,7 +83,7 @@ module Lepidlo
 
     # [GET,POST] /resources/query
     def query
-      filter_class_name =  Lepidlo::Settings.filters.try(:model_name)
+      filter_class_name =  Lepidlo::Settings.filters.model_name
       if filter_class_name.present? and params[:filter_name].present?
         filter_class = filter_class_name.constantize
         form = query_form
@@ -149,7 +149,7 @@ module Lepidlo
 
     def filters
       collection #just for authorize resource
-      redirect_to polymorphic_path(Filter, 'f[filter_type_eq]' => resource_class)
+      redirect_to polymorphic_path(Lepidlo::Settings.filters.model_name.constantize, 'f[filter_type_eq]' => resource_class)
     end
 
     protected

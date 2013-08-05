@@ -36,7 +36,7 @@
         = button_tag class: 'btn', name: 'edit_ql', data: {"remote-form" => "parent=form", "remote-target" => "parent=.form-query"} do
           %i.icon-pencil
           Upravit dotaz
-      - if Lepidlo::Settings.filters.try(:model_name) and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
+      - if Lepidlo::Settings.filters.model_name and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
         = hidden_field_tag 'filter_name'
         = button_tag class: 'btn', id: 'filter-add', title: "Uložit filtr" do
           %i.icon-plus
