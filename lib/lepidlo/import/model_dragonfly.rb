@@ -163,6 +163,7 @@ module Lepidlo
         import = self
         ability_attributes = current_ability.attributes_for(:import, importable_class)
         mapping = import.configuration[:mapping] || []
+        use_blanks = import.configuration[:blank_vals] == 'use'
         skip_rows = import.num_imported + import.num_errors + 1 # 1==header, if > 1, then import failed and called repeatedly
         idx = 0
 
@@ -179,7 +180,7 @@ module Lepidlo
               attrs = ability_attributes.dup
               row.each_with_index do |data, i|
                 attr = mapping[i]
-                attrs[attr] = data if attr.present?
+                attrs[attr] = data if attr.present? and (data.present? or use_blanks)
               end
 
               import_attributes(Rack::Utils.parse_nested_query(attrs.to_query)) do |object|
@@ -196,8 +197,15 @@ module Lepidlo
         if attrs.present?
           transaction do
             model = importable_class
-            object = model.try(:find_or_initialize_for_import, attrs) ||
-                     Lepidlo::Import::Importable.find_or_initialize_for_import(model, attrs)
+
+            begin
+              object = model.try(:find_or_initialize_for_import, attrs) ||
+                       Lepidlo::Import::Importable.find_or_initialize_for_import(model, attrs)
+            rescue ActiveRecord::RecordNotFound => e # error in finding nested attributes
+              object = model.new
+              object.errors[:base] << e.message
+            end
+
             if object.respond_to?(:around_import)
               object.around_import(self) { yield(object) }
             else
@@ -209,7 +217,7 @@ module Lepidlo
       end
 
       def save_object(object)
-        status = object.save
+        status = object.errors.empty? ? object.save : false
         if status
           self.num_imported += 1
           self.importables.build(importable: object)

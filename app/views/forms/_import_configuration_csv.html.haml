@@ -5,6 +5,10 @@
     = form.builder.input :col_sep, label: t('admin.export.csv.col_sep') do
       %select{name: "import[configuration][col_sep]"}
         = options_for_select({"<comma> ','" => ',', "<semicolon> ';'" => ';', '<tabs>' => "'\t'"}, configuration[:col_sep] || ',')
+    = form.builder.input :blank_vals, label: 'Prázdné hodnoty' do
+      %select{name: "import[configuration][blank_vals]"}
+        = options_for_select({"Přeskočit" => 'skip', "Nastavit" => 'use'}, configuration[:blank_vals] || 'skip')
+    %hr
     - mapping = configuration[:mapping] || []
     - csv_cols.each_with_index do |col, i|
       = form.builder.input :"col_#{i}", label: html_escape(col.presence || "Sloupec #{i + 1}") do

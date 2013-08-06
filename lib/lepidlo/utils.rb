@@ -57,7 +57,7 @@ module Lepidlo
       #
       filter.each do |k, v|
         if k == "c"
-          # {"c"=>{"28054"=>{"a"=>{"0"=>{"name"=>"tag"}}, "p"=>"cont", "v"=>{"0"=>{"value"=>"test"}}}}
+          # {"c"=>{"28054"=>{"a"=>{"0"=>{"name"=>"tag"}}, "p"=>"cont", "v"=>{"0"=>{"value"=>"test"}}}}}
           #
           v.each_value do |cond|
             f = [cond["a"]["0"]["name"], cond["p"] || 'eq', cond["v"].try(:[], "0").try(:[], "value")]
@@ -93,10 +93,6 @@ module Lepidlo
       scope = scope.page(params[:page].presence || 1)
       scope = scope.per(params[:per].presence) if params[:per].presence
       scope
-    end
-
-    def self.sort(scope, params, config)
-      scope.order()
     end
 
     def self.query(scope, params, config)

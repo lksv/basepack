@@ -2,12 +2,10 @@ module Lepidlo
   module Forms
     class List < Forms::Base
       attr_reader :query_form
-      attr_accessor :sort_by
 
       def initialize(factory, chain, options = {})
         super(factory, chain, options)
         @query_form = options[:query_form]
-        @sort_by = options[:sort_by]
       end
 
       def view=(view)

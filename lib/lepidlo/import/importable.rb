@@ -17,6 +17,7 @@ module Lepidlo
         def find_or_initialize_for_import(attrs)
           Lepidlo::Import::Importable.find_or_initialize_for_import(self, attrs)
         end
+        alias :find_or_initialize_for_import! :find_or_initialize_for_import
       end
 
       def around_import(import, &block)
@@ -28,7 +29,7 @@ module Lepidlo
         key ||= model.primary_key
         if attrs[key]
           object = model.where(key => attrs[key]).first_or_initialize
-          object.assign_attributes(attrs.except(key)) # TODO ActiveRecord::RecordNotFound for nested attributes
+          object.assign_attributes(attrs.except(key))
           object
         else
           model.new(attrs)
