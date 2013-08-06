@@ -16,7 +16,12 @@ module Lepidlo
 
       rule(:quote)          { str("'") }
       rule(:nonquote)       { str("'").absnt? >> any }
+
+      rule(:dbquote)          { str('"') }
+      rule(:nondbquote)       { str('"').absnt? >> any }
+
       rule(:escape)         { str('\\') >> any }
+      rule(:comma) { spaces? >> str(',') >> spaces? }
 
       rule(:and_op)         { stri('and') >> spaces? }
       rule(:or_op)          { stri('or') >> spaces? }
@@ -28,10 +33,15 @@ module Lepidlo
       rule(:str_op)         { stri('like') | stri('cont') | stri('start') | stri('end') }
       rule(:switch_op)      { stri('null') | stri('blank') }
       rule(:identifier)     { (match('[a-z_]') >> match('[a-z0-9_]').repeat).as(:identifier) }
-      rule(:string)         { quote >> (escape | nonquote).repeat.as(:string) >> quote }
+      rule(:string)         { (quote >> (escape | nonquote).repeat.as(:string) >> quote) | (dbquote >> (escape | nondbquote).repeat.as(:string) >> dbquote) }
       rule(:integer)        { (str('+') | str('-')).maybe >> match('[0-9]').repeat(1) }
       rule(:float)          { integer >> (str('.') >> match('[0-9]').repeat(1) | stri('e') >> match('[0-9]').repeat(1)) }
-      rule(:literal)        { string | float.as(:float) | integer.as(:integer) | stri('true').as(:true) | stri('false').as(:false) }
+      rule(:literal)        { string | array | jshash | float.as(:float) | integer.as(:integer) | stri('true').as(:true) | stri('false').as(:false) }
+
+
+      rule(:array)          { str('[') >> spaces? >> (literal >> (comma >> literal).repeat).maybe.as(:array) >> spaces? >> str(']') }
+      rule(:hash_pair)      { ( identifier.as(:key) >> spaces? >> str(':') >> spaces? >> literal.as(:val) ).as(:hash_pair) }
+      rule(:jshash)         { str('{') >> spaces? >> (hash_pair >> (comma >> hash_pair).repeat).maybe.as(:jshash) >> spaces? >> str('}') }
 
       rule(:expression)     { identifier.as(:id) >> spaces? >> operator.as(:op) >> spaces? >> literal.as(:value) >> spaces? }
       rule(:str_expression) { identifier.as(:id) >> spaces >> not_op.as(:not) >> str_op.as(:op) >> spaces? >> string.as(:str) >> spaces? }
@@ -92,6 +102,15 @@ module Lepidlo
     }.freeze
 
     class Transformer < Parslet::Transform
+      class HashPair < Struct.new(:key, :val); end
+
+      rule(:array => subtree(:ar)) { Array(ar) }
+      rule(:jshash => subtree(:ob)) {
+        (ob.is_a?(Array) ? ob : [ ob ]).inject({}) { |h, e| h[e.key] = e.val; h }
+      }
+      rule(:hash_pair => { :key => simple(:ke), :val => simple(:va) }) { HashPair.new(ke, va) }
+
+
       rule(:string     => simple(:str))    { FilterQL.string_to_value(str.to_s) }
       rule(:integer    => simple(:int))    { Integer(int) }
       rule(:float      => simple(:float))  { Float(float) }
@@ -100,7 +119,7 @@ module Lepidlo
       rule(:false      => simple(:false))  { false }
       rule(:not        => simple(:n))      { n ? :not : nil }
 
-      rule(id: simple(:id), op: simple(:op), value: simple(:value)) do
+      rule(id: simple(:id), op: simple(:op), value: subtree(:value)) do
         { "#{id}_#{PREDICATE_MAP[op.to_s]}" => value }
       end
 
@@ -137,8 +156,9 @@ module Lepidlo
       end
     end
 
+    #Lepidlo::FilterQL.new.test
     def test
-      parse("a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d'")
+      parse("a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d' and a7 = \"str\\\"s\" and a8 = { key:'value', key2:1 } and a9 = ['str', 4, 3.5] " )
     end
 
     def self.conditions_to_ql(conditions)
@@ -146,7 +166,10 @@ module Lepidlo
         if predicates[predicate_name][:type] == :boolean
           "#{name} #{PREDICATE_MAP_REVERSE[predicate_name]}"
         else
-          value = value_to_string(value) if value.is_a? String
+          case value
+          when String then value = value_to_string(value)
+          when Hash   then value = value_to_jshash(value)
+          end
           "#{name} #{PREDICATE_MAP_REVERSE[predicate_name]} #{value}"
         end
       end.join(" and ")
@@ -168,6 +191,13 @@ module Lepidlo
 
     def self.value_to_string(value)
       "'#{value.gsub(/(['\\])/, '\\\\\1')}'"
+    end
+
+    def self.value_to_jshash(value)
+      res = value.inject([]) do |r,(k,v)|
+        r << "#{k}: #{v.inspect}"
+      end.join(", ")
+      "{ #{res} }"
     end
 
     def self.string_to_value(string)
