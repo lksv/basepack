@@ -72,11 +72,12 @@ module Lepidlo
         elsif k =~ /\A(.*)_((?:(?:does_)?not_)?[a-z]+)\z/
           atr = $1
           predicate = $2
-          method = "filter_#{k}"
+          method = "filter_#{k}".sub(/_eq\z/, '')
           if scope.klass.respond_to? method
             scope = scope.klass.send(method, scope, v, auth_object)
             custom_filters << [atr, predicate, v]
           else
+            Rails.logger.warn("Unknown filter #{method.inspect} with params #{v.inspect}.")
             nil
           end
         end

@@ -36,12 +36,14 @@ module Lepidlo
       rule(:string)         { (quote >> (escape | nonquote).repeat.as(:string) >> quote) | (dbquote >> (escape | nondbquote).repeat.as(:string) >> dbquote) }
       rule(:integer)        { (str('+') | str('-')).maybe >> match('[0-9]').repeat(1) }
       rule(:float)          { integer >> (str('.') >> match('[0-9]').repeat(1) | stri('e') >> match('[0-9]').repeat(1)) }
-      rule(:literal)        { string | array | jshash | float.as(:float) | integer.as(:integer) | stri('true').as(:true) | stri('false').as(:false) }
+      rule(:literal)        { string | array | jshash | function.as(:function) | float.as(:float) | integer.as(:integer) | stri('true').as(:true) | stri('false').as(:false) }
 
 
       rule(:array)          { str('[') >> spaces? >> (literal >> (comma >> literal).repeat).maybe.as(:array) >> spaces? >> str(']') }
       rule(:hash_pair)      { ( identifier.as(:key) >> spaces? >> str(':') >> spaces? >> literal.as(:val) ).as(:hash_pair) }
       rule(:jshash)         { str('{') >> spaces? >> (hash_pair >> (comma >> hash_pair).repeat).maybe.as(:jshash) >> spaces? >> str('}') }
+
+      rule(:function)       { identifier.as(:function_name) >> str('(') >> literal.maybe.as(:param) >> str(')') }
 
       rule(:expression)     { identifier.as(:id) >> spaces? >> operator.as(:op) >> spaces? >> literal.as(:value) >> spaces? }
       rule(:str_expression) { identifier.as(:id) >> spaces >> not_op.as(:not) >> str_op.as(:op) >> spaces? >> string.as(:str) >> spaces? }
@@ -104,13 +106,6 @@ module Lepidlo
     class Transformer < Parslet::Transform
       class HashPair < Struct.new(:key, :val); end
 
-      rule(:array => subtree(:ar)) { Array(ar) }
-      rule(:jshash => subtree(:ob)) {
-        (ob.is_a?(Array) ? ob : [ ob ]).inject({}) { |h, e| h[e.key] = e.val; h }
-      }
-      rule(:hash_pair => { :key => simple(:ke), :val => simple(:va) }) { HashPair.new(ke, va) }
-
-
       rule(:string     => simple(:str))    { FilterQL.string_to_value(str.to_s) }
       rule(:integer    => simple(:int))    { Integer(int) }
       rule(:float      => simple(:float))  { Float(float) }
@@ -118,6 +113,19 @@ module Lepidlo
       rule(:true       => simple(:true))   { true }
       rule(:false      => simple(:false))  { false }
       rule(:not        => simple(:n))      { n ? :not : nil }
+
+      rule(:function => { :function_name => simple(:fce_name), :param => subtree(:param) }) {
+        #TODO call fce_name in context of current controller, eg. current_controller.send(fce_name.intern, *(Array(param)))
+        rand(100).to_s
+      }
+
+      rule(:array => subtree(:ar)) { Array(ar) }
+      rule(:jshash => subtree(:ob)) {
+        (ob.is_a?(Array) ? ob : [ ob ]).inject({}) { |h, e| h[e.key] = e.val; h }
+      }
+      rule(:hash_pair => { :key => simple(:ke), :val => simple(:va) }) { HashPair.new(ke, va) }
+
+
 
       rule(id: simple(:id), op: simple(:op), value: subtree(:value)) do
         { "#{id}_#{PREDICATE_MAP[op.to_s]}" => value }
@@ -158,7 +166,10 @@ module Lepidlo
 
     #Lepidlo::FilterQL.new.test
     def test
-      parse("a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d' and a7 = \"str\\\"s\" and a8 = { key:'value', key2:1 } and a9 = ['str', 4, 3.5] " )
+      parse(
+        "a0 = user() and a01 = user('I') and a02 = user({ x: 1}) and a03 = user([1,2,'3']) and " +
+        "a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d' and a7 = \"str\\\"s\" and " + 
+        "a8 = { key:'value', key2:1 } and a9 = ['str', 4, 3.5] " )
     end
 
     def self.conditions_to_ql(conditions)
