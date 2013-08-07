@@ -7,12 +7,14 @@ module Lepidlo
       attr_accessor :ql
       attr_accessor :date_format
       attr_reader   :auth_object
+      attr_reader   :filterql_options
 
       def initialize(factory, chain, options = {})
         super(factory, chain, options)
 
         @scope = options[:scope]
         @auth_object = options[:auth_object]
+        @filterql_options = options[:filterql_options]
         @collection_includes = options[:collection_includes]
 
         if params = options[:params]
@@ -186,8 +188,10 @@ module Lepidlo
         @resource_filter, @collection = Lepidlo::Utils.query_from_params(
           @scope,
           @params,
-          @auth_object,
-          Lepidlo::Utils.model_config(resource_class)
+          {
+            auth_object: @auth_object,
+            filterql_options: @filterql_options,
+          }
         )
         @collection = @collection.includes(@collection_includes) if @collection_includes
       end

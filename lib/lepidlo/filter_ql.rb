@@ -38,12 +38,11 @@ module Lepidlo
       rule(:float)          { integer >> (str('.') >> match('[0-9]').repeat(1) | stri('e') >> match('[0-9]').repeat(1)) }
       rule(:literal)        { string | array | jshash | function.as(:function) | float.as(:float) | integer.as(:integer) | stri('true').as(:true) | stri('false').as(:false) }
 
-
       rule(:array)          { str('[') >> spaces? >> (literal >> (comma >> literal).repeat).maybe.as(:array) >> spaces? >> str(']') }
       rule(:hash_pair)      { ( identifier.as(:key) >> spaces? >> str(':') >> spaces? >> literal.as(:val) ).as(:hash_pair) }
       rule(:jshash)         { str('{') >> spaces? >> (hash_pair >> (comma >> hash_pair).repeat).maybe.as(:jshash) >> spaces? >> str('}') }
 
-      rule(:function)       { identifier.as(:function_name) >> str('(') >> literal.maybe.as(:param) >> str(')') }
+      rule(:function)       { (match('[a-z_]') >> match('[a-z0-9_]').repeat).as(:function_name) >> str('(') >> literal.maybe.as(:param) >> str(')') }
 
       rule(:expression)     { identifier.as(:id) >> spaces? >> operator.as(:op) >> spaces? >> literal.as(:value) >> spaces? }
       rule(:str_expression) { identifier.as(:id) >> spaces >> not_op.as(:not) >> str_op.as(:op) >> spaces? >> string.as(:str) >> spaces? }
@@ -114,18 +113,20 @@ module Lepidlo
       rule(:false      => simple(:false))  { false }
       rule(:not        => simple(:n))      { n ? :not : nil }
 
-      rule(:function => { :function_name => simple(:fce_name), :param => subtree(:param) }) {
-        #TODO call fce_name in context of current controller, eg. current_controller.send(fce_name.intern, *(Array(param)))
-        rand(100).to_s
-      }
+      rule(:function => { :function_name => simple(:fce_name), :param => subtree(:param) }) do
+        b = builder.new_for_slice(fce_name)
+        if f = builder.functions[fce_name.to_sym]
+          f.call(b, param)
+        else
+          b.raise_error("Neznámá funkce `#{fce_name}'")
+        end
+      end
 
       rule(:array => subtree(:ar)) { Array(ar) }
-      rule(:jshash => subtree(:ob)) {
+      rule(:jshash => subtree(:ob)) do
         (ob.is_a?(Array) ? ob : [ ob ]).inject({}) { |h, e| h[e.key] = e.val; h }
-      }
+      end
       rule(:hash_pair => { :key => simple(:ke), :val => simple(:va) }) { HashPair.new(ke, va) }
-
-
 
       rule(id: simple(:id), op: simple(:op), value: subtree(:value)) do
         { "#{id}_#{PREDICATE_MAP[op.to_s]}" => value }
@@ -146,21 +147,53 @@ module Lepidlo
       end
     end
 
+    class Builder
+      attr_reader :query, :options, :slice
+
+      def initialize(query, options, slice = nil)
+        @query = query
+        @options = options
+        @slice = slice
+      end
+
+      def functions
+        @options[:functions] || {}
+      end
+
+      def raise_error_for_pos(message, pos, line = '?', column = '?')
+        query_error = pos >= query.length ? "#{query}(<=CHYBA)" : query.dup.insert(pos, "(<=CHYBA)")
+        raise ParseError, "#{message} na řádku #{line} sloupec #{column}: \"#{query_error}\""
+      end
+
+      def raise_error(message)
+        if slice
+          line, column = slice.line_and_column
+          raise_error_for_pos(message, slice.offset, line, column)
+        else
+          raise ParseError, message
+        end
+      end
+
+      def new_for_slice(slice)
+        Builder.new(query, options, slice)
+      end
+    end
+
     def initialize
       @parser = Parser.new
       @transformer = Transformer.new
     end
 
-    def parse(query)
+    def parse(query, options = nil)
+      builder = Builder.new(query, options || {})
       begin
         ast = @parser.parse(query, reporter: Parslet::ErrorReporter::Deepest.new)
-        @transformer.apply(ast)
+        @transformer.apply(ast, builder: builder)
       rescue Parslet::ParseFailed => e
-        puts e.cause.ascii_tree
+        #puts e.cause.ascii_tree
         deepest = deepest_cause(e.cause)
         line, column = deepest.source.line_and_column(deepest.pos)
-        query_error = column >= query.length ? "#{query}(<=CHYBA)" : query.dup.insert(column, "(<=CHYBA)")
-        raise ParseError, "Neočekáváný vstup na řádku #{line} sloupec #{column}: \"#{query_error}\""
+        builder.raise_error_for_pos("Neočekáváný vstup", deepest.pos, line, column)
       end
     end
 
@@ -168,8 +201,12 @@ module Lepidlo
     def test
       parse(
         "a0 = user() and a01 = user('I') and a02 = user({ x: 1}) and a03 = user([1,2,'3']) and " +
-        "a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d' and a7 = \"str\\\"s\" and " + 
-        "a8 = { key:'value', key2:1 } and a9 = ['str', 4, 3.5] " )
+        "a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d' and a7 = \"str\\\"s\" and " +
+        "a8 = { key:'value', key2:1 } and a9 = ['str', 4, 3.5] ",
+        functions: {
+          user: proc {|builder, arg| arg.inspect }
+        }
+      )
     end
 
     def self.conditions_to_ql(conditions)

@@ -83,18 +83,19 @@ module Lepidlo
 
     # [GET,POST] /resources/query
     def query
-      filter_class_name =  Lepidlo::Settings.filters.model_name
+      filter_class_name = Lepidlo::Settings.filters.model_name
       if filter_class_name.present? and params[:filter_name].present?
         filter_class = filter_class_name.constantize
-        form = query_form
-        if form
-          filter = filter_class.new(name: params[:filter_name], filter: form.conditions_to_ql, filter_type: resource_class.to_s)
-          filter.assign_attributes(current_ability.attributes_for(:create, filter_class))
-          if filter.save
-            flash.now[:notice] = message_new_done(Lepidlo::Utils.model_config(filter_class).label)
-          else
-            flash.now[:error] = "Chyba při ukládání filtru: #{filter.errors.full_messages.join('. ')}"
-          end
+        filter = filter_class.new(
+          name:         params[:filter_name],
+          filter:       params[:ql] || query_form.conditions_to_ql,
+          filter_type:  resource_class.to_s
+        )
+        filter.assign_attributes(current_ability.attributes_for(:create, filter_class))
+        if filter.save
+          flash.now[:notice] = message_new_done(Lepidlo::Utils.model_config(filter_class).label)
+        else
+          flash.now[:error] = "Chyba při ukládání filtru: #{filter.errors.full_messages.join('. ')}"
         end
       end
 
@@ -230,6 +231,10 @@ module Lepidlo
       resource_config.fields.select do |f|
         f.type.in?([:belongs_to_association, :has_one_association]) && !f.polymorphic?
       end.map {|f| f.association[:name] }
+    end
+
+    def filterql_options
+      nil
     end
 
     def return_to_path
@@ -382,7 +387,8 @@ module Lepidlo
         form = query_form_for(
           chain_with_class,
           end_of_association_chain.accessible_by(current_ability, action_name.to_sym),
-          collection_includes: collection_includes
+          collection_includes: collection_includes,
+          filterql_options: filterql_options
         )
         form.configure(&block) if block
         form

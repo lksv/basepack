@@ -20,20 +20,21 @@ module Lepidlo
       end.flatten
     end
 
-    def self.query_from_params(scope, params, auth_object = nil, config = nil)
-      config ||= model_config(scope.klass)
+    def self.query_from_params(scope, params, options = {})
+      config = options[:config] || model_config(scope.klass)
       scope = paginate(query(scope, params, config), params)
-      filter(scope, params, config, auth_object)
+      filter(scope, params, config, options)
     end
 
-    def self.filter(scope, params, config, auth_object = nil)
+    def self.filter(scope, params, config, options = {})
+      auth_object = options[:auth_object]
       filter = params[:f].is_a?(Hash) ? params[:f] : {}
       custom_filters = []
       error = nil
 
       if params[:ql].present?
         begin
-          filter = filter.merge(FilterQL.new.parse(params[:ql]))
+          filter = filter.merge(FilterQL.new.parse(params[:ql], options[:filterql_options]))
         rescue FilterQL::ParseError => e
           error = e.message
         end
@@ -65,8 +66,6 @@ module Lepidlo
             if scope.klass.respond_to? method
               scope = scope.klass.send(method, scope, f[2], auth_object)
               custom_filters << f
-            else
-              nil
             end
           end
         elsif k =~ /\A(.*)_((?:(?:does_)?not_)?[a-z]+)\z/
@@ -76,9 +75,6 @@ module Lepidlo
           if scope.klass.respond_to? method
             scope = scope.klass.send(method, scope, v, auth_object)
             custom_filters << [atr, predicate, v]
-          else
-            Rails.logger.warn("Unknown filter #{method.inspect} with params #{v.inspect}.")
-            nil
           end
         end
       end
