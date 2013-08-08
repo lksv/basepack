@@ -39,22 +39,30 @@ module Lepidlo
         view.link_to (icon ? "<i class='#{icon}'></i> ".html_safe + name : name), url, html_options.reverse_merge(class: "btn btn-mini")
       end
 
-      render :actions do
-        result = ''.html_safe
+      render :show_action do
         if view.can? :show, resource
-          result << render_action("Zobrazit", [association_chain, resource].flatten, "icon-eye-open")
+          render_action("Zobrazit", [association_chain, resource].flatten, "icon-eye-open")
         end
+      end
+
+      render :edit_action do
         if view.can? :edit, resource
-          result << render_action("Upravit", [:edit, association_chain, resource].flatten, "icon-pencil",
+          render_action("Upravit", [:edit, association_chain, resource].flatten, "icon-pencil",
                                   class: 'btn btn-info btn-mini')
         end
+      end
+
+      render :destroy_action do
         if view.can? :destroy, resource
-          result << render_action("Smazat", [association_chain, resource].flatten, "icon-trash",
-                                  class: 'btn btn-mini btn-danger',
-                                  method: :delete,
-                                  data: { confirm: "Jste si jistí?" })
+          render_action("Smazat", [association_chain, resource].flatten, "icon-trash",
+                        class: 'btn btn-mini btn-danger',
+                        method: :delete,
+                        data: { confirm: "Jste si jistí?" })
         end
-        result
+      end
+
+      render :actions do
+        view.render 'list_row_actions', form: self
       end
     end
   end
