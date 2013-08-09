@@ -168,7 +168,7 @@ module Lepidlo
       def raise_error(message)
         if slice
           line, column = slice.line_and_column
-          raise_error_for_pos(message, slice.offset, line, column)
+          raise_error_for_pos(message, slice.offset + slice.size, line, column)
         else
           raise ParseError, message
         end
@@ -179,13 +179,14 @@ module Lepidlo
       end
     end
 
-    def initialize
+    def initialize(options = nil)
       @parser = Parser.new
       @transformer = Transformer.new
+      @options = (options || {}).freeze
     end
 
     def parse(query, options = nil)
-      builder = Builder.new(query, options || {})
+      builder = Builder.new(query, @options)
       begin
         ast = @parser.parse(query, reporter: Parslet::ErrorReporter::Deepest.new)
         @transformer.apply(ast, builder: builder)
@@ -197,15 +198,16 @@ module Lepidlo
       end
     end
 
-    #Lepidlo::FilterQL.new.test
-    def test
-      parse(
-        "a0 = user() and a01 = user('I') and a02 = user({ x: 1}) and a03 = user([1,2,'3']) and " +
-        "a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d' and a7 = \"str\\\"s\" and " +
-        "a8 = { key:'value', key2:1 } and a9 = ['str', 4, 3.5] ",
+    #Lepidlo::FilterQL.test
+    def self.test
+      new(
         functions: {
           user: proc {|builder, arg| arg.inspect }
         }
+      ).parse(
+        "a0 = user() and a01 = user('I') and a02 = user({ x: 1}) and a03 = user([1,2,'3']) and " +
+        "a1 = 3 and a2 like 'asd' and a3 not like 'asd' and a4 is null and a5 is not null and a6 != 'as\\'d' and a7 = \"str\\\"s\" and " +
+        "a8 = { key:'value', key2:1 } and a9 = ['str', 4, 3.5] ",
       )
     end
 

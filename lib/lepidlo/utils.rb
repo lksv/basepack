@@ -34,7 +34,7 @@ module Lepidlo
 
       if params[:ql].present?
         begin
-          filter = filter.merge(FilterQL.new.parse(params[:ql], options[:filterql_options]))
+          filter = filter.merge(FilterQL.new(options[:filterql_options]).parse(params[:ql]))
         rescue FilterQL::ParseError => e
           error = e.message
         end

@@ -1,6 +1,3 @@
 = form.input field.method_name, label: "<i class='icon-tags'></i> #{field.label}", hint: field.help, required: field.required? do
-  = form.input_field field.method_name, field.html_attributes.reverse_merge({type: :hidden})
-:javascript
-  $("##{form_field_id(form, field)}").select2({
-    tags: #{tag_suggestions(field, :length => 10, :order => { :count => :desc }).to_json}
-  });
+  = form.input_field field.method_name, { type: :hidden,
+      data: { select: { tags: tag_suggestions(field, length: 10, order: { count: :desc })}}}.deep_merge(field.html_attributes)

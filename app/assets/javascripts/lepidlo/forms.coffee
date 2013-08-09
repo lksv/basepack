@@ -11,7 +11,10 @@ $(document).on 'nested:fieldAdded', 'form', (content) ->
   form.bind()
 
 $(document).on 'click.data-api', '[data-toggle="checkboxes"]', ->
-  $($(this).data('target')).prop "checked", $(this).is(":checked")
+  $($(@).data('target')).prop "checked", $(@).is(":checked")
+
+$(document).on 'click.data-api', '[data-toggleclass]', (e) ->
+  $(@).toggleClass($(@).data("toggleclass"));
 
 $(document).on 'click.data-api', '[data-toggle="ajax-modal"]', (e) ->
   # ajax modals
@@ -200,20 +203,20 @@ class Lepidlo.Form.Plugins.WysiwigHtml5 extends Lepidlo.Form.Plugin
       $(@).closest('.controls').addClass('well')
       $(@).wysihtml5() #TODO implement settings of config_options
 
-
-class Lepidlo.Form.Plugins.ShowOneRemoveOthers extends Lepidlo.Form.Plugin
-  @priority: 1000
+class Lepidlo.Form.Plugins.RemoveOnCollapse extends Lepidlo.Form.Plugin
+  @priority: -1000
   bind: ->
-    @form.find('[data-toggle=show-one-remove-others]').each ->
-      group = $($(@).data('group'))
-      group.show()
-      target = group.find($(@).data('target'))
-      removed = target.html()
-      target.remove() unless $(@).hasClass('active')
-
-      $(@).on "click", (e) ->
-        group.html(removed)
-        new Lepidlo.Form(group).bind()
+    @form.find('[data-removeoncollapse]').each ->
+      $this = $(@)
+      $target = $($(@).attr("href"))
+      parent = $target.parent()
+      $target.on "hide", (e) ->
+        $this.removeClass('toggle-chevron')
+      $target.on "hidden", (e) ->
+        $target.appendTo($('body'))
+      $target.on "show", (e) ->
+        $this.addClass('toggle-chevron')
+        $target.appendTo(parent)
 
 class Lepidlo.Form.Plugins.DependantFilteringSelect extends Lepidlo.Form.Plugin
   bind: ->
@@ -250,6 +253,11 @@ class Lepidlo.Form.Plugins.HiddeningFilteringSelect extends Lepidlo.Form.Plugin
         group.hide()
       else
         group.show()
+
+class Lepidlo.Form.Plugins.Select2 extends Lepidlo.Form.Plugin
+  bind: ->
+    @form.find('[data-select]').each ->
+      $(@).select2($(@).data('select'))
 
   #$('form [data-enumeration]').each ->
   #  if $(this).is('[multiple]')

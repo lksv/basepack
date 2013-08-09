@@ -38,6 +38,9 @@
   input[type=file] {
     display: block;
   }
+  .accordion-heading {
+    background: $wellBackground;
+  }
 }
 
 .form-query {

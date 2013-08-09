@@ -185,13 +185,17 @@ module Lepidlo
             end
           end
 
-          if nform = f.nform
-            nparams = new_params[f.method_name]
+          if nform = f.nform and nparams = new_params[f.method_name]
             new_params[f.method_name] = case nparams
             when Array
-              nparams.map {|p| p.is_a?(Hash) ? nform.sanitize_params(p) : p}
+              nparams.map {|p| p.is_a?(Hash) ? nform.sanitize_params(p) : p.to_s}
             when Hash
-              Hash[nparams.map {|k, p| [k, p.is_a?(Hash) ? nform.sanitize_params(p): p] }]
+              if f.multiple?
+                Hash[nparams.map {|k, p| [k, p.is_a?(Hash) ? nform.sanitize_params(p) : p.to_s] }]
+              else
+                allowed << f.method_name
+                nform.sanitize_params(nparams)
+              end
             else
               nparams
             end

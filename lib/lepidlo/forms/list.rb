@@ -62,7 +62,11 @@ module Lepidlo
       end
 
       render :actions do
-        view.render 'list_row_actions', form: self
+        result = ''.html_safe
+        result << render_show_action
+        result << render_edit_action
+        result << render_destroy_action
+        result
       end
     end
   end
