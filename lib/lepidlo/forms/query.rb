@@ -107,6 +107,13 @@ module Lepidlo
         end
       end
 
+      def filtered_fields_find(nested_field_name, condition = nil)
+        filtered_fields.find do |f|
+          (field_nested_name(f[0]) == nested_field_name) and 
+          (condition ? (f[1] == condition) : true)
+        end
+      end
+
       def initial_data
         if @edit_ql
           init = []
