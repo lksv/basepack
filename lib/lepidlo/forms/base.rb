@@ -124,7 +124,7 @@ module Lepidlo
       end
 
       def show_fields(*field_names)
-        field_names.each {|name| @fields_hash[field_name].try :visible, true }
+        field_names.each {|name| @fields_hash[name].try :visible, true }
       end
 
       def group(attributes = nil)

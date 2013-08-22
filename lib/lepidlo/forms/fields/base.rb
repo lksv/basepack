@@ -59,6 +59,18 @@ module Lepidlo
           !!searchable
         end
 
+        attr_default :partial do
+          File.join('forms', 'edit', 'form_field')
+        end
+
+        attr_default :html_attributes do
+          {}
+        end
+
+        attr_default :allowed_methods, [:method_name] do
+          [method_name]
+        end
+
         def association?
           !!ASSOC_TYPES[type]
         end
@@ -127,7 +139,6 @@ module Lepidlo
         def nested_label
           form.nested_in ? "#{form.nested_in.nested_label}: #{label}" : label
         end
-
       end
     end
   end

@@ -208,8 +208,14 @@ class Lepidlo.Form.Plugins.RemoveOnCollapse extends Lepidlo.Form.Plugin
   bind: ->
     @form.find('[data-removeoncollapse]').each ->
       $this = $(@)
-      $target = $($(@).attr("href"))
+      $target = $($this.attr("href"))
       parent = $target.parent()
+
+      if $target.hasClass('in')
+        $this.addClass('toggle-chevron')
+      else
+        $target.appendTo($('body'))
+
       $target.on "hide", (e) ->
         $this.removeClass('toggle-chevron')
       $target.on "hidden", (e) ->

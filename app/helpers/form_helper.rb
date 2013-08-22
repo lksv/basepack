@@ -1,8 +1,7 @@
 module FormHelper
   def form_setup_simple_form simple_form
     (params[:return_to] ? hidden_field_tag(:return_to, params[:return_to]) : '') +
-      simple_form.error_notification.to_s +
-      form_display_base_errors(simple_form.object)
+      simple_form.error_notification.to_s
   end
 
   def form_display_base_errors resource

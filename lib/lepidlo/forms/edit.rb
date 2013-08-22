@@ -28,6 +28,7 @@ module Lepidlo
 
       def initialize(factory, chain, options = {})
         super
+        @path = options[:path]
         @builder_default_options = {
           html:     { multipart: true, class: 'form-horizontal denser' },
           defaults: { input_html: { class: 'span6'} }

@@ -1,29 +1,30 @@
 - switch_id = "#{form.builder.object_name}_#{field.method_name}_show_one"
 - active_nested_form = field.value && field.value.new_record?
 
-.accordion{id: switch_id}
-  .accordion-group
-    .accordion-heading
-      %a.accordion-toggle{class: active_nested_form ? nil : "toggle-chevron", data: {toggle: 'collapse', parent: "##{switch_id}", removeoncollapse: true}, href: "##{switch_id}_filtering_select"}
-        %i.icon-chevron-right
-        Vybrat existujícího
-    .accordion-body.collapse{id: "#{switch_id}_filtering_select", class: active_nested_form ? nil : "in"}
-      .accordion-inner
-        = render 'forms/edit/form_filtering_select', form: form, field: field.copy(nested_form: false)
-  .accordion-group
-    .accordion-heading
-      %a.accordion-toggle{class: !active_nested_form ? nil : "toggle-chevron", data: {toggle: 'collapse', parent: "##{switch_id}", removeoncollapse: true}, href: "##{switch_id}_nested_form"}
-        %i.icon-chevron-right
-        Zadat nový
-    .accordion-body.collapse{id: "#{switch_id}_nested_form", class: !active_nested_form ? nil : "in"}
-      .accordion-inner
-        = form.render_nested_form field do |nform|
-          - if active_nested_form
-            .nested_fields.well.well-small
-              = nform.render_fields
-          - else
-            - nform.with_resource(nform.resource_class.new) do
-              - nform.builder.object = nform.resource
+.control-group
+  .accordion{id: switch_id}
+    .accordion-group
+      .accordion-heading
+        %a.accordion-toggle{data: {toggle: 'collapse', parent: "##{switch_id}", removeoncollapse: true}, href: "##{switch_id}_filtering_select"}
+          %i.icon-chevron-right
+          #{field.label} - vybrat existujícího
+      .accordion-body.collapse{id: "#{switch_id}_filtering_select", class: active_nested_form ? nil : "in"}
+        .accordion-inner
+          = render 'forms/edit/form_filtering_select', form: form, field: field.copy(nested_form: false)
+    .accordion-group
+      .accordion-heading
+        %a.accordion-toggle{data: {toggle: 'collapse', parent: "##{switch_id}", removeoncollapse: true}, href: "##{switch_id}_nested_form"}
+          %i.icon-chevron-right
+          #{field.label} - zadat nový
+      .accordion-body.collapse{id: "#{switch_id}_nested_form", class: !active_nested_form ? nil : "in"}
+        .accordion-inner
+          = form.render_nested_form field do |nform|
+            - if active_nested_form
               .nested_fields.well.well-small
                 = nform.render_fields
+            - else
+              - nform.with_resource(nform.resource_class.new) do
+                - nform.builder.object = nform.resource
+                .nested_fields.well.well-small
+                  = nform.render_fields
 

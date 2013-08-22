@@ -13,7 +13,7 @@ module Lepidlo
       module ClassMethods
         def import_action(name, actions_class = Lepidlo::Import::Actions)
           name = name.to_sym
-          custom_actions collection: [name]
+          self.__actions += [name] #custom_actions collection: [name] TODO - destroys URL helpers for other actions
           name_bang = "#{name}!"
 
           # [GET,POST,PATCH,DELETE] /resources/#{name}
@@ -49,6 +49,8 @@ module Lepidlo
             send(name_bang)
           end
 
+          protected name_bang
+
           name_form = "#{name}_form"
           name_form_bang = "#{name}_form!"
           var = :"@#{name}_form"
@@ -72,7 +74,6 @@ module Lepidlo
           define_method name_form do
             send(name_form_bang)
           end
-
         end
       end
 

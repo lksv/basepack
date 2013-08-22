@@ -1,6 +1,40 @@
 # encoding: UTF-8
 module Lepidlo
   class BaseController < InheritedResources::Base
+    class_attribute :__actions
+    self.__actions = InheritedResources::ACTIONS
+
+    class << self
+      def default_query(&block)
+        before_filter :only => [:index] do |controller|
+          redirect_to query_resources_path(controller.instance_eval(&block))
+        end
+      end
+
+      def create_custom_action(resource_or_collection, action)
+        super
+        self.__actions += [action.to_sym]
+      end
+
+      # Copied from inherited_resources for support of custom actions. Defines wich actions will be inherited from the inherited controller.
+      # Syntax is borrowed from resource_controller.
+      #
+      #   actions :index, :show, :edit
+      #   actions :all, :except => :index
+      #
+      def actions(*actions_to_keep)
+        raise ArgumentError, 'Wrong number of arguments. You have to provide which actions you want to keep.' if actions_to_keep.empty?
+
+        options = actions_to_keep.extract_options!
+        actions_to_remove = Array(options[:except])
+        actions_to_remove += __actions - actions_to_keep.map { |a| a.to_sym } unless actions_to_keep.first == :all
+        actions_to_remove.map! { |a| a.to_sym }.uniq!
+        (instance_methods.map { |m| m.to_sym } & actions_to_remove).each do |action|
+          undef_method action, "#{action}!"
+        end
+      end
+    end
+
     respond_to :html
     with_role :default # InheritedResources
     defaults route_prefix: nil
@@ -53,21 +87,25 @@ module Lepidlo
       super(options, &block)
     end
     alias :index! :index
+    protected :index!
 
     def update(options={}, &block)
       super(options.reverse_merge(notice: message_edit_done), &block)
     end
     alias :update! :update
+    protected :update!
 
     def create(options={}, &block)
       super(options.reverse_merge(notice: message_new_done), &block)
     end
     alias :create! :create
+    protected :create!
 
     def destroy(options={}, &block)
       super(options.reverse_merge(notice: message_destroy_done), &block)
     end
     alias :destroy! :destroy
+    protected :destroy!
 
     def options(options={})
       primary_key = resource_class.primary_key
@@ -80,6 +118,7 @@ module Lepidlo
       render :json => response
     end
     alias :options! :options
+    protected :options!
 
     # [GET,POST] /resources/query
     def query
@@ -106,7 +145,7 @@ module Lepidlo
       end
     end
     alias :query! :query
-
+    protected :query!
 
     # [GET,POST] /resources/export
     def export
@@ -118,6 +157,7 @@ module Lepidlo
       end
     end
     alias :export! :export
+    protected :export!
 
     def list_form_for(query_form)
       form_factory_rails_admin(:list, Lepidlo::Forms::List, query_form.chain_with_class, query_form: query_form)
@@ -134,10 +174,10 @@ module Lepidlo
       )
     end
 
-    def edit_form_for(resource_or_chain)
+    def edit_form_for(resource_or_chain, options = {})
       res = Array.wrap(resource_or_chain).last
       section = (res.is_a?(Class) or res.new_record?) ? :create : :update
-      form_factory_rails_admin(section, Lepidlo::Forms::Edit, resource_or_chain)
+      form_factory_rails_admin(section, Lepidlo::Forms::Edit, resource_or_chain, options)
     end
 
     def diff_form_for(resource, resource2) # resource or chain
@@ -202,6 +242,7 @@ module Lepidlo
         object
       end
     end
+    alias :build_resource! :build_resource
 
     # for InheritedResources
     def build_resource_params
@@ -401,7 +442,7 @@ module Lepidlo
 
     def edit_form!(&block)
       @edit_form ||= begin
-        form = edit_form_for(chain)
+        form = edit_form_for(chain, path: collection_action? ? collection_path : resource_path)
         form.configure(&block) if block
         form
       end
@@ -422,14 +463,6 @@ module Lepidlo
 
     def form_factory_rails_admin(section, form_class, *args)
       Lepidlo::Forms::Factories::RailsAdmin.new(section, view_context, form_class).new_form(*args)
-    end
-
-    class << self
-      def default_query(&block)
-        before_filter :only => [:index] do |controller|
-          redirect_to polymorphic_path([:query, association_chain, resource_class].flatten, controller.instance_eval(&block))
-        end
-      end
     end
 
   end
