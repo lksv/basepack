@@ -1,0 +1,28 @@
+<% if content_for?(:navigation) %>
+  <%= yield(:navigation) %>
+<% else %>
+  <%= nav_bar :fixed => :top, :responsive => true do %>
+      <%= menu_group do %>
+        <%= menu_divider %>
+        <%#= drop_down "Example" do %>
+          <%#= menu_item model_name_pluralize(User), main_app.users_path %>
+        <%# end %>
+
+        <%= drop_down '<i class="icon-cog"></i>Dočasně' do %>
+          <% RailsAdmin::Config.models.each do |m| %>
+            <% next unless (main_app.url_for(m.abstract_model.model) rescue nil)  #hack: some of the models do not have controllers and i don't want to display them %>
+            <%= menu_item model_name_pluralize(m.abstract_model.model), main_app.url_for(m.abstract_model.model) %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= menu_group :pull => :right do %>
+        <% if current_user %>
+          <%= menu_item "Log Out", main_app.destroy_user_session_path, method: :delete %>
+        <% else %>
+          <%= menu_item "Log In", main_app.new_user_session_path %>
+        <% end %>
+      <% end %>
+
+  <% end %>
+<% end %>

@@ -29,18 +29,20 @@ module Lepidlo
               @import_actions.patch do |import_resource|
                 # run import
                 import_resource.import_data(current_ability) if import_resource.state == "not_started"
-                redirect_to import_resources_path(import_id: import_resource.id),
-                  notice: message_edit_done(import_form.show_form.label)
+                redirect_to polymorphic_path([name, route_prefix, association_chain, resource_class].flatten,
+                                             import_id: import_resource.id),
+                            notice: message_edit_done(import_form.show_form.label)
               end
             elsif request.post?
               @import_actions.post do
-                redirect_to import_resources_path(import_id: import_form.edit_form.resource.id),
-                  notice: message_new_done(import_form.edit_form.label)
+                redirect_to polymorphic_path([name, route_prefix, association_chain, resource_class].flatten,
+                                             import_id: import_form.edit_form.resource.id),
+                            notice: message_new_done(import_form.edit_form.label)
               end
             elsif request.delete?
               @import_actions.delete do
-                redirect_to import_resources_path,
-                  notice: message_destroy_done(import_form.edit_form.label)
+                redirect_to polymorphic_path([name, route_prefix, association_chain, resource_class].flatten),
+                            notice: message_destroy_done(import_form.edit_form.label)
               end
             end
           end

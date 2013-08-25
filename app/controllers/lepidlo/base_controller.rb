@@ -40,7 +40,7 @@ module Lepidlo
     defaults route_prefix: nil
     check_authorization # CanCan
 
-    helper_method :resource_config, :return_to_path, :collection_action?,
+    helper_method :resource_config, :return_to_path, :collection_action?, :route_prefix,
                   :chain, :title_params, :resource_filter,
                   :build_resource,
                   :query_params,
@@ -205,6 +205,10 @@ module Lepidlo
 
     def message_destroy_done(name = resource_config.label)
       t("admin.flash.successful", :name => name, :action => t("admin.actions.delete.done"))
+    end
+
+    def route_prefix
+      @route_prefix ||= resources_configuration[:self][:route_prefix]
     end
 
     # for InheritedResources
