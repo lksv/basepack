@@ -1,8 +1,8 @@
 module Lepidlo
   module Generators
-    class InstallGenerator < Rails::Generators::Base
+    class InstallGenerator < ::Rails::Generators::Base
       source_root File.expand_path("../templates", __FILE__)
-      include Rails::Generators::Migration
+      include ::Rails::Generators::Migration
 
       desc "Creates a Lepidlo initializer and copy locale files to your application."
 
@@ -18,23 +18,13 @@ module Lepidlo
         scss_manifest = 'app/assets/stylesheets/application.css.scss'
         if File.exist?(css_manifest)
           content = File.read(css_manifest)
-          if content.match(/require_tree\s+\.\s*$/)
-            # Problem - needs to be erased...
-            raise 'found "require_tree ." in application.css file'
-          else
-            insert_into_file css_manifest, " *= require lepidlo\n *= require lepidlo_and_overrides\n", :after => "require_self\n"
-            copy_file "lepidlo_and_overrides.css", "app/assets/stylesheets/lepidlo_and_overrides.css"
-          end
+          insert_into_file css_manifest, " *= require lepidlo\n *= require lepidlo_and_overrides\n", :after => "require_self\n"
+          copy_file "lepidlo_and_overrides.css", "app/assets/stylesheets/lepidlo_and_overrides.css"
         elsif File.exists?(scss_manifest)
           content = File.read(scss_manifest)
-          if content.match(/require_tree\s+\.\s*$/)
-            # Problem - needs to be erased...
-            raise 'found "require_tree ." in application.css.scss file'
-          else
-            append_file css_manifest, '@import "lepidlo";'
-            append_file css_manifest, '@import "lepidlo_and_overrides";'
-            copy_file "lepidlo_and_overrides.css", "app/assets/stylesheets/lepidlo_and_overrides.css"
-          end
+          append_file scss_manifest, '@import "lepidlo";'
+          append_file scss_manifest, '@import "lepidlo_and_overrides";'
+          copy_file "lepidlo_and_overrides.css", "app/assets/stylesheets/lepidlo_and_overrides.css"
         else
           copy_file "application.css.scss", "app/assets/stylesheets/application.css.scss"
         end
@@ -81,7 +71,18 @@ module Lepidlo
       patch  'import',      :on => :collection
       delete 'import',      :on => :collection
   end
+
+  #resources :lepidlo_example_resource, concerns: :resourcable
 RUBY
+        end
+      end
+
+      def rails_admin_init_script
+        rails_admin_cfg_file = 'config/initializers/rails_admin.rb'
+        if File.exist?(rails_admin_cfg_file)
+          insert_into_file rails_admin_cfg_file, "  config.included_models = Lepidlo::Utils.detect_models #+ ['ActsAsTaggableOn::Tag', 'Delayed::Job']\n", :before => "end\n"
+        else
+          copy_file "rails_admin.rb", rails_admin_cfg_file
         end
       end
 

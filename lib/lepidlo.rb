@@ -191,4 +191,10 @@ module Lepidlo
     end
   end
 
+  class Railtie < ::Rails::Railtie
+    config.app_generators.template_engine :lepidlo
+    config.app_generators.resource_route :lepidlo_resource_route
+    config.app_generators.scaffold_controller :lepidlo_controller
+  end
+
 end
