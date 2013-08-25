@@ -5,8 +5,7 @@ This project rocks and uses LGPL-LICENSE.
 = Generator usuage:
 
 1. rails new MyApp
-2. FIXME: change locale to :cs, othervise error: missing interpolation argument :entry\_name in "No %{entry\_name} found" ({:count=>0} given)
-3. add Lepidlo's gems:
+2. add Lepidlo's gems:
 
 ```ruby
 ### Lepidlo
@@ -21,11 +20,12 @@ gem 'bootbox-rails'
 
 ```
 
-4. bundle install
-5. rails g lepidlo:install
-6. remove from app/assets/stylesheets/application.css line: require\_tree .
-7. define basic ability e.g. ```can :manage, :all```
-8. rails g scaffold NAME [field[:type][:index] field[:type][:index]] [options]
+3. ```bundle install```
+4. ```rails g lepidlo:install```
+5. define basic ability e.g. ```can :manage, :all```
+6. ```rails g scaffold NAME [field[:type][:index] field[:type][:index]] [options]```
+7. ```rake db:migrate```
+8. ```rails s```
 
 FIXME:
  * route is generated above the concerns, which leads to the error
