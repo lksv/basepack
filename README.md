@@ -1,20 +1,23 @@
-= Lepidlo
+Lepidlo
+=======
 
 This project rocks and uses LGPL-LICENSE.
 
-= Generator usuage:
+Generator usuage
+================
 
-1. rails new MyApp
-2. add Lepidlo's gems:
+1. ```rails new MyApp```
+2. add to the ```Gemfile```:
 
 ```ruby
 ### Lepidlo
 gem "lepidlo",      git: "https://github.com/lksv/lepidlo.git"
-gem 'inherited_resources'
-gem 'ransack',      git: "https://github.com/ernie/ransack", branch: "rails-4"
-gem 'kaminari',     git: "https://github.com/amatsuda/kaminari.git", ref: "03fe8ba9b04c85372e04b4e31e89060caee26ff" # fast total_count
-gem "simple_form"  
-gem 'settingslogic' 
+gem 'inherited_resources',  '~> 1.4.1'
+gem 'ransack',              '~> 1.0'
+gem 'kaminari'
+gem "simple_form",          '~> 3.0.0.rc'
+gem 'settingslogic'
+gem "twitter-bootstrap-rails"
 gem 'bootbox-rails'
 ### /Lepidlo
 
