@@ -260,6 +260,50 @@ class Lepidlo.Form.Plugins.HiddeningFilteringSelect extends Lepidlo.Form.Plugin
       else
         group.show()
 
+###*
+ * Dynamically show/hide fields based on other field value.
+
+ * takes all elements with data-dynamic-fields and use this data attribute as an configuration:
+   @param{data-dynamic-fields} array of actions. Each action is a hash with keys: 
+   condition - condition which should be met (Stirng: field has to equal, Array: field has to match one of item of array)
+   fields_actin - hash. Keys are other fields on which are taken action.
+
+ * Exmaple:
+   [{"condition":["aaa","hide"],"fields_actin":{"www":{"visible":false}}},{"condition":"xxx","fields_actin":{"www":{"visible":true}}}]
+ ###
+
+class Lepidlo.Form.Plugins.DynamicFields extends Lepidlo.Form.Plugin
+  value_checker: (field_value, value_condition) ->
+    if ((Object.prototype.toString.call(value_condition)) == '[object Array]')
+      return (value_condition.indexOf(field_value) != -1)
+    else if (field_value == value_condition)
+      return true
+    else
+      return false
+
+  bind: ->
+    plugin = @
+    @form.find('[data-dynamic-fields]').each ->
+      that = $(@)
+      dependant = that.data('dynamic-fields')
+      $(@).on "change", (e) ->
+        current_value = $(this).val()
+        if $(this).is('input[type="checkbox"]')
+          current_value = $(this).is(':checked')
+        for options in dependant
+          value_condition = options.condition
+          fields_actin = options.fields_actin
+          if plugin.value_checker(current_value, value_condition)
+            $.each fields_actin, (field_name, field_options) ->
+              field = that.findExtended("field=" + field_name)
+              if field and field_options.visible == true or field_options.visible == false
+                fieldDom = $(field).parents(".control-group")
+                if field_options.visible 
+                  fieldDom.show() #slideDown()
+                else
+                  fieldDom.hide() #slideUp()
+      $(@).trigger('change').trigger('change')
+
 class Lepidlo.Form.Plugins.Select2 extends Lepidlo.Form.Plugin
   bind: ->
     @form.find('[data-select]').each ->
