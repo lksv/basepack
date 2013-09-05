@@ -1,10 +1,19 @@
 module Lepidlo
   module Generators
     class InstallGenerator < ::Rails::Generators::Base
+      include Rails::Generators::Migration
       source_root File.expand_path("../templates", __FILE__)
-      include ::Rails::Generators::Migration
 
       desc "Creates a Lepidlo initializer and copy locale files to your application."
+
+      def self.next_migration_number(path)
+        if ActiveRecord::Base.timestamped_migrations
+          sleep 1 # make sure each time we get a different timestamp
+          Time.new.utc.strftime("%Y%m%d%H%M%S")
+        else
+          "%.3d" % (current_migration_number(path) + 1)
+        end
+      end
 
       def add_assets
         js_manifest = 'app/assets/javascripts/application.js'
@@ -86,9 +95,31 @@ RUBY
         end
       end
 
+      def create_migration
+         #TODO - should I ask whether generate?
+         copy_migrate 'create_filters'
+
+         #TODO - should I ask whether generate?
+         copy_migrate 'create_imports'
+         copy_migrate 'create_imports_importables_join_table'
+         copy_file 'import.rb', 'app/models/import.rb'
+      end
+
+
       #def show_readme
       #  readme "README" if behavior == :invoke
       #end
+
+    private
+
+      def copy_migrate(filename)
+        if self.class.migration_exists?("db/migrate", "#{filename}")
+          say_status("skipped", "Migration #{filename}.rb already exists")
+        else
+          migration_template "migrations/#{filename}.rb", "db/migrate/#{filename}.rb"
+        end
+      end
+
     end
   end
 end

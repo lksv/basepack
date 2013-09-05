@@ -30,5 +30,5 @@ gem 'bootbox-rails'
 7. ```rake db:migrate```
 8. ```rails s```
 
-FIXME:
- * route is generated above the concerns, which leads to the error
+TODO:
+ * disable jbuilder generator 

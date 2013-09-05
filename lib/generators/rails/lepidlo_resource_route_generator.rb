@@ -22,10 +22,18 @@ module Rails
         end
 
         # route prepends two spaces onto the front of the string that is passed, this corrects that
-        route route_string[2..-1]
+        route_after route_string[2..-1]
       end
 
+    private
 
+      def route_after(routing_code)
+        log :route, routing_code
+
+        in_root do
+          inject_into_file 'config/routes.rb', "\n #{routing_code}", { after: /concern :resourcable do.*?^\s*end\s*$/m, verbose: true }
+        end
+      end
 
     end
   end
