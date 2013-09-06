@@ -108,7 +108,7 @@ module Lepidlo
     protected :destroy!
 
     def options(options={})
-      primary_key = resource_class.primary_key
+      primary_key = params[:primary_key] || resource_class.primary_key
       response = (options[:collection] || collection).map do |object|
         {
           :id   => object.send(primary_key),

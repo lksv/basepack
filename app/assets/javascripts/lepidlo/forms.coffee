@@ -128,10 +128,23 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
       Lepidlo.Form.Plugins.FilteringSelect.select2 $(@), $(@).data('options')
 
   @select2: ($el, options) ->
-    options = _.extend({remote_source_params: {}, init: {}}, options)
+    options = _.extend(
+      {
+        remote_source_params: {},
+        init: {},
+        minimumInputLength: 0,
+        init_select_query: 'id_eq'
+      },
+      options
+    )
     $el.select2
+      createSearchChoice: (term, data) ->
+        if options.create_search_choice
+          {id:term, text:term}
+        else
+          null
       placeholder: options.placeholder
-      minimumInputLength: 0
+      minimumInputLength: options.minimumInputLength
       allowClear: !options.required
       multiple: options.multiple
       escapeMarkup: (m) ->
@@ -179,13 +192,17 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
           id:   id
           text: options.init[id]
       else
+        if options.strip_spaces
+          id = id.replace(/(^\s+|\s+$)/g,'')
         ids_for_ajax.push(id)
 
      if _.isEmpty(ids_for_ajax)
        callback(data)
      else
+       remote_params = { f: {} }
+       remote_params.f[options.init_select_query] = ids_for_ajax
        $.ajax(options.remote_source,
-         data: $.extend({ f: { id_eq: ids_for_ajax }}, options.remote_source_params)
+         data: $.extend(remote_params, options.remote_source_params)
          dataType: "json"
        ).done (d) ->
          callback(data.concat(d))

@@ -1,3 +1,17 @@
+:ruby
+  js_data = {
+    filteringselect: true,
+    options: {
+      create_search_choice: true,
+      init_select_query: 'name_in',
+      minimumInputLength: 1,
+      multiple:true,
+      strip_spaces: true,
+      placeholder: I18n.t('admin.misc.search'),
+      remote_source: options_acts_as_taggable_on_tags_path,
+      remote_source_params: { primary_key: 'name'}
+    }.to_json
+  }
+
 = form.input field.method_name, label: "<i class='icon-tags'></i> #{field.label}", hint: field.help, required: field.required? do
-  = form.input_field field.method_name, { type: :hidden,
-      data: { select: { tags: tag_suggestions(field, length: 10, order: { count: :desc })}}}.deep_merge(field.html_attributes)
+  = form.input_field field.method_name, { type: 'text', data: js_data}
