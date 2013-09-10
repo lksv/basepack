@@ -176,11 +176,20 @@ module Lepidlo
 
     def taggings(options={})
       authorize!(action_name.to_sym, resource_class)
-      # pridat filtr na:  where("taggings.taggable_type = ?", class_resource.to_s)
-      params['f[taggings_taggable_type_eq]'] = resource_class.to_s
+      query_params = params.clone
+
+      #for inital data on selectbox change searching from id_tq to name_id
+      if (t = query_params['f']) and (t = t.delete 'id_eq')
+        query_params['f']['name_in'] = t.map! { |value| value.strip }
+      end
+      #add filter to search only on proper type
+      query_params['f'] ||= {}
+      query_params['f']['taggings_taggable_type_eq'] = resource_class.to_s
+
       query_form = query_form_for(
-        ActsAsTaggableOn::Tag, 
-        ActsAsTaggableOn::Tag.all.accessible_by(current_ability)
+        ActsAsTaggableOn::Tag,
+        ActsAsTaggableOn::Tag.all.accessible_by(current_ability),
+        params: query_params
       )
 
       response = query_form.collection.map do |object|

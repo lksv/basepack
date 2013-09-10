@@ -132,8 +132,7 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
       {
         remote_source_params: {},
         init: {},
-        minimum_input_length: 0,
-        init_select_query: 'id_eq'
+        minimum_input_length: 0
       },
       options
     )
@@ -197,10 +196,8 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
      if _.isEmpty(ids_for_ajax)
        callback(data)
      else
-       remote_params = { f: {} }
-       remote_params.f[options.init_select_query] = ids_for_ajax
        $.ajax(options.remote_source,
-         data: $.extend(remote_params, options.remote_source_params)
+         data: $.extend({ f: { id_eq: ids_for_ajax }}, options.remote_source_params)
          dataType: "json"
        ).done (d) ->
          callback(data.concat(d))

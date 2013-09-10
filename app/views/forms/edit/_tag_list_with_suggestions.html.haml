@@ -3,13 +3,11 @@
     filteringselect: true,
     options: {
       create_search_choice: true,
-      init_select_query: 'name_in',
       minimum_input_length: 1,
       multiple:true,
       strip_spaces: true,
       placeholder: I18n.t('admin.misc.search'),
-      remote_source: polymorphic_path([:taggings, field.form.resource_class]),
-      remote_source_params: { primary_key: 'name'}
+      remote_source: polymorphic_path([:taggings, field.form.resource_class])
     }.to_json
   }
 
