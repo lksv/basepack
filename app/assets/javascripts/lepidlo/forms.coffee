@@ -132,7 +132,7 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
       {
         remote_source_params: {},
         init: {},
-        minimumInputLength: 0,
+        minimum_input_length: 0,
         init_select_query: 'id_eq'
       },
       options
@@ -144,7 +144,7 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
         else
           null
       placeholder: options.placeholder
-      minimumInputLength: options.minimumInputLength
+      minimumInputLength: options.minimum_input_length
       allowClear: !options.required
       multiple: options.multiple
       escapeMarkup: (m) ->
@@ -192,8 +192,6 @@ class Lepidlo.Form.Plugins.FilteringSelect extends Lepidlo.Form.Plugin
           id:   id
           text: options.init[id]
       else
-        if options.strip_spaces
-          id = id.replace(/(^\s+|\s+$)/g,'')
         ids_for_ajax.push(id)
 
      if _.isEmpty(ids_for_ajax)

@@ -79,6 +79,9 @@ module Lepidlo
       post   'import',      :on => :collection
       patch  'import',      :on => :collection
       delete 'import',      :on => :collection
+
+      get    'filters',     :on => :collection
+      get    'taggings',     :on => :collection
   end
 
   #resources :lepidlo_example_resource, concerns: :resourcable
