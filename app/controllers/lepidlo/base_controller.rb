@@ -47,7 +47,7 @@ module Lepidlo
                   :list_form, :show_form, :query_form, :edit_form, :export_form,
                   :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for
 
-    custom_actions collection: [:options, :query, :export]
+    custom_actions collection: [:options, :query, :export, :taggings]
 
     def index(options={}, &block)
       block ||= proc do |format|
@@ -108,7 +108,7 @@ module Lepidlo
     protected :destroy!
 
     def options(options={})
-      primary_key = params[:primary_key] || resource_class.primary_key
+      primary_key = resource_class.primary_key
       response = (options[:collection] || collection).map do |object|
         {
           :id   => object.send(primary_key),
@@ -173,6 +173,35 @@ module Lepidlo
         { scope: scope }.reverse_merge!(options.reverse_merge(params: params, auth_object: current_ability))
       )
     end
+
+    def taggings(options={})
+      authorize!(action_name.to_sym, resource_class)
+      query_params = params.clone
+
+      #for inital data on selectbox change searching from id_tq to name_id
+      if (t = query_params['f']) and (t = t.delete 'id_eq')
+        query_params['f']['name_in'] = t.map! { |value| value.strip }
+      end
+      #add filter to search only on proper type
+      query_params['f'] ||= {}
+      query_params['f']['taggings_taggable_type_eq'] = resource_class.to_s
+
+      query_form = query_form_for(
+        ActsAsTaggableOn::Tag,
+        ActsAsTaggableOn::Tag.all.accessible_by(current_ability),
+        params: query_params
+      )
+
+      response = query_form.collection.map do |object|
+        {
+          :id => ERB::Util.html_escape(object.name),
+          :text => ERB::Util.html_escape(object.name),
+        }
+      end
+      render :json => response
+    end
+    alias :taggings! :taggings
+    protected :taggings!
 
     def edit_form_for(resource_or_chain, options = {})
       res = Array.wrap(resource_or_chain).last
