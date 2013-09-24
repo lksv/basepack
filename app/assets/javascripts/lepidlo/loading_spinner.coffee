@@ -1,0 +1,27 @@
+# http://stackoverflow.com/a/15310394/1045752
+@PageSpinner =
+  spin: (ms=250)->
+    @spinner = setTimeout( (=> @add_spinner()), ms)
+    $(document).on 'page:change', =>
+      @remove_spinner()
+  spinner_html: '
+    <div class="modal hide fade" id="page-spinner">
+      <div class="modal-head card-title"> Prosím s strpení...</div>
+      <div class="modal-body card-body">
+        <i class="icon-spinner icon-spin icon-2x"></i>
+        &emsp;Načítám...
+      </div>
+    </div>
+  '
+  spinner: null
+  add_spinner: ->
+    $('body').append(@spinner_html)
+    $('body div#page-spinner').modal()
+  remove_spinner: ->
+    clearTimeout(@spinner)
+    $('div#page-spinner').modal('hide')
+    $('div#page-spinner').on 'hidden', ->
+      $(this).remove()
+
+$(document).on 'page:fetch', ->
+  PageSpinner.spin()
