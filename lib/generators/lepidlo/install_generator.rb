@@ -82,9 +82,11 @@ module Lepidlo
 
       get    'filters',     :on => :collection
       get    'taggings',     :on => :collection
+      #patch  'list_columns', :on => :collection
+      #put    'list_columns', :on => :collection
   end
 
-  #resources :lepidlo_example_resource, concerns: :resourcable
+  resources :acts_as_taggable_on_tags, :filters, concerns: :resourcable
 RUBY
         end
       end
