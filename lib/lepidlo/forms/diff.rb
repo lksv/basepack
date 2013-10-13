@@ -1,10 +1,12 @@
 module Lepidlo
   module Forms
-    class Diff < Forms::Show
+    class Diff < Forms::Edit
       attr_reader :form2
+      attr_accessor :path
 
       def initialize(factory, chain1, chain2, options = {})
         super(factory, chain1, options)
+        @path = options[:path]
         @form2 = Lepidlo::Forms::Show.new(factory, chain2)
 
         @compare = {}
@@ -20,8 +22,8 @@ module Lepidlo
       end
 
       def build_from_factory
-        factory.build_form(self)
         factory.build_form(@form2)
+        factory.build_form(self)
       end
 
       def resource2

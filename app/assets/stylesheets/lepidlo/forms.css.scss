@@ -7,7 +7,7 @@
 
 .form-show {
   .dl-horizontal > dt {
-    width: 200px;
+    width: 150px;
     /* white-space: normal; */
     /* font-size: 85%; */
     color: $grayLight;
@@ -21,7 +21,12 @@
   }
 
   .diff-value {
-    width: 50%;
+    width: 35%;
+    float: left;
+  }
+
+  .radios{
+    width: 10%;
     float: left;
   }
 

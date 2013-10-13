@@ -1,7 +1,7 @@
 module Lepidlo
   module Forms
     module Groups
-      class Diff < Base
+      class Diff < Groups::Base
         def visible_fields2
           field_names.map {|f| form.visible_field2(f)}.compact
         end

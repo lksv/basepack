@@ -1,35 +1,63 @@
-.form-show
-  %dl.dl-horizontal
-    %dt
-      = check_box_tag("merge_all", "1", params[:merge_all], class: "pull-left", 
-          data: {toggle: "checkboxes", target: "input[name='merge[]']"})
-    %dd
-      .diff-value
-        %h1
-          %small= form.resource.to_label
-      .diff-value
-        %h1
-          %small= form.resource2.to_label
+:coffee
+  $(document).ready ->
+    $("input[name='merge_all']").change ->
+      val = $(this).val()
+      $("input[value='" + val + "'][disabled!='disabled']").prop("checked", true)
 
-  - form.visible_groups.each do |group|
-    - changes = group.changes
-    - unless changes.empty?
-      %h4= group.label
-      - if group.help
-        %p= group.help
+= form.render_form do
+  .form-show
+    %dl.dl-horizontal
+      %dt
+      %dd
+        .diff-value
+          %h1
+            %small= form.resource.to_label
+        .diff-value
+          %h1
+            %small= form.resource2.to_label
 
-      - changes.each do |field1, field2|
-        %dl.dl-horizontal{class: "#{field1.type_css_class} #{field1.css_class}"}
-          %dt{title: field1.label}
-            = check_box_tag("merge[]", field1.method_name, params[field1.name], class: "pull-left")
-            %span.label.label-important
-              = field1.label
-          %dd
-            %span{"data-toggle" => "tooltip", "data-placement" => "top", "data-delay" => "500",
-                  title: field1.help.present? ? "#{field1.label} (#{field1.help})" : field1.label}
-              .diff-value
-                = field1.pretty_value
-              .diff-value
-                = field2.pretty_value
-            .clearfix
+    %dl.dl-horizontal
+      %dt
+      %dd
+        .diff-value
+          &nbsp;
+        .radios
+          = radio_button_tag("merge_all", "left")
+          = radio_button_tag("merge_all", "right")
+        .diff-value
+          &nbsp;
+
+    - form.visible_groups.each do |group|
+      - changes = group.changes
+      - unless changes.empty?
+        %h4= group.label
+        - if group.help
+          %p= group.help
+
+        - changes.each do |field1, field2|
+          %dl.dl-horizontal{class: "#{field1.type_css_class} #{field1.css_class}"}
+            %dt{title: field1.label}
+              %span.label.label-important
+                = field1.label
+            %dd
+              %span{"data-toggle" => "tooltip", "data-placement" => "top", "data-delay" => "500",
+                    title: field1.help.present? ? "#{field1.label} (#{field1.help})" : field1.label}
+                .diff-value
+                  = field1.pretty_value
+                .radios
+                  - disabled = false
+                  - checked = true
+                  - if field1.unique?
+                    - disabled = true
+                    - checked = false
+                  = radio_button_tag("merge[#{field1.name}]", "left", checked = checked, disabled: disabled)
+                  = " / "
+                  = radio_button_tag("merge[#{field2.name}]", "right", checked = false, disabled: disabled)
+                .diff-value
+                  = field2.pretty_value
+              .clearfix
+
+    .form-actions
+      .pull-right
+        = form.render_actions
 

@@ -139,6 +139,10 @@ module Lepidlo
         def nested_label
           form.nested_in ? "#{form.nested_in.nested_label}: #{label}" : label
         end
+
+        def unique?
+          abstract_model.model.validators_on(self.name).map(&:class).include?(ActiveRecord::Validations::UniquenessValidator)
+        end
       end
     end
   end

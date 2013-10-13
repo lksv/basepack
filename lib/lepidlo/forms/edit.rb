@@ -33,6 +33,10 @@ module Lepidlo
           html:     { multipart: true, class: 'form-horizontal denser' },
           defaults: { input_html: { class: 'span6'} }
         }
+
+        if options[:method].present?
+          @builder_default_options[:method] = options[:method]
+        end
       end
 
       def path

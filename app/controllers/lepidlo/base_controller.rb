@@ -44,7 +44,7 @@ module Lepidlo
                   :chain, :title_params, :resource_filter,
                   :build_resource,
                   :query_params,
-                  :list_form, :show_form, :query_form, :edit_form, :export_form,
+                  :list_form, :show_form, :query_form, :edit_form, :export_form, :diff_form,
                   :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for
 
     custom_actions collection: [:options, :query, :export, :taggings]
@@ -159,6 +159,36 @@ module Lepidlo
     alias :export! :export
     protected :export!
 
+    # [GET] /resources/:id/diff/:id2
+    def diff
+      @resource2 = resource2
+      respond_with(chain)
+    end
+    alias :diff! :diff
+    protected :diff!
+
+    # [POST] /resources/:id/diff/:id2
+    def merge(options = {}, &block)
+      authorize!(:update, resource) # CanCan
+
+      @resource = resource
+      @resource2 = resource2
+      merge = params[:merge]
+
+      merge.each do |key, val|
+        if val == "right"
+          resource[key] = @resource2[key]
+        end
+      end
+
+      resource.save
+      options[:notice] ||= message_edit_done
+
+      respond_with(*with_chain(resource), options, &block)
+    end
+    alias :merge! :merge
+    protected :merge!
+
     def list_form_for(query_form)
       form_factory_rails_admin(:list, Lepidlo::Forms::List, query_form.chain_with_class, query_form: query_form)
     end
@@ -209,8 +239,9 @@ module Lepidlo
       form_factory_rails_admin(section, Lepidlo::Forms::Edit, resource_or_chain, options)
     end
 
-    def diff_form_for(resource, resource2) # resource or chain
-      form_factory_rails_admin(:show, Lepidlo::Forms::Diff, resource, resource2)
+    def diff_form_for(resource, resource2, options = {}) # resource or chain
+      options[:method] = :post
+      Lepidlo::Forms::Factories::RailsAdmin.new(:edit, view_context, Lepidlo::Forms::Diff, Lepidlo::Forms::Groups::Diff).new_form(resource, resource2, options)
     end
 
     def export_form_for(query_form)
@@ -260,6 +291,15 @@ module Lepidlo
         authorize!(action_name.to_sym, o) # CanCan
         set_resource_ivar(o)
       end
+    end
+
+    # for diff
+    def resource2
+      @resource2 ||= begin
+       resource2 = params[:id2].present? ? end_of_association_chain.find_by_id(params[:id2].to_i) : resource.copied_from
+       authorize!(action_name.to_sym, resource2) if resource2 # CanCan
+       resource2
+     end
     end
 
     # for InheritedResources
@@ -489,6 +529,19 @@ module Lepidlo
       @export_form ||= begin
         authorize!(:export, resource_class)
         form = export_form_for(query_form)
+        form.configure(&block) if block
+        form
+      end
+    end
+
+    def diff_form
+      diff_form!
+    end
+
+    def diff_form!(&block)
+      @diff_form ||= begin
+        authorize!(:diff, resource_class)
+        form = diff_form_for(chain, resource2, path: polymorphic_path([:merge, route_prefix, association_chain, resource].flatten, id2: resource2))
         form.configure(&block) if block
         form
       end
