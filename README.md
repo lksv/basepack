@@ -30,16 +30,7 @@ TODO:
 
 In your `Gemfile`, add the following dependencies:
 
-    ### Lepidlo
     gem "lepidlo",      git: "https://github.com/lksv/lepidlo.git"
-    gem 'inherited_resources',  '~> 1.4.1'
-    gem 'ransack',              '~> 1.0'
-    gem 'kaminari'
-    gem "simple_form",          '~> 3.0.0.rc'
-    gem 'settingslogic'
-    gem "twitter-bootstrap-rails"
-    gem 'bootbox-rails'
-    ### /Lepidlo
 
 Run:
 
@@ -51,7 +42,16 @@ And then run:
 
 This generator will install **Lepidlo**, 
 [Devise](https://github.com/plataformatec/devise) and
-[CanCan](https://github.com/ryanb/cancan.git)
+[CanCan](https://github.com/ryanb/cancan.git) and following gems
+* inherited\_resources
+* ransack
+* kaminari
+* simple\_form
+* settingslogic
+* twitter-bootstrap-rails
+* bootbox-rails
+
+
 if you don't already have it installed.
 
 Define inital ability in `app/models/ability.rb`. You can put ```can

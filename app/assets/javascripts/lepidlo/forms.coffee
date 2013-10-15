@@ -321,6 +321,25 @@ class Lepidlo.Form.Plugins.Select2 extends Lepidlo.Form.Plugin
     @form.find('[data-select]').each ->
       $(@).select2($(@).data('select'))
 
+
+class Lepidlo.Form.Plugins.Orderable extends Lepidlo.Form.Plugin
+  update_sort_order: ->
+    console.log('volam update_sort_order')
+    @form.find('.fields').each (idx,fields) ->
+      console.log('updatuji: ' + idx)
+      $(fields).find('input[name$="[position]"]').val(idx+1)
+
+  bind: ->
+    console.log('init')
+    plugin = @
+    @form.find('[data-orderable]').each ->
+      $(@).sortable(
+        handle: '.nested-form-drag',
+        axis: "y",
+        stop: =>
+          plugin.update_sort_order()
+      )
+
   #$('form [data-enumeration]').each ->
   #  if $(this).is('[multiple]')
   #    $(this).filteringMultiselect $(this).data('options')

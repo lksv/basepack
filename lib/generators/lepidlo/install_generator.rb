@@ -57,6 +57,17 @@ module Lepidlo
         end
       end
 
+      def add_dependant_gems
+        gem 'jquery-turbolinks'
+        gem 'inherited_resources',  '~> 1.4.1'
+        gem 'ransack',              '~> 1.0'
+        gem 'kaminari'
+        gem "simple_form",          '~> 3.0.0.rc'
+        gem 'settingslogic'
+        gem "twitter-bootstrap-rails"
+        gem 'bootbox-rails'
+      end
+
       def copy_files
         template "lepidlo-settings.yml", "config/lepidlo-settings.yml"
         copy_file "../../../../config/locales/en.yml", "config/locales/lepidlo.en.yml"

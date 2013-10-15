@@ -65,118 +65,122 @@ module Lepidlo
       send_data str, :type => Mime::CSV, :disposition => "attachment; filename=#{filename}.csv"
     end
 
-    Ransack::Search.class_eval do
-      def errors
-        @errors_patch ||= {}
-      end
+    if defined? Ransack
+      Ransack::Search.class_eval do
+        def errors
+          @errors_patch ||= {}
+        end
 
-      attr_accessor :custom_filters
+        attr_accessor :custom_filters
+      end
     end
 
-    RailsAdmin::Config::Fields::Association.class_eval do
-      alias pretty_value! pretty_value
+    if defined? RailsAdmin
+      RailsAdmin::Config::Fields::Association.class_eval do
+        alias pretty_value! pretty_value
 
-      register_instance_option :pretty_value do
-        if RailsAdmin::ApplicationController === bindings[:controller]
-          pretty_value!
-        else
-          bindings[:view].form_field_show_association(self)
+        register_instance_option :pretty_value do
+          if RailsAdmin::ApplicationController === bindings[:controller]
+            pretty_value!
+          else
+            bindings[:view].form_field_show_association(self)
+          end
+        end
+
+        register_instance_option :options_source do
+          begin
+            bindings[:view].url_for([:options, associated_model_config.abstract_model.model])
+          rescue
+              Rails.logger.debug <<-MESSAGE.strip_heredoc
+
+
+              [Lepidlo] Please add routes for '#{associated_model_config.abstract_model.model}' - url_for([:options, #{associated_model_config.abstract_model.model}]) failed
+
+              MESSAGE
+            "/#{associated_model_config.abstract_model.model.name.parameterize}-options-url-not-exists"
+          end
+        end
+
+        register_instance_option :options_source_params do
+          {}
+        end
+
+        register_instance_option :partial_show do
+          nil
         end
       end
 
-      register_instance_option :options_source do
-        begin
-          bindings[:view].url_for([:options, associated_model_config.abstract_model.model])
-        rescue
-            Rails.logger.debug <<-MESSAGE.strip_heredoc
+      RailsAdmin::Config::Fields::Base.class_eval do
+        alias export_value! export_value
 
-
-            [Lepidlo] Please add routes for '#{associated_model_config.abstract_model.model}' - url_for([:options, #{associated_model_config.abstract_model.model}]) failed
-
-            MESSAGE
-          "/#{associated_model_config.abstract_model.model.name.parameterize}-options-url-not-exists"
+        register_instance_option :export_value do
+          formatted_value
         end
       end
 
-      register_instance_option :options_source_params do
-        {}
-      end
+      RailsAdmin::Config::Fields::Types::Datetime.class_eval do
+        alias export_value! export_value
 
-      register_instance_option :partial_show do
-        nil
-      end
-    end
-
-    RailsAdmin::Config::Fields::Base.class_eval do
-      alias export_value! export_value
-
-      register_instance_option :export_value do
-        formatted_value
-      end
-    end
-
-    RailsAdmin::Config::Fields::Types::Datetime.class_eval do
-      alias export_value! export_value
-
-      register_instance_option :export_value do
-        unless (time = value).nil?
-          I18n.l(time, format: "%d.%m.%Y %T")
-        else
-          ""
+        register_instance_option :export_value do
+          unless (time = value).nil?
+            I18n.l(time, format: "%d.%m.%Y %T")
+          else
+            ""
+          end
         end
       end
-    end
 
-    RailsAdmin::Config::Fields::Types::Time.class_eval do
-      register_instance_option :export_value do
-        export_value!
+      RailsAdmin::Config::Fields::Types::Time.class_eval do
+        register_instance_option :export_value do
+          export_value!
+        end
       end
+
+      #RailsAdmin::Config::Fields::Types::Enum.class_eval do
+      #  register_instance_option :pretty_value do
+      #    v = bindings[:object].send(name)
+      #    v ? v.text : ' - '
+      #  end
+      #end
+
+      #RailsAdmin::Adapters::ActiveRecord.class_eval do
+      #  private
+
+      #  alias build_statement! build_statement
+
+      #  def build_statement(column, type, value, operator)
+      #    result = build_statement!(column, type, value, operator)
+      #    return unless result.present?
+
+      #    case type
+      #    when :enum
+      #      if operator == '_blank' || value == '_blank'
+      #        result = ["(#{column} IS NULL)"]
+      #      elsif operator == '_present' || value == '_present'
+      #        result = ["(#{column} IS NOT NULL)"]
+      #      else
+      #        in_values = {}
+      #
+      #        if enum_attrs = model.enumerized_attributes[column[/([^.]+)$/, 1].to_sym]
+      #          enum_values = enum_attrs.values
+
+      #          values = Array.wrap(value).each do |val|
+      #            enum_values.each do |e_val| 
+      #              if e_val == val or e_val.value == val or e_val.text.downcase.include?(val.downcase)
+      #                in_values[e_val.value] = true
+      #              end
+      #            end
+      #          end
+      #        end
+
+      #        result = in_values.empty? ? nil : ["(#{column} IN (?))", in_values.keys]
+      #      end
+      #    end
+
+      #    return result
+      #  end
+      #end
     end
-
-    #RailsAdmin::Config::Fields::Types::Enum.class_eval do
-    #  register_instance_option :pretty_value do
-    #    v = bindings[:object].send(name)
-    #    v ? v.text : ' - '
-    #  end
-    #end
-
-    #RailsAdmin::Adapters::ActiveRecord.class_eval do
-    #  private
-
-    #  alias build_statement! build_statement
-
-    #  def build_statement(column, type, value, operator)
-    #    result = build_statement!(column, type, value, operator)
-    #    return unless result.present?
-
-    #    case type
-    #    when :enum
-    #      if operator == '_blank' || value == '_blank'
-    #        result = ["(#{column} IS NULL)"]
-    #      elsif operator == '_present' || value == '_present'
-    #        result = ["(#{column} IS NOT NULL)"]
-    #      else
-    #        in_values = {}
-    #
-    #        if enum_attrs = model.enumerized_attributes[column[/([^.]+)$/, 1].to_sym]
-    #          enum_values = enum_attrs.values
-
-    #          values = Array.wrap(value).each do |val|
-    #            enum_values.each do |e_val| 
-    #              if e_val == val or e_val.value == val or e_val.text.downcase.include?(val.downcase)
-    #                in_values[e_val.value] = true
-    #              end
-    #            end
-    #          end
-    #        end
-
-    #        result = in_values.empty? ? nil : ["(#{column} IN (?))", in_values.keys]
-    #      end
-    #    end
-
-    #    return result
-    #  end
-    #end
   end
 
   def self.map_value_csv(value)

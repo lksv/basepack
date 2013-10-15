@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require jquery.ui.datepicker
 //= require jquery.ui.widget
+//= require jquery.ui.sortable
 //= require jquery_nested_form
 //= require rails_admin/jquery.ui.timepicker
 //= require rails_admin/ra.datetimepicker
