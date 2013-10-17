@@ -162,6 +162,15 @@ License
 
 This project rocks and uses LGPL-LICENSE.
 
+Credits
+=======
+
+[RailsAdmin](https://github.com/sferik/rails_admin) field forms was
+originaly taken from rails-admin.
+
+[nested_form_ui](https://github.com/tb/nested_form_ui) - stylesheed and
+code for orderable was inspired by this project.
+
 ## TODO
 * Generator - set proprely model inherites form ResourcesController add
   include for imports
