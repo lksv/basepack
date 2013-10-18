@@ -1,5 +1,10 @@
-ted-form-sortable {
+.neste-form-sortable {
   .nested-form-drag {
     cursor: move;
+    display: inline-block;
+    height: 100%;
+    margin-bottom: -6px;
+    min-height: 24px;
+    width: 8px;
   }
 }
