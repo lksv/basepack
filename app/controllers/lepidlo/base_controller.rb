@@ -346,13 +346,13 @@ module Lepidlo
         when :index
           resource_class
         when :create, :new
-          [[resource, "Nový"]]
+          [[resource, I18n.t('admin.actions.new.breadcrumb')]]
         when :edit, :update
-          [[resource, "Úprava"]]
+          [[resource, I18n.t('admin.actions.edit.breadcrumb')]]
         when :show
           resource
         when :export
-          [[resource_class, "Export"]]
+          [[resource_class, I18n.t('admin.actions.export.breadcrumb')]]
         else
           collection_action? ? resource_class : resource
         end

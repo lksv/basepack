@@ -3,7 +3,7 @@
          html: {method: :post, id: 'filter-form', class: 'form-horizontal form-search'} do |f|
     .modal-header
       = render 'forms/buttons/modal_close'
-      %h3 Filtry
+      %h3= I18n.t('admin.misc.filter')
 
     .modal-body
       = form_display_base_errors form.resource_filter
@@ -16,7 +16,7 @@
             %i.icon-search
       #complex-filters-menu.dropdown.pull-right
         %a.btn.dropdown-toggle{href: "#", "data-toggle" => "dropdown"}
-          Přidat pravidlo
+          = I18n.t('admin.misc.add_filter')
           %span.caret
         = render "forms/query_menu", form: form
       .clearfix
