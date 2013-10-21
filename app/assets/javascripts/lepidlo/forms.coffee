@@ -49,7 +49,7 @@ $ ->
   form = new Lepidlo.Form()
   form.bind()
 
-window.Lepidlo = {}
+window.Lepidlo ||= {}
 
 class Lepidlo.Form
   constructor: ($container) ->
@@ -330,7 +330,6 @@ class Lepidlo.Form.Plugins.Orderable extends Lepidlo.Form.Plugin
       $(fields).find('input[name$="[position]"]').val(idx+1)
 
   bind: ->
-    console.log('init')
     plugin = @
     @form.find('[data-orderable]').each ->
       $(@).sortable(
