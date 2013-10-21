@@ -110,6 +110,16 @@ module Lepidlo
         simple_form.hidden_field field.method_name, options
       end
 
+      def textfield_options(field)
+        options = (field.html_attributes || {}).dup
+        options.reverse_merge!(@builder_default_options[:defaults][:input_html]) if @builder_default_options[:defaults]
+        options
+      end
+
+      render :textfield do |field, options = {}|
+        simple_form.input_field field.method_name, textfield_options(field).reverse_merge(options)
+      end
+
       render :actions do
         view.render "forms/buttons/submit"
       end
