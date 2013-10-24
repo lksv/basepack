@@ -92,6 +92,7 @@ module Lepidlo
       end
 
       def has_field?(name)
+        @fields_hash.has_key? name
       end
 
       def field(name, delegate_or_attributes = nil)
