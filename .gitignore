@@ -5,8 +5,21 @@ pkg/
 /tags
 tags
 .rspec
-Gemfile.lock
+/Gemfile.lock
 
 # vim artifacts
 **.swp
 **.swo
+
+#Dummy app:
+/spec/dummy/log
+/spec/dummy/.bundle
+
+# Ignore the default SQLite database.
+/spec/dummy/db/*.sqlite3
+/spec/dummy/db/*.sqlite3-journal
+
+# Ignore all logfiles and tempfiles.
+/spec/dummy/log/*.log
+/spec/dummy/tmp
+/spec/dummy/temp

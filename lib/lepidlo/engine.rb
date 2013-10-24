@@ -6,11 +6,6 @@ require 'bootstrap-modal-rails'
 require 'underscore-rails'
 require 'underscore-string-rails'
 require 'rails-i18n'
-require 'cancan'
-require 'ransack'
-require 'simple_form'
-require 'rspec-rails'
-require 'factory_girl_rails'
 
 module Lepidlo
   class Engine < ::Rails::Engine

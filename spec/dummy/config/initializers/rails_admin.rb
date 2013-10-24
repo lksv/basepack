@@ -6,7 +6,7 @@ RailsAdmin.config do |config|
   ################  Global configuration  ################
 
   # Set the admin name here (optional second array element will appear in red). For example:
-  config.main_app_name = ['Subsys3', 'Admin']
+  config.main_app_name = ['DummyApp', 'Admin']
   # or for a more dynamic name:
   # config.main_app_name = Proc.new { |controller| [Rails.application.engine_name.titleize, controller.params['action'].titleize] }
 
@@ -17,7 +17,7 @@ RailsAdmin.config do |config|
   # config.audit_with :history, 'User'
 
   # Or with a PaperTrail: (you need to install it first)
-  # config.audit_with :paper_trail, 'User'
+  config.audit_with :paper_trail, 'User'
 
   # Display empty fields in show views:
   # config.compact_show_view = false
@@ -29,4 +29,5 @@ RailsAdmin.config do |config|
   # config.excluded_models = ['Customer', 'User']
 
   # Include specific models (exclude the others):
+  config.included_models = Lepidlo::Utils.detect_models #+ ['ActsAsTaggableOn::Tag', 'ActsAsTaggableOn::Taggings', 'Delayed::Job']
 end

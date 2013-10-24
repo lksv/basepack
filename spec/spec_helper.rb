@@ -1,4 +1,5 @@
 ENV['RAILS_ENV'] ||= 'test'
+ENV['SKIP_RAILS_ADMIN_INITIALIZER'] = 'false'
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require 'rspec/rails'
@@ -10,6 +11,10 @@ require 'devise'
 require 'warden'
 
 Rails.backtrace_cleaner.remove_silencers!
+
+#TODO - use poltergeist in the future
+#require 'capybara/poltergeist'
+#Capybara.javascript_driver = :poltergeist
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
