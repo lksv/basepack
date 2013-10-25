@@ -2,6 +2,8 @@ defaults: &defaults
   to_label_methods: [name, title]
   help:
     title: false
+  filters:
+    model_name: Filter
 
 development:
   <<: *defaults
