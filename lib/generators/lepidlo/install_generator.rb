@@ -66,6 +66,16 @@ module Lepidlo
         gem 'settingslogic'
         gem "twitter-bootstrap-rails"
         gem 'bootbox-rails'
+
+
+        #needed for imports
+        gem 'rack-cache', :require => 'rack/cache'
+        gem 'dragonfly' # images
+        gem 'delayed_job_active_record', ">= 4.0.0.beta2"
+
+
+        #used in filters
+        gem "strip_attributes", "~> 1.2"
       end
 
       def copy_files
@@ -111,14 +121,29 @@ RUBY
         end
       end
 
-      def create_migration
-         #TODO - should I ask whether generate?
-         copy_migrate 'create_filters'
-
+      def create_imports
          #TODO - should I ask whether generate?
          copy_migrate 'create_imports'
          copy_migrate 'create_imports_importables_join_table'
          copy_file 'import.rb', 'app/models/import.rb'
+
+         copy_file 'dragonfly.rb', 'config/initializers/dragonfly.rb'
+      end
+
+      def create_saved_filters
+         #TODO - should I ask whether generate?
+         copy_migrate 'create_filters'
+         copy_file 'filter.rb', 'app/models/filter.rb'
+         copy_file 'filters_controller.rb', 'app/controllers/filters_controller.rb'
+
+        ability_model_file = 'app/models/ability.rb'
+        if File.exists?(ability_model_file)
+          insert_into_file ability_model_file, "    can :read, Filter\n    can :manage, Filter, :user_id => user.id if user\n", :after => "def initialize(user)\n"
+        end
+        user_model_file =  'app/models/user.rb'
+        if File.exists?(user_model_file)
+          insert_into_file user_model_file, "  has_many :filters, inverse_of: :user", :after => "class User < ActiveRecord::Base\n"
+        end
       end
 
 
