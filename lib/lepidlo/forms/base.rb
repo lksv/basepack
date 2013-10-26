@@ -223,6 +223,11 @@ module Lepidlo
         "#<#{self.class.name}[#{resource_class.name}] #{field_names}>"
       end
 
+      # use more lookup paths for translations
+      def translate(resource, action, subaction = "menu")
+        Utils.translate(resource, action, subaction)
+      end
+
     end
   end
 end

@@ -209,6 +209,15 @@ module Lepidlo
         end
       end.compact
     end
+
+    def self.translate(resource, action, subaction = '')
+      model_name = resource.class.model_name.singular
+      lookups = []
+      lookups << :"lepidlo.forms.#{model_name}.#{action}.#{subaction}"
+      lookups << :"admin.actions.#{action}.#{subaction}"
+
+      I18n.t(lookups.shift, default: lookups).presence
+    end
   end
 end
 

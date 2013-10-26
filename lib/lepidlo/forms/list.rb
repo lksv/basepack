@@ -41,23 +41,24 @@ module Lepidlo
 
       render :show_action do
         if view.can? :show, resource
-          render_action(I18n.t('admin.actions.show.menu'), [association_chain, resource].flatten, "icon-eye-open")
+          render_action(self.translate(resource, :show), [association_chain, resource].flatten, "icon-eye-open")
         end
       end
 
       render :edit_action do
         if view.can? :edit, resource
-          render_action(I18n.t('admin.actions.edit.menu'), [:edit, association_chain, resource].flatten, "icon-pencil",
-                                  class: 'btn btn-info btn-mini')
+          render_action(self.translate(resource, :edit), [:edit, association_chain, resource].flatten, "icon-pencil",
+              class: 'btn btn-info btn-mini')
+
         end
       end
 
       render :destroy_action do
         if view.can? :destroy, resource
-          render_action(I18n.t('admin.actions.delete.menu'), [association_chain, resource].flatten, "icon-trash",
-                        class: 'btn btn-mini btn-danger',
-                        method: :delete,
-                        data: { confirm: I18n.t('admin.form.confirmation') })
+          render_action(self.translate(resource, :delete), [association_chain, resource].flatten, "icon-trash",
+                class: 'btn btn-mini btn-danger',
+                method: :delete,
+                data: { confirm: I18n.t('admin.form.confirmation') })
         end
       end
 
