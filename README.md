@@ -65,7 +65,7 @@ Migrate your database and start the server:
     rails s
 
 
-## Generator usuage
+## Generator usage
 
 You can easily generate new resource (scaffold for the resource) by
 ```rails g scaffold NAME [field[:type][:index] field[:type][:index]] [options]```.
@@ -79,14 +79,14 @@ Then
 ```rails s```
 
 
-## Basic Usuage
+## Basic usage
 
 TODO: after the scaffold is generated, you can easily configure fields
 used in individual actions:
 
 File ```app/models/project.rb```:
 ```
-class Project < ResourcesController
+class Project < ActiveRecord::Base
   has_many :tasks, inverse_of: :project
   validates :name, :short_description, presence: true
 
@@ -117,7 +117,7 @@ end
 
 File ```app/models/task.rb```
 ```
-class Task < ResourcesController
+class Task < ActiveRecord::Base
   belongs_to :project, inverse_of: :tasks
   belongs_to :user
 end
@@ -150,7 +150,7 @@ inspired by [RailsAdmin](https://github.com/sferik/rails_admin) and
 still using [RailsAdmin
 DSL](https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL) for defining the forms.
 
-TODO - explain the concept. Class ```Lepidlo::Form::Base``` and Lepidlo::Form::Fields::Base```.
+TODO - explain the concept. Class ```Lepidlo::Form::Base``` and ```Lepidlo::Form::Fields::Base```.
 Controller action as ```<form_name>_form_for``` and ```form_factory_rails_admin```.
 
 ## Customining Views
