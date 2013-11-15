@@ -126,7 +126,7 @@ module Lepidlo
           raise NameError unless c.ancestors.include? ActiveRecord::Base
           false
         rescue NameError
-          errors.add(:klass, "Není název známého modelu")
+          errors.add(:klass, "is not known model!")
           true
         end
       end

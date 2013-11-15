@@ -18,7 +18,9 @@ module Lepidlo
       def add_assets
         js_manifest = 'app/assets/javascripts/application.js'
         if File.exist?(js_manifest)
+          insert_into_file js_manifest, "//= require jquery\n", :before => "\n//= require"
           insert_into_file js_manifest, "//= require lepidlo\n", :after => "jquery_ujs\n"
+          insert_into_file js_manifest, "//= require jquery.turbolinks\n", :after => "jquery\n"
         else
           copy_file "application.js", js_manifest
         end
