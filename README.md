@@ -51,8 +51,7 @@ This generator will install **Lepidlo**,
 * twitter-bootstrap-rails
 * bootbox-rails
 
-
-if you don't already have it installed.
+if you don't already have them installed.
 
 Define inital ability in `app/models/ability.rb`. You can put ```can
 :manage, :all``` to enable anybody to perform any
@@ -78,11 +77,11 @@ Then
 ```rake db:migrate```
 ```rails s```
 
+Notice that files for views are not generated (directories appp/views/projects and appp/views/tasks are empty), but all RESTful actions are working correctly. It is because views iherit default structure and you can easily override these defaults by creating appropriate files.
 
 ## Basic usage
 
-TODO: after the scaffold is generated, you can easily configure fields
-used in individual actions:
+After scaffolding your resources, you can customize fields used in individual actions by [Railsdmin DSL](https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL)
 
 File ```app/models/project.rb```:
 ```
@@ -94,7 +93,7 @@ class Project < ActiveRecord::Base
     list do
       field :name
       field :short_description
-      field :end
+      field :finish
     end
 
     edit do
@@ -122,8 +121,47 @@ class Task < ActiveRecord::Base
   belongs_to :user
 end
 ```
+IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of **Lepidlo**, see [Rails documentation](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations) for explaination.
 
 
+Another difference is controllers which inherit from ResourcesController. Full inheritance hierarchy looks this way:
+```
+ProjectsController < ResourcesController < Lepidlo::BaseController < InheritedResources::Base
+```
+
+
+If you are not familiar with [InheritedResources](https://github.com/josevalim/inherited_resources), take a look at it.  
+
+Lepidlo::BaseController adds to it:
+* strong parameters handling
+* ```options``` method
+* ```taggings``` method
+* ```build_resource``` method
+
+You do NOT need to define permitted parameters anymore. It is defined by RailsAdmin DSL, more precisely by what you set as visible in edit action. 
+So file ```app/models/project.rb```:
+
+```
+class Project < ActiveRecord::Base
+  ...
+    edit do
+      field :name
+      field :short_description
+      field :description, :wysihtml5
+      field :start
+      field :finish
+     end 
+  ...
+end
+```
+
+implicitly sets permitted params which could be written as:
+```
+def permitted_params
+  params.permit(:project => [:name, :short_description, :description, :start, :finish])
+end
+```
+in your projects controller. You can override these implicit settings by creating this method in case you want it.
 
 ## Basic Architecture Background
 
@@ -140,7 +178,7 @@ end
 * ...[and others](lepidlo.gemspec)
 
 Althoug you can use **Lepidlo** without knowing anything of the
-background architecture it is recommanded to get to know at least
+background architecture it is recommended to get to know at least with:
 [InheritedResources](https://github.com/josevalim/inherited_resources),
 [CanCan](https://github.com/ryanb/cancan.git) and
 [Device](https://github.com/plataformatec/devise). 
