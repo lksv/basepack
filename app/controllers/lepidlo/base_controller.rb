@@ -386,16 +386,16 @@ module Lepidlo
         when :index
           resource_class
         when :create, :new
-          [[resource, 
+          [[resource,
             Utils.translate(resource, :new, 'breadcrumb')]]
         when :edit, :update
-          [[resource, 
+          [[resource,
             Utils.translate(resource, :edit, 'breadcrumb')]]
         when :show
           resource
         when :export
-          [[resource_class, 
-            Utils.translate(resource, :export, 'breadcrumb')]]
+          [[resource_class,
+            Utils.translate(resource_class, :export, 'breadcrumb')]]
         else
           collection_action? ? resource_class : resource
         end
