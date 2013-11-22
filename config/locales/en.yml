@@ -1,2 +1,5 @@
 en:
   web_name: "Project Name"
+  misc:
+    loading: "Loading, please wait"
+    error_filter: "Filter can't be saved"

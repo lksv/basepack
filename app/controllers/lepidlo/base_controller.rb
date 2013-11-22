@@ -134,7 +134,7 @@ module Lepidlo
         if filter.save
           flash.now[:notice] = message_new_done(Lepidlo::Utils.model_config(filter_class).label)
         else
-          flash.now[:error] = "Chyba při ukládání filtru: #{filter.errors.full_messages.join('. ')}"
+          flash.now[:error] = I18n.t :error_filter, scope: [:misc]
         end
       end
 

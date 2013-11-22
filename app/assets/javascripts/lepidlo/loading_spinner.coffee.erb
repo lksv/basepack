@@ -6,10 +6,10 @@
       @remove_spinner()
   spinner_html: '
     <div class="modal hide fade" id="page-spinner">
-      <div class="modal-head card-title"> Prosím s strpení...</div>
+      <div class="modal-head card-title"> <%= I18n.t :loading %></div>
       <div class="modal-body card-body">
         <i class="icon-spinner icon-spin icon-2x"></i>
-        &emsp;Načítám...
+        &emsp;<%= I18n.t :loading %>
       </div>
     </div>
   '

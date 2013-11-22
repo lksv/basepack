@@ -49,7 +49,7 @@ module Lepidlo
             result << form.render_action("Smazat", path(delete_id: form.resource.id), "icon-trash",
                                          class: 'btn btn-mini btn-danger',
                                          method: :delete,
-                                         data: { confirm: "Jste si jistí?" })
+                                         data: { confirm: I18n.t('admin.form.confirmation') })
             result
           end
         end
