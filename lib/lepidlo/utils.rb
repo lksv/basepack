@@ -211,7 +211,8 @@ module Lepidlo
     end
 
     def self.translate(resource, action, subaction = '')
-      model_name = resource.class.model_name.singular
+      resource_class = (Class === resource) ? resource : resource.class
+      model_name = resource_class.model_name.singular
       lookups = []
       lookups << :"lepidlo.forms.#{model_name}.#{action}.#{subaction}"
       lookups << :"admin.actions.#{action}.#{subaction}"
