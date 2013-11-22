@@ -278,10 +278,10 @@ class Lepidlo.Form.Plugins.HiddeningFilteringSelect extends Lepidlo.Form.Plugin
  * takes all elements with data-dynamic-fields and use this data attribute as an configuration:
    @param{data-dynamic-fields} array of actions. Each action is a hash with keys: 
    condition - condition which should be met (Stirng: field has to equal, Array: field has to match one of item of array)
-   fields_actin - hash. Keys are other fields on which are taken action.
+   field_actions - hash. Keys are other fields on which are taken action.
 
  * Exmaple:
-   [{"condition":["aaa","hide"],"fields_actin":{"www":{"visible":false}}},{"condition":"xxx","fields_actin":{"www":{"visible":true}}}]
+   [{"condition":["aaa","hide"],"field_actions":{"www":{"visible":false}}},{"condition":"xxx","field_actions":{"www":{"visible":true}}}]
  ###
 
 class Lepidlo.Form.Plugins.DynamicFields extends Lepidlo.Form.Plugin
@@ -304,9 +304,11 @@ class Lepidlo.Form.Plugins.DynamicFields extends Lepidlo.Form.Plugin
           current_value = $(this).is(':checked')
         for options in dependant
           value_condition = options.condition
-          fields_actin = options.fields_actin
+          field_actions = options.field_actions
+          if !field_actions
+            throw new Error("Parameter field_actions must be set!")
           if plugin.value_checker(current_value, value_condition)
-            $.each fields_actin, (field_name, field_options) ->
+            $.each field_actions, (field_name, field_options) ->
               field = that.findExtended("field=" + field_name)
               if field and field_options.visible == true or field_options.visible == false
                 fieldDom = $(field).parents(".control-group")
