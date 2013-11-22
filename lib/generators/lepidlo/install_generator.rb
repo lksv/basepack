@@ -110,6 +110,14 @@ module Lepidlo
   end
 
   resources :acts_as_taggable_on_tags, :filters, concerns: :resourcable
+
+  #exampe of controller which merge action:
+  #
+  #resources :customers do
+  #  get    'diff/:id2',   on: :member, to: :diff  #for showing a diff page
+  #  post   'merge',       on: :member             #for mege action
+  #end
+
 RUBY
         end
       end
