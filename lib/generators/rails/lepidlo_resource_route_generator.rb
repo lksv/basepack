@@ -31,7 +31,7 @@ module Rails
         log :route, routing_code
 
         in_root do
-          inject_into_file 'config/routes.rb', "\n #{routing_code}", { after: /concern :resourcable do.*?^\s*end\s*$/m, verbose: true }
+          inject_into_file 'config/routes.rb', "\n  #{routing_code}", { after: /concern :resourcable do.*?^\s*end\s*$/m, verbose: true }
         end
       end
 
