@@ -11,8 +11,8 @@
         = yield(:query)
       - else
         .input-append
-          = text_field_tag 'query', form.query, autofocus: true, placeholder: 'Filtrovat', class: "search-query"
-          %button{type: "submit", class: "btn", title: 'Filtrovat', 'data-disable-with' => "<i class='icon-search'></i>"}
+          = text_field_tag 'query', form.query, autofocus: true, placeholder: I18n.t('admin.misc.filter'), class: "search-query"
+          %button{type: "submit", class: "btn", title: I18n.t('admin.misc.filter'), 'data-disable-with' => "<i class='icon-search'></i>"}
             %i.icon-search
       #complex-filters-menu.dropdown.pull-right
         %a.btn.dropdown-toggle{href: "#", "data-toggle" => "dropdown"}
@@ -35,18 +35,18 @@
       - unless form.edit_ql
         = button_tag class: 'btn', name: 'edit_ql', data: {"remote-form" => "parent=form", "remote-target" => "parent=.form-query"} do
           %i.icon-pencil
-          Upravit dotaz
+          =I18n.t('misc.modify_query')
       - if Lepidlo::Settings.filters.model_name and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
         = hidden_field_tag 'filter_name'
-        = button_tag class: 'btn', id: 'filter-add', title: "Uložit filtr" do
+        = button_tag class: 'btn', id: 'filter-add', title: I18n.t('misc.save_filter') do
           %i.icon-plus
-          Uložit filtr
+          =I18n.t('misc.save_filter')
         :javascript
           jQuery(function($) {
             $("#filter-add").click(function(e) {
               e.preventDefault();
 
-              bootbox.prompt("Zadejte prosím název filtru", function(result) {
+              bootbox.prompt(#{I18n.t('misc.enter_filter_name').to_json}, function(result) {
                 if (result) {
                   $('#filter-form input[name=filter_name]').val(result);
                   $('#filter-form').submit();
