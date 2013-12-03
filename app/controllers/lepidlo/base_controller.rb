@@ -7,7 +7,7 @@ module Lepidlo
     class << self
       def default_query(&block)
         before_filter :only => [:index] do |controller|
-          redirect_to query_resources_path(controller.instance_eval(&block))
+          redirect_to query_resources_path(controller.instance_eval(&block)) unless params[:f]
         end
       end
 
@@ -45,7 +45,8 @@ module Lepidlo
                   :build_resource,
                   :query_params,
                   :list_form, :show_form, :query_form, :edit_form, :export_form, :diff_form,
-                  :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for
+                  :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for,
+                  :resource2
 
     custom_actions collection: [:options, :query, :export, :taggings]
 
