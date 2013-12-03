@@ -7,8 +7,8 @@ describe "Lepidlo basic merge" do
 
   describe "diff" do
     it "shows form" do
-      @customer = FactoryGirl.create(:customer) 
-      @customer2 = FactoryGirl.create(:customer) 
+      @customer = FactoryGirl.create(:customer)
+      @customer2 = FactoryGirl.create(:customer)
       visit customer_path(:model_name => "customer", :id => @customer.id)
     end
   end

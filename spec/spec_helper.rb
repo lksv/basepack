@@ -1,7 +1,7 @@
 ENV['RAILS_ENV'] ||= 'test'
 ENV['SKIP_RAILS_ADMIN_INITIALIZER'] = 'false'
 
-require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require File.expand_path("../dummy_app/config/environment.rb",  __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
 require 'factory_girl_rails'
@@ -20,6 +20,10 @@ Rails.backtrace_cleaner.remove_silencers!
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+
   config.include Capybara::DSL
   config.mock_with :rspec
   config.use_transactional_fixtures = true
@@ -29,9 +33,10 @@ RSpec.configure do |config|
   # config.order = "random"
 
   config.before(:each) do
-    Warden.test_mode!
-    user = FactoryGirl.create(:user)
-    login_as(user, :scope => :user)
+    #Warden.test_mode!
+    #user = FactoryGirl.create(:user)
+    #login_as(user, :scope => :user)
+
     # sign_in(user, :scope => :user)
   end
 end

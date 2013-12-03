@@ -7,7 +7,7 @@ module Lepidlo
     class << self
       def default_query(&block)
         before_filter :only => [:index] do |controller|
-          redirect_to query_resources_path(controller.instance_eval(&block))
+          redirect_to query_resources_path(controller.instance_eval(&block)) unless params[:f]
         end
       end
 
