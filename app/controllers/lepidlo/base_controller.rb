@@ -280,7 +280,7 @@ module Lepidlo
       end
     end
 
-    def collection_without_paggination
+    def collection_without_pagination
       collection.offset(nil).limit(nil)
     end
 
