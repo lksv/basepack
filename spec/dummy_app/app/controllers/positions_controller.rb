@@ -1,0 +1,3 @@
+class PositionsController < ResourcesController
+
+end

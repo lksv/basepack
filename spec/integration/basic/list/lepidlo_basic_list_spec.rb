@@ -5,88 +5,88 @@ include Devise::TestHelpers
 describe "Lepidlo basic list" do
   subject { page }
 
-  describe "GET /customers" do
+  describe "GET /employees" do
 
     context "list defined columns" do
       before do
-        @customers  = 2.times.map { FactoryGirl.create :customer }
+        @employees = 2.times.map { FactoryGirl.create :employee }
       end
 
       it "shows all fields when form is not defined" do
-        visit customers_path
-        Customer.attribute_names.each do |attr|
-          should have_content(Customer.human_attribute_name(attr))
+        visit employees_path
+        Employee.attribute_names.each do |attr|
+          should have_content(Employee.human_attribute_name(attr))
         end
       end
 
       it "show only defined columns" do
-        RailsAdmin.config Customer do
+        RailsAdmin.config Employee do
           list do
             field :name
           end
         end
 
-        visit customers_path()
+        visit employees_path()
 
-        should have_content(@customers[0].name)
-        should have_content(@customers[1].name)
-        should have_no_content(@customers[0].email)
-        should have_no_content(@customers[1].email)
+        should have_content(@employees[0].name)
+        should have_content(@employees[1].name)
+        should have_no_content(@employees[0].email)
+        should have_no_content(@employees[1].email)
       end
 
       it "properly format date columns" do
-        RailsAdmin.config Customer do
+        RailsAdmin.config Employee do
           list do
             field :name
             field :created_at
           end
         end
 
-        visit customers_path()
-        should have_content(I18n.l @customers.first.created_at, format: :long)
+        visit employees_path()
+        should have_content(I18n.l @employees.first.created_at, format: :long)
       end
 
       it "properly shows belongs_to association" do
-        RailsAdmin.config Customer do
+        RailsAdmin.config Employee do
           list do
-            field :group
+            field :position
           end
         end
-        @customers.first.group = FactoryGirl.create(:group, name: 'My Group')
-        @customers.first.save!
+        @employees.first.position = FactoryGirl.create(:position, name: 'My Position')
+        @employees.first.save!
 
-        visit customers_path
-        should have_content('My Group')
-        #TODO: rozdelit na dva testcasy - jeden se zakazanym ablity na cannot :show, Group (ten to zobrazi pouze jako text) a druhy s povoleny, pro ten to bude link
-        #should_not have_selector(:link_or_button, 'My Group')
+        visit employees_path
+        should have_content('My Position')
+        #TODO: rozdelit na dva testcasy - jeden se zakazanym ablity na cannot :show, Position (ten to zobrazi pouze jako text) a druhy s povoleny, pro ten to bude link
+        #should_not have_selector(:link_or_button, 'My Position')
       end
 
       describe "properly shows has_many association" do
         before do
-          RailsAdmin.config Customer do
+          RailsAdmin.config Employee do
             list do
-              field :comments
+              field :tasks
             end
           end
-          customer = @customers.first
-          customer.comments.build(body: 'first comment')
-          customer.comments.build(body: 'second comment')
-          customer.save!
+          employee = @employees.first
+          employee.tasks.build(description: 'first task')
+          employee.tasks.build(description: 'second task')
+          employee.save!
         end
 
         it "show only text" do
-          #TODO: cannot :show, Comment
-          #visit customers_path
-          #should have_content('first comment and second comment')
-          #should_not have_selector(:link_or_button, 'first comment')
-          #should_not have_selector(:link_or_button, 'first comment')
+          #TODO: cannot :show, Task
+          #visit employees_path
+          #should have_content('first task and second task')
+          #should_not have_selector(:link_or_button, 'first task')
+          #should_not have_selector(:link_or_button, 'second task')
         end
 
         it "shows as links" do
-          visit customers_path
-          should have_content('first comment and second comment')
-          should have_selector(:link_or_button, 'first comment')
-          should have_selector(:link_or_button, 'first comment')
+          visit employees_path
+          should have_content('first task and second task')
+          should have_selector(:link_or_button, 'first task')
+          should have_selector(:link_or_button, 'second task')
         end
       end
 
@@ -95,7 +95,7 @@ describe "Lepidlo basic list" do
       end
 
       it "respons with :json" do
-        visit customers_path(:format => :json)
+        visit employees_path(:format => :json)
         expect(ActiveSupport::JSON.decode(page.body).length).to eq(2)
         ActiveSupport::JSON.decode(page.body).each do |object|
           expect(object).to have_key("id")
@@ -114,14 +114,14 @@ describe "Lepidlo basic list" do
     describe "pagination" do
       before do
         #FIXME: setting RailsAdmin items_pare_page do not work for me:( decrease the creating objects to 5.
-        53.times { FactoryGirl.create(:customer) }
+        53.times { FactoryGirl.create(:employee) }
         RailsAdmin.config.default_items_per_page = 1
-        RailsAdmin.config Customer do
+        RailsAdmin.config Employee do
           list do
             items_per_page 1
           end
         end
-        visit customers_path(:page => 2)
+        visit employees_path(:page => 2)
       end
 
       it "shows total number of items" do
@@ -140,20 +140,20 @@ describe "Lepidlo basic list" do
 
     describe "filters" do
       before do
-        @c1 = FactoryGirl.create(:customer, name: 'xxx')
-        @c2 = FactoryGirl.create(:customer, name: 'yyy')
-        @c3 = FactoryGirl.create(:customer, name: 'xxxx')
+        @c1 = FactoryGirl.create(:employee, name: 'xxx')
+        @c2 = FactoryGirl.create(:employee, name: 'yyy')
+        @c3 = FactoryGirl.create(:employee, name: 'xxxx')
       end
 
       describe "default filter" do
         before do
-          CustomersController.default_query do
+          EmployeesController.default_query do
             { "f[name_eq]" => "xxx" }
           end
         end
 
         it "uses default filter when no search params provided" do
-          visit customers_path
+          visit employees_path
 
           should have_content(@c1.name)
           should have_no_content(@c2.name)
@@ -161,7 +161,7 @@ describe "Lepidlo basic list" do
         end
 
         it "do not use default filter when search params provided" do
-          visit customers_path('f[name_not_eq]' => '123')
+          visit employees_path('f[name_not_eq]' => '123')
 
           should have_content(@c1.name)
           should have_content(@c2.name)

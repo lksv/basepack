@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131203150600) do
+ActiveRecord::Schema.define(version: 20131204163517) do
 
   create_table "comments", force: true do |t|
     t.text     "body"
@@ -33,11 +33,39 @@ ActiveRecord::Schema.define(version: 20131203150600) do
 
   add_index "customers", ["group_id"], name: "index_customers_on_group_id"
 
+  create_table "employees", force: true do |t|
+    t.string   "name"
+    t.string   "email"
+    t.integer  "income"
+    t.boolean  "bonus"
+    t.integer  "position_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "employees", ["position_id"], name: "index_employees_on_position_id"
+
   create_table "groups", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "positions", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tasks", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "employee_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tasks", ["employee_id"], name: "index_tasks_on_employee_id"
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

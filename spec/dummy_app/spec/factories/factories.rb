@@ -1,12 +1,12 @@
 require 'faker'
 
 FactoryGirl.define do
-  factory :customer do
-    email { Faker::Internet.email }
+  factory :employee do
     name { Faker::Name.name }
+    email { Faker::Internet.email }
   end
 
-  factory :group do
-    name { Faker::Commerce.department }
+  factory :position do
+    name { Faker::Name.title }
   end
 end
