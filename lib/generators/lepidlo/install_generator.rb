@@ -112,7 +112,16 @@ module Lepidlo
   resources :filters, concerns: :resourcable
 
   # Uncomment if you are going to use tags (you also need get "acts-as-taggable-on")
+  #
   # resources :acts_as_taggable_on_tags, concerns: :resourcable
+
+  # Exampe of controller which merge action:
+  #
+  # resources :customers do
+  #   get    'diff/:id2',   on: :member, to: :diff, as: :diff    #for showing a diff page
+  #   post   'merge/:id2',  on: :member, to: :merge, as: :merge  #for mege action
+  # end
+
 RUBY
         end
       end
