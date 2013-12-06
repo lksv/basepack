@@ -28,17 +28,17 @@ RSpec.configure do |config|
   config.mock_with :rspec
   config.use_transactional_fixtures = true
   config.infer_base_class_for_anonymous_controllers = false
-  config.include Warden::Test::Helpers
+  # config.include Warden::Test::Helpers
   config.include Devise::TestHelpers, :type => :controller
   # config.order = "random"
 
-  config.before(:each) do
+  # config.before(:each) do
     #Warden.test_mode!
     #user = FactoryGirl.create(:user)
     #login_as(user, :scope => :user)
 
     # sign_in(user, :scope => :user)
-  end
+  # end
 end
 
 

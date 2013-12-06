@@ -22,6 +22,8 @@ group :test do
   gem 'timecop'
   gem 'settingslogic'
   gem 'ransack'
+
+  gem "twitter-bootstrap-rails"
 end
 
 # Declare any dependencies that are still in development here instead of in
