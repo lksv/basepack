@@ -1,0 +1,11 @@
+!!! 5
+%html
+  = render 'layouts/head'
+  %body{class: "#{controller_name} #{action_name}"}
+    .page-container
+      = render 'layouts/header'
+      .container
+        .row
+          .span12.content-span
+            = render 'layouts/content'
+      = render 'layouts/footer'

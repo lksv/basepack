@@ -1,0 +1,8 @@
+.content
+  .page-toolbar
+    = yield(:page_toolbar)
+  - if content_for?(:page_title)
+    %div.page-header
+      %h1= yield(:page_title)
+  = bootstrap_flash 
+  = yield
