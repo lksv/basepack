@@ -11,6 +11,7 @@
 
 class Task < ActiveRecord::Base
   belongs_to :employee, inverse_of: :tasks
+  # validates_presence_of :name
 
   def to_label
     self.description

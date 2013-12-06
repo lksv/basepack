@@ -23,6 +23,7 @@ group :test do
   gem 'settingslogic'
   gem 'ransack'
 
+  gem 'launchy'
   gem "twitter-bootstrap-rails"
 end
 

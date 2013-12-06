@@ -7,46 +7,83 @@ describe "Lepidlo basic list" do
 
   describe "GET /employees" do
 
-    context "list defined columns" do
-      before do
-        @employees = 2.times.map { FactoryGirl.create :employee }
-      end
+    before(:each) do
+      @employees = 2.times.map { FactoryGirl.create :employee }
+    end
 
-      it "shows all fields when form is not defined" do
-        visit employees_path
-        Employee.attribute_names.each do |attr|
-          should have_content(Employee.human_attribute_name(attr))
+    it "has Show, Edit and Delete links" do
+      visit employees_path
+      expect(page).to have_selector(:link_or_button, "Show")
+      expect(page).to have_selector(:link_or_button, "Edit")
+      expect(page).to have_selector(:link_or_button, "Delete")
+    end
+
+    it "shows all fields when as default" do
+      visit employees_path
+      Employee.attribute_names.each do |attr|
+        expect(page).to have_content(Employee.human_attribute_name(attr))
+      end
+    end
+
+    it "show only defined columns" do
+      RailsAdmin.config Employee do
+        list do
+          field :name
         end
       end
 
-      it "show only defined columns" do
-        RailsAdmin.config Employee do
-          list do
-            field :name
-          end
+      visit employees_path()
+
+      expect(page).to have_content(@employees[0].name)
+      expect(page).to have_content(@employees[1].name)
+      expect(page).to have_no_content(@employees[0].email)
+      expect(page).to have_no_content(@employees[1].email)
+    end
+
+    it "properly format date columns" do
+      RailsAdmin.config Employee do
+        list do
+          field :name
+          field :created_at
         end
-
-        visit employees_path()
-
-        should have_content(@employees[0].name)
-        should have_content(@employees[1].name)
-        should have_no_content(@employees[0].email)
-        should have_no_content(@employees[1].email)
       end
 
-      it "properly format date columns" do
-        RailsAdmin.config Employee do
-          list do
-            field :name
-            field :created_at
-          end
+      visit employees_path()
+      expect(page).to have_content(I18n.l @employees.first.created_at, format: :long)
+    end
+
+    it "properly shows boolean field type" do
+      @employees.first.update_attributes(bonus: true)
+
+      RailsAdmin.config Employee do
+        list do
+          field :bonus
         end
-
-        visit employees_path()
-        should have_content(I18n.l @employees.first.created_at, format: :long)
       end
+      visit employees_path()
 
-      it "properly shows belongs_to association" do
+      expect(page).to have_content("Bonus")
+      expect(page).to have_content("✓")
+    end
+
+    it "respons with :json" do
+      visit employees_path(:format => :json)
+      expect(ActiveSupport::JSON.decode(page.body).length).to eq(2)
+      ActiveSupport::JSON.decode(page.body).each do |object|
+        expect(object).to have_key("id")
+        expect(object).to have_key("name")
+        expect(object).to have_key("email")
+        expect(object).to have_key("created_at")
+        expect(object).to have_key("updated_at")
+      end
+    end
+
+    it "respons with :xml" do
+      pending "add some examples to (or delete) #{__FILE__}"
+    end
+
+    describe "belongs_to association" do
+      before(:each) do
         RailsAdmin.config Employee do
           list do
             field :position
@@ -55,60 +92,68 @@ describe "Lepidlo basic list" do
         @employees.first.position = FactoryGirl.create(:position, name: 'My Position')
         @employees.first.save!
 
-        visit employees_path
-        should have_content('My Position')
-        #TODO: rozdelit na dva testcasy - jeden se zakazanym ablity na cannot :show, Position (ten to zobrazi pouze jako text) a druhy s povoleny, pro ten to bude link
-        #should_not have_selector(:link_or_button, 'My Position')
       end
 
-      describe "properly shows has_many association" do
-        before do
-          RailsAdmin.config Employee do
-            list do
-              field :tasks
-            end
+      context "when has access" do
+        it "shows as link" do
+          visit employees_path
+
+          expect(page).to have_selector(:link_or_button, 'My Position')
+        end
+      end
+
+      context "when has no access" do
+        it "shows as text" do
+          @ability = Object.new
+          @ability.extend(CanCan::Ability)
+          @ability.can :manage, :all
+          @ability.cannot :show, Position
+          ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
+
+          visit employees_path
+          expect(page).to have_content("My Position")
+          expect(page).to_not have_selector(:link_or_button, 'My Position')
+        end
+      end
+    end
+
+    describe "has_many association" do
+      before do
+        RailsAdmin.config Employee do
+          list do
+            field :tasks
           end
-          employee = @employees.first
-          employee.tasks.build(description: 'first task')
-          employee.tasks.build(description: 'second task')
-          employee.save!
         end
+        employee = @employees.first
+        employee.tasks.build(description: 'first task')
+        employee.tasks.build(description: 'second task')
+        employee.save!
+      end
 
-        it "show only text" do
-          #TODO: cannot :show, Task
-          #visit employees_path
-          #should have_content('first task and second task')
-          #should_not have_selector(:link_or_button, 'first task')
-          #should_not have_selector(:link_or_button, 'second task')
-        end
-
+      context "when has access" do
         it "shows as links" do
           visit employees_path
-          should have_content('first task and second task')
-          should have_selector(:link_or_button, 'first task')
-          should have_selector(:link_or_button, 'second task')
+          expect(page).to have_content('first task and second task')
+          expect(page).to have_selector(:link_or_button, 'first task')
+          expect(page).to have_selector(:link_or_button, 'second task')
         end
       end
 
-      it "properly shows boolean field type" do
-        pending "add some examples to (or delete) #{__FILE__}"
-      end
+      context "when has no access" do
+        it "show only text" do
+          @ability = Object.new
+          @ability.extend(CanCan::Ability)
+          @ability.can :manage, :all
+          @ability.cannot :show, Task
+          ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
 
-      it "respons with :json" do
-        visit employees_path(:format => :json)
-        expect(ActiveSupport::JSON.decode(page.body).length).to eq(2)
-        ActiveSupport::JSON.decode(page.body).each do |object|
-          expect(object).to have_key("id")
-          expect(object).to have_key("name")
-          expect(object).to have_key("email")
-          expect(object).to have_key("created_at")
-          expect(object).to have_key("updated_at")
+          visit employees_path
+          expect(page).to have_content('first task and second task')
+          expect(page).to_not have_selector(:link_or_button, 'first task')
+          expect(page).to_not have_selector(:link_or_button, 'second task')
         end
       end
 
-      it "respons with :xml" do
-        pending "add some examples to (or delete) #{__FILE__}"
-      end
     end
 
     describe "pagination" do
@@ -125,7 +170,8 @@ describe "Lepidlo basic list" do
       end
 
       it "shows total number of items" do
-        should have_content('53 in total')
+        # save_and_open_page
+        expect(page).to have_content('55 in total')
       end
 
       it "paginates correctly" do
@@ -155,17 +201,17 @@ describe "Lepidlo basic list" do
         it "uses default filter when no search params provided" do
           visit employees_path
 
-          should have_content(@c1.name)
-          should have_no_content(@c2.name)
-          should have_css("tbody tr", :count => 1)
+          expect(page).to have_content(@c1.name)
+          expect(page).to have_no_content(@c2.name)
+          expect(page).to have_css("tbody tr", :count => 1)
         end
 
         it "do not use default filter when search params provided" do
           visit employees_path('f[name_not_eq]' => '123')
 
-          should have_content(@c1.name)
-          should have_content(@c2.name)
-          should have_content(@c3.name)
+          expect(page).to have_content(@c1.name)
+          expect(page).to have_content(@c2.name)
+          expect(page).to have_content(@c3.name)
         end
       end
 

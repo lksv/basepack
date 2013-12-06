@@ -30,8 +30,6 @@ describe "Lepidlo Basic Show" do
 
       visit employee_path(:id => @employee.id)
       
-      # TODO should I test every attribute? I did not 
-      # because I would have to set them while creating factory
       expect(page).to have_content(@employee.name)
       expect(page).to have_content(@employee.income)
 
@@ -52,7 +50,17 @@ describe "Lepidlo Basic Show" do
     end
 
     it "properly shows boolean field type" do
-      pending "add some examples to (or delete) #{__FILE__}"
+        RailsAdmin.config Employee do
+          show do
+            field :bonus
+          end
+        end
+        @employee.update_attributes(bonus: false)
+
+        visit employee_path(:id => @employee.id)
+        
+        expect(page).to have_content("Bonus")
+        expect(page).to have_content("✘")
     end
 
     it "properly shows belongs_to association" do
@@ -92,7 +100,7 @@ describe "Lepidlo Basic Show" do
 
   end
 
-  describe "show with has-and-belongs-to-many association" do
+  describe "has_many association" do
     before(:each) do
       @employee = FactoryGirl.create :employee
       @task1 = FactoryGirl.create :task, :employee_id => @employee.id, description: "first task"

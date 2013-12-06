@@ -9,4 +9,10 @@ FactoryGirl.define do
   factory :position do
     name { Faker::Name.title }
   end
+
+  factory :task do
+    sequence :name do |n| 
+      "task #{n}"
+    end
+  end
 end
