@@ -109,7 +109,10 @@ module Lepidlo
       #put    'list_columns', :on => :collection
   end
 
-  resources :acts_as_taggable_on_tags, :filters, concerns: :resourcable
+  resources :filters, concerns: :resourcable
+
+  # Uncomment if you are going to use tags (you also need get "acts-as-taggable-on")
+  # resources :acts_as_taggable_on_tags, concerns: :resourcable
 RUBY
         end
       end
