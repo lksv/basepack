@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe "Lepidlo Basic Show" do
-  subject { page }
+  # subject { page }
 
-  describe "GET /employees/1" do
+  # TODO separate to actions and responses   
+  describe "fields without association" do
     before do
       @employee = FactoryGirl.create :employee
     end
@@ -63,26 +64,31 @@ describe "Lepidlo Basic Show" do
         expect(page).to have_content("✘")
     end
 
-    it "properly shows belongs_to association" do
-      RailsAdmin.config Employee do
-        show do
-          field :position
-        end
+    describe "belongs_to association" do
+      before(:each) do
+        RailsAdmin.config Employee do
+          show do
+            field :position
+          end
+        end        
+      
+        @employee.position = FactoryGirl.create(:position, name: "My Position")
+        @employee.save!
       end
       
-      @employee.position = FactoryGirl.create(:position, name: "My Position")
-      @employee.save!
-      
-      visit employee_path(:id => @employee.id)
-      expect(page).to have_content('My Position')
-
+      context "when has access" do
+        it "it shows as link" do
+          visit employee_path(:id => @employee.id)
+          expect(page).to have_content('My Position')
+        end
+      end
 
       #TODO: rozdelit na dva testcasy - jeden se zakazanym ablity na cannot :show, Position (ten to zobrazi pouze jako text) a druhy s povoleny, pro ten to bude link
       #should_not have_selector(:link_or_button, 'My Position')
     end
 
 
-    # it "respons with :json" do
+    # it "responses with :json" do
     #   visit employees_path(:format => :json)
     #   expect(ActiveSupport::JSON.decode(page.body).length).to eq(2)
     #   ActiveSupport::JSON.decode(page.body).each do |object|
@@ -94,7 +100,7 @@ describe "Lepidlo Basic Show" do
     #   end
     # end
 
-    # it "respons with :xml" do
+    # it "responses with :xml" do
     #   pending "add some examples to (or delete) #{__FILE__}"
     # end
 
@@ -112,7 +118,7 @@ describe "Lepidlo Basic Show" do
       visit employee_path(:id => @employee.id)
     end
 
-    # TODO withouth access not as links
+    # TODO without access not as links
     it "shows associated objects" do      
       expect(page).to have_content('first task and second task')
       expect(page).to have_selector(:link_or_button, 'first task')
