@@ -16,4 +16,5 @@ class Employee < ActiveRecord::Base
   belongs_to :position, inverse_of: :employees
   has_many :tasks, inverse_of: :employee
   has_one :account, inverse_of: :employee
+  has_and_belongs_to_many :skills
 end
