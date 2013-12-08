@@ -10,6 +10,11 @@ describe "Lepidlo Basic Show" do
     end
 
     it "has Edit, Delete and attributes" do
+      RailsAdmin.config Employee do
+        show do
+          include_all_fields
+        end
+      end
       visit employee_path(:id => @employee.id)
       expect(page).to have_selector("a", :text => "Edit")
       expect(page).to have_selector("a", :text => "Delete")
@@ -126,10 +131,11 @@ describe "Lepidlo Basic Show" do
     end
   end
 
+
 =begin
-  describe "GET /admin/employees/123this-id-doesnt-exist" do
+  describe "GET employees/123this-id-doesnt-exist" do
     it "raises NotFound" do
-      visit '/admin/employees/123this-id-doesnt-exist'
+      visit 'employees/123this-id-doesnt-exist'
       expect(page.driver.status_code).to eq(404)
     end
   end
