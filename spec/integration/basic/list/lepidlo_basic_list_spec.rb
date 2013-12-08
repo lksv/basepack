@@ -54,6 +54,7 @@ describe "Lepidlo basic list" do
       expect(page.driver.status_code).to eq 200
       expect(page).to have_selector(:link_or_button, "Show")
       expect(page).to have_selector(:link_or_button, "Edit")
+      expect(page).to have_selector(:link_or_button, "Add new")
       expect(page).to have_selector(:link_or_button, "Delete")
     end
 
@@ -65,12 +66,19 @@ describe "Lepidlo basic list" do
       expect(current_path).to eq employee_path(id: @employees[0].id)
     end
 
+    
     it "displays edit page" do
       # TODO refactor - only one employee needs to be created or click on first
       @employees[1].destroy!
       visit employees_path
       click_on "Edit"
       expect(current_path).to eq edit_employee_path(id: @employees[0].id)
+    end
+
+    it "displays new page" do
+      visit employees_path
+      click_on "Add new"
+      expect(current_path).to eq new_employee_path
     end
 
     it "deletes an employee" do
@@ -172,6 +180,43 @@ describe "Lepidlo basic list" do
     end
   end
 
+  describe "has one association" do
+    before(:each) do
+      RailsAdmin.config Employee do
+        list do
+          field :account
+        end
+      end
+      employee = @employees.first
+      employee.account = FactoryGirl.create(:account, account_number: 49)
+      employee.save!
+    end
+
+    context "when has access" do
+      it "shows as link" do    
+        visit employees_path
+        
+        expect(page).to have_content("Account 49")
+        # TODO - does not displays link
+        # expect(page).to have_selector(:link_or_button, "Account 49")
+      end
+    end
+
+    context "when has no access" do
+      it "shows as text" do
+        @ability = Object.new
+        @ability.extend(CanCan::Ability)
+        @ability.can :manage, :all
+        @ability.cannot :show, Account
+        ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
+        visit employees_path    
+
+        expect(page).to have_content("Account 49")
+        expect(page).to_not have_selector(:link_or_button, "Account 49")
+      end
+    end
+  end
+
   describe "has_many association" do
     before(:each) do
       RailsAdmin.config Employee do
@@ -206,6 +251,46 @@ describe "Lepidlo basic list" do
         expect(page).to have_content('first task and second task')
         expect(page).to_not have_selector(:link_or_button, 'first task')
         expect(page).to_not have_selector(:link_or_button, 'second task')
+      end
+    end
+
+  end
+
+    describe "has_and_belongs_to_many association" do
+    before(:each) do
+      RailsAdmin.config Employee do
+        list do
+          field :skills
+        end
+      end
+      employee = @employees.first
+      employee.skills = 2.times.map { |n| FactoryGirl.create(:skill, name: "skill #{n + 1}") }
+      employee.save!
+    end
+
+    context "when has access" do
+      it "shows as links" do
+        visit employees_path
+        expect(page).to have_content('skill 1 and skill 2')
+        # TODO why there are not links?
+        # expect(page).to have_selector(:link_or_button, 'skill 1')
+        # expect(page).to have_selector(:link_or_button, 'skill 2')
+      end
+    end
+
+    context "when has no access" do
+      it "shows only text" do
+        @ability = Object.new
+        @ability.extend(CanCan::Ability)
+        @ability.can :manage, :all
+        @ability.cannot :show, Task
+        ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
+
+        visit employees_path
+
+        expect(page).to have_content('skill 1 and skill 2')
+        expect(page).to_not have_selector(:link_or_button, 'skill 1')
+        expect(page).to_not have_selector(:link_or_button, 'skill 2')
       end
     end
 

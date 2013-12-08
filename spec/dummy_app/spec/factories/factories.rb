@@ -15,4 +15,12 @@ FactoryGirl.define do
       "task #{n}"
     end
   end
+
+  factory :account do 
+    account_number 49
+  end
+
+  factory :skill do
+    name "skill"
+  end
 end

@@ -1,9 +1,7 @@
 require 'spec_helper'
-include Warden::Test::Helpers
-include Devise::TestHelpers
 
 describe "Lepidlo basic merge" do
-  subject { page }
+  # subject { page }
 
   describe "diff" do
     it "shows form" do
