@@ -5,7 +5,11 @@ describe "Lepidlo basic list" do
   
   # TODO touch, is it ok?
   # TODO refactor to 1 employee in some cases
-  let(:employees) { 2.times.map { FactoryGirl.create :employee } }
+  let(:employee1) { FactoryGirl.create :employee }
+  let(:employee2) { FactoryGirl.create :employee }
+  
+  let(:employees) { [employee1, employee2] }
+  
   let(:ability) { Object.new.extend(CanCan::Ability) }
   
   describe "responses" do
@@ -16,6 +20,7 @@ describe "Lepidlo basic list" do
     end
 
     it "responses with :json" do
+      # touch employees to create them
       employees
       visit employees_path(:format => :json)
       expect(ActiveSupport::JSON.decode(page.body).length).to eq(2)
@@ -49,7 +54,7 @@ describe "Lepidlo basic list" do
 
   describe "actions" do
     it "has Show, Edit and Delete links" do
-      employees
+      employee1
       visit employees_path
 
       expect(page.driver.status_code).to eq 200
@@ -60,20 +65,18 @@ describe "Lepidlo basic list" do
     end
 
     it "displays show page" do
-      # TODO refactor - only one employee needs to be created or click on first
-      employees[1].destroy!
+      employee1
       visit employees_path
       click_on "Show"
-      expect(current_path).to eq employee_path(id: employees[0].id)
+      expect(current_path).to eq employee_path(id: employee1.id)
     end
 
     
     it "displays edit page" do
-      # TODO refactor - only one employee needs to be created or click on first
-      employees[1].destroy!
+      employee1
       visit employees_path
       click_on "Edit"
-      expect(current_path).to eq edit_employee_path(id: employees[0].id)
+      expect(current_path).to eq edit_employee_path(id: employee1.id)
     end
 
     it "displays new page" do
