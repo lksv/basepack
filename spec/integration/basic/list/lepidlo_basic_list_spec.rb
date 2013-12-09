@@ -4,7 +4,6 @@ describe "Lepidlo basic list" do
   # subject { page }
   
   # TODO touch, is it ok?
-  # TODO refactor to 1 employee in some cases
   let(:employee1) { FactoryGirl.create :employee }
   let(:employee2) { FactoryGirl.create :employee }
   
@@ -130,14 +129,14 @@ describe "Lepidlo basic list" do
           field :created_at
         end
       end
-      employees
+      employee1
 
       visit employees_path()
-      expect(page).to have_content(I18n.l employees.first.created_at, format: :long)
+      expect(page).to have_content(I18n.l employee1.created_at, format: :long)
     end
 
     it "properly shows boolean field type" do
-      employees.first.update_attributes(bonus: true)
+      employee1.update_attributes(bonus: true)
 
       RailsAdmin.config Employee do
         list do
@@ -158,8 +157,8 @@ describe "Lepidlo basic list" do
           field :position
         end
       end
-      employees.first.position = FactoryGirl.create(:position, name: 'My Position')
-      employees.first.save!
+      employee1.position = FactoryGirl.create(:position, name: 'My Position')
+      employee1.save!
 
     end
 
@@ -191,9 +190,8 @@ describe "Lepidlo basic list" do
           field :account
         end
       end
-      employee = employees.first
-      employee.account = FactoryGirl.create(:account, account_number: 49)
-      employee.save!
+      employee1.account = FactoryGirl.create(:account, account_number: 49)
+      employee1.save!
     end
 
     context "when has access" do
@@ -226,10 +224,9 @@ describe "Lepidlo basic list" do
           field :tasks
         end
       end
-      employee = employees.first
-      employee.tasks.build(description: 'first task')
-      employee.tasks.build(description: 'second task')
-      employee.save!
+      employee1.tasks.build(description: 'first task')
+      employee1.tasks.build(description: 'second task')
+      employee1.save!
     end
 
     context "when has access" do
@@ -263,9 +260,8 @@ describe "Lepidlo basic list" do
           field :skills
         end
       end
-      employee = employees.first
-      employee.skills = 2.times.map { |n| FactoryGirl.create(:skill, name: "skill #{n + 1}") }
-      employee.save!
+      employee1.skills = 2.times.map { |n| FactoryGirl.create(:skill, name: "skill #{n + 1}") }
+      employee1.save!
     end
 
     context "when has access" do
