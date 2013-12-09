@@ -3,13 +3,11 @@ require 'spec_helper'
 describe "Lepidlo basic list" do
   # subject { page }
   
-  # TODO refactor to 1 employee in same cases
-  # TODO refactor to let 
-  # let(:employees) { 2.times.map { FactoryGirl.create :employee } }
-  before(:each) do
-    @employees = 2.times.map { FactoryGirl.create :employee }
-  end
-
+  # TODO touch, is it ok?
+  # TODO refactor to 1 employee in some cases
+  let(:employees) { 2.times.map { FactoryGirl.create :employee } }
+  let(:ability) { Object.new.extend(CanCan::Ability) }
+  
   describe "responses" do
     
     it "success code with :html " do
@@ -18,6 +16,7 @@ describe "Lepidlo basic list" do
     end
 
     it "responses with :json" do
+      employees
       visit employees_path(:format => :json)
       expect(ActiveSupport::JSON.decode(page.body).length).to eq(2)
       ActiveSupport::JSON.decode(page.body).each do |employee|
@@ -31,6 +30,7 @@ describe "Lepidlo basic list" do
 
     # TODO check
     it "responses with :xml" do
+      employees
       visit employees_path(:format => :xml)
       xml = Nokogiri::XML(page.html)
       expect(xml.xpath("//employee").count).to eq(2)
@@ -49,6 +49,7 @@ describe "Lepidlo basic list" do
 
   describe "actions" do
     it "has Show, Edit and Delete links" do
+      employees
       visit employees_path
 
       expect(page.driver.status_code).to eq 200
@@ -60,19 +61,19 @@ describe "Lepidlo basic list" do
 
     it "displays show page" do
       # TODO refactor - only one employee needs to be created or click on first
-      @employees[1].destroy!
+      employees[1].destroy!
       visit employees_path
       click_on "Show"
-      expect(current_path).to eq employee_path(id: @employees[0].id)
+      expect(current_path).to eq employee_path(id: employees[0].id)
     end
 
     
     it "displays edit page" do
       # TODO refactor - only one employee needs to be created or click on first
-      @employees[1].destroy!
+      employees[1].destroy!
       visit employees_path
       click_on "Edit"
-      expect(current_path).to eq edit_employee_path(id: @employees[0].id)
+      expect(current_path).to eq edit_employee_path(id: employees[0].id)
     end
 
     it "displays new page" do
@@ -82,14 +83,15 @@ describe "Lepidlo basic list" do
     end
 
     it "deletes an employee" do
+      employees
       visit employees_path
 
       within("tbody tr:first") do
         click_on "Delete"
       end
 
-      expect(page).to_not have_content(@employees[0].name)
-      expect(page).to have_content(@employees[1].name)
+      expect(page).to_not have_content(employees[0].name)
+      expect(page).to have_content(employees[1].name)
       expect(page).to have_css("tbody tr", :count => 1)
     end
   end
@@ -109,13 +111,13 @@ describe "Lepidlo basic list" do
           field :name
         end
       end
-
+      employees
       visit employees_path()
 
-      expect(page).to have_content(@employees[0].name)
-      expect(page).to have_content(@employees[1].name)
-      expect(page).to have_no_content(@employees[0].email)
-      expect(page).to have_no_content(@employees[1].email)
+      expect(page).to have_content(employees[0].name)
+      expect(page).to have_content(employees[1].name)
+      expect(page).to have_no_content(employees[0].email)
+      expect(page).to have_no_content(employees[1].email)
     end
 
     it "properly format date columns" do
@@ -125,13 +127,14 @@ describe "Lepidlo basic list" do
           field :created_at
         end
       end
+      employees
 
       visit employees_path()
-      expect(page).to have_content(I18n.l @employees.first.created_at, format: :long)
+      expect(page).to have_content(I18n.l employees.first.created_at, format: :long)
     end
 
     it "properly shows boolean field type" do
-      @employees.first.update_attributes(bonus: true)
+      employees.first.update_attributes(bonus: true)
 
       RailsAdmin.config Employee do
         list do
@@ -152,8 +155,8 @@ describe "Lepidlo basic list" do
           field :position
         end
       end
-      @employees.first.position = FactoryGirl.create(:position, name: 'My Position')
-      @employees.first.save!
+      employees.first.position = FactoryGirl.create(:position, name: 'My Position')
+      employees.first.save!
 
     end
 
@@ -167,11 +170,9 @@ describe "Lepidlo basic list" do
 
     context "when has no access" do
       it "shows as text" do
-        @ability = Object.new
-        @ability.extend(CanCan::Ability)
-        @ability.can :manage, :all
-        @ability.cannot :show, Position
-        ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
+        ability.can :manage, :all
+        ability.cannot :show, Position
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
 
         visit employees_path
         expect(page).to have_content("My Position")
@@ -187,7 +188,7 @@ describe "Lepidlo basic list" do
           field :account
         end
       end
-      employee = @employees.first
+      employee = employees.first
       employee.account = FactoryGirl.create(:account, account_number: 49)
       employee.save!
     end
@@ -204,11 +205,9 @@ describe "Lepidlo basic list" do
 
     context "when has no access" do
       it "shows as text" do
-        @ability = Object.new
-        @ability.extend(CanCan::Ability)
-        @ability.can :manage, :all
-        @ability.cannot :show, Account
-        ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
+        ability.can :manage, :all
+        ability.cannot :show, Account
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
         visit employees_path    
 
         expect(page).to have_content("Account 49")
@@ -224,7 +223,7 @@ describe "Lepidlo basic list" do
           field :tasks
         end
       end
-      employee = @employees.first
+      employee = employees.first
       employee.tasks.build(description: 'first task')
       employee.tasks.build(description: 'second task')
       employee.save!
@@ -241,11 +240,9 @@ describe "Lepidlo basic list" do
 
     context "when has no access" do
       it "shows only text" do
-        @ability = Object.new
-        @ability.extend(CanCan::Ability)
-        @ability.can :manage, :all
-        @ability.cannot :show, Task
-        ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
+        ability.can :manage, :all
+        ability.cannot :show, Task
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
 
         visit employees_path
         expect(page).to have_content('first task and second task')
@@ -256,14 +253,14 @@ describe "Lepidlo basic list" do
 
   end
 
-    describe "has_and_belongs_to_many association" do
+  describe "has_and_belongs_to_many association" do
     before(:each) do
       RailsAdmin.config Employee do
         list do
           field :skills
         end
       end
-      employee = @employees.first
+      employee = employees.first
       employee.skills = 2.times.map { |n| FactoryGirl.create(:skill, name: "skill #{n + 1}") }
       employee.save!
     end
@@ -280,11 +277,9 @@ describe "Lepidlo basic list" do
 
     context "when has no access" do
       it "shows only text" do
-        @ability = Object.new
-        @ability.extend(CanCan::Ability)
-        @ability.can :manage, :all
-        @ability.cannot :show, Task
-        ApplicationController.any_instance.stub(:current_ability).and_return(@ability)
+        ability.can :manage, :all
+        ability.cannot :show, Task
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
 
         visit employees_path
 
@@ -312,7 +307,7 @@ describe "Lepidlo basic list" do
 
     it "shows total number of items" do
       # save_and_open_page
-      expect(page).to have_content('55 in total')
+      expect(page).to have_content('53 in total')
     end
 
     it "paginates correctly" do

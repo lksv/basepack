@@ -3,11 +3,8 @@ require 'spec_helper'
 describe "Lepidlo Basic Show" do
   # subject { page }
 
-  # TODO separate to actions and responses   
   describe "fields without association" do
-    before do
-      @employee = FactoryGirl.create :employee
-    end
+    let(:employee) { FactoryGirl.create :employee }
 
     it "has Edit, Delete and attributes" do
       RailsAdmin.config Employee do
@@ -15,14 +12,14 @@ describe "Lepidlo Basic Show" do
           include_all_fields
         end
       end
-      visit employee_path(:id => @employee.id)
+      visit employee_path(:id => employee.id)
       expect(page).to have_selector("a", :text => "Edit")
       expect(page).to have_selector("a", :text => "Delete")
       
       Employee.attribute_names.each do |attr|
         next if attr.in?(["id", "created_at", "updated_at"])
         expect(page).to have_content(Employee.human_attribute_name(attr))
-        expect(page).to have_content(@employee.send(attr))
+        expect(page).to have_content(employee.send(attr))
       end
     end
 
@@ -34,12 +31,12 @@ describe "Lepidlo Basic Show" do
         end
       end
 
-      visit employee_path(:id => @employee.id)
+      visit employee_path(:id => employee.id)
       
-      expect(page).to have_content(@employee.name)
-      expect(page).to have_content(@employee.income)
+      expect(page).to have_content(employee.name)
+      expect(page).to have_content(employee.income)
 
-      expect(page).to have_no_content(@employee.email)
+      expect(page).to have_no_content(employee.email)
     end
 
     it "properly format date columns" do
@@ -50,9 +47,9 @@ describe "Lepidlo Basic Show" do
         end
       end
 
-      visit employee_path(:id => @employee.id)
+      visit employee_path(:id => employee.id)
 
-      expect(page).to have_content(I18n.l @employee.created_at, format: :long)
+      expect(page).to have_content(I18n.l employee.created_at, format: :long)
     end
 
     it "properly shows boolean field type" do
@@ -61,9 +58,9 @@ describe "Lepidlo Basic Show" do
             field :bonus
           end
         end
-        @employee.update_attributes(bonus: false)
+        employee.update_attributes(bonus: false)
 
-        visit employee_path(:id => @employee.id)
+        visit employee_path(:id => employee.id)
         
         expect(page).to have_content("Bonus")
         expect(page).to have_content("✘")
@@ -77,13 +74,13 @@ describe "Lepidlo Basic Show" do
           end
         end        
       
-        @employee.position = FactoryGirl.create(:position, name: "My Position")
-        @employee.save!
+        employee.position = FactoryGirl.create(:position, name: "My Position")
+        employee.save!
       end
       
       context "when has access" do
         it "it shows as link" do
-          visit employee_path(:id => @employee.id)
+          visit employee_path(:id => employee.id)
           expect(page).to have_content('My Position')
         end
       end
@@ -113,14 +110,14 @@ describe "Lepidlo Basic Show" do
 
   describe "has_many association" do
     before(:each) do
-      @employee = FactoryGirl.create :employee
-      @task1 = FactoryGirl.create :task, :employee_id => @employee.id, description: "first task"
-      @task2 = FactoryGirl.create :task, :employee_id => @employee.id, description: "second task"
+      employee = FactoryGirl.create :employee
+      @task1 = FactoryGirl.create :task, :employee_id => employee.id, description: "first task"
+      @task2 = FactoryGirl.create :task, :employee_id => employee.id, description: "second task"
 
       RailsAdmin.config Employee do
         field :tasks
       end
-      visit employee_path(:id => @employee.id)
+      visit employee_path(:id => employee.id)
     end
 
     # TODO without access not as links
@@ -142,10 +139,10 @@ describe "Lepidlo Basic Show" do
 
   describe "show with belongs_to association" do
     before(:each) do
-      @employee = FactoryGirl.create :employee
+      employee = FactoryGirl.create :employee
       @team   = FactoryGirl.create :team
-      @employee.update_attributes(:team_id => @team.id)
-      visit employee_path(:id => @employee.id)
+      employee.update_attributes(:team_id => @team.id)
+      visit employee_path(:id => employee.id)
     end
 
     it "shows associated objects" do
@@ -155,9 +152,9 @@ describe "Lepidlo Basic Show" do
 
   describe "show with has-one association" do
     before(:each) do
-      @employee = FactoryGirl.create :employee
-      @draft  = FactoryGirl.create :draft, :employee => @employee
-      visit employee_path(:id => @employee.id)
+      employee = FactoryGirl.create :employee
+      @draft  = FactoryGirl.create :draft, :employee => employee
+      visit employee_path(:id => employee.id)
     end
 
     it "shows associated objects" do
@@ -167,12 +164,12 @@ describe "Lepidlo Basic Show" do
 
   describe "show with has-and-belongs-to-many association" do
     before(:each) do
-      @employee = FactoryGirl.create :employee
-      @comment1 = FactoryGirl.create :comment, :commentable => @employee
-      @comment2 = FactoryGirl.create :comment, :commentable => @employee
+      employee = FactoryGirl.create :employee
+      @comment1 = FactoryGirl.create :comment, :commentable => employee
+      @comment2 = FactoryGirl.create :comment, :commentable => employee
       @comment3 = FactoryGirl.create :comment, :commentable => FactoryGirl.create(:employee)
 
-      visit employee_path(:id => @employee.id)
+      visit employee_path(:id => employee.id)
     end
 
     it "shows associated objects" do
@@ -184,13 +181,13 @@ describe "Lepidlo Basic Show" do
 
   describe "show for polymorphic objects" do
     before(:each) do
-      @employee = FactoryGirl.create :employee
-      @comment = FactoryGirl.create :comment, :commentable => @employee
+      employee = FactoryGirl.create :employee
+      @comment = FactoryGirl.create :comment, :commentable => employee
       visit employee_path(:model_name => "comment", :id => @comment.id)
     end
 
     it "shows associated object" do
-      should have_css("a[href='/admin/employee/#{@employee.id}']")
+      should have_css("a[href='/admin/employee/#{employee.id}']")
     end
   end
 =end
