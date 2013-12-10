@@ -131,7 +131,7 @@ describe "Lepidlo Basic Show" do
 
   describe "GET employees/123this-id-doesnt-exist" do
     it "raises NotFound" do
-      visit 'employees/123this-id-doesnt-exist'
+      visit employee_path(id: '123this-id-doesnt-exist')
       expect(page.driver.status_code).to eq(404)
     end
   end
