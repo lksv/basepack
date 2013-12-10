@@ -17,7 +17,7 @@ FactoryGirl.define do
   end
 
   factory :account do 
-    account_number 49
+    account_number Faker::Number.number(3)
   end
 
   factory :skill do

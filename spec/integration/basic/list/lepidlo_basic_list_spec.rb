@@ -133,18 +133,36 @@ describe "Lepidlo basic list" do
       expect(page).to have_content(I18n.l employee1.created_at, format: :long)
     end
 
-    it "properly shows boolean field type" do
-      employee1.update_attributes(bonus: true)
-
-      RailsAdmin.config Employee do
-        list do
-          field :bonus
+    describe "properly shows boolean field type" do
+      before(:all) do
+        RailsAdmin.config Employee do
+          list do
+            field :bonus
+          end
         end
       end
-      visit employees_path()
+      
+      it "when true" do
+        employee1.update_attributes(bonus: true)
+        visit employees_path()
+        expect(page).to have_content("Bonus")
+        expect(page).to have_content("✓")
+        
+      end
 
-      expect(page).to have_content("Bonus")
-      expect(page).to have_content("✓")
+      it "when false" do
+        employee1.update_attributes(bonus: false)
+        visit employees_path()
+        expect(page).to have_content("Bonus")
+        expect(page).to have_content("✘")
+      end
+
+      it "when nil" do
+        employee1.update_attributes(bonus: nil)
+        visit employees_path()
+        expect(page).to have_content("Bonus")
+        expect(page).to have_content("-")
+      end
     end
   end
 
@@ -157,14 +175,14 @@ describe "Lepidlo basic list" do
       end
       employee1.position = FactoryGirl.create(:position, name: 'My Position')
       employee1.save!
-
     end
 
     context "when has access" do
       it "shows as link" do
         visit employees_path
 
-        expect(page).to have_selector(:link_or_button, 'My Position')
+        click_on "My Position"
+        expect(current_path).to eq position_path(employee1.position)
       end
     end
 
@@ -181,14 +199,14 @@ describe "Lepidlo basic list" do
     end
   end
 
-  describe "has one association" do
+  describe "has_one association" do
     before(:each) do
       RailsAdmin.config Employee do
         list do
           field :account
         end
       end
-      employee1.account = FactoryGirl.create(:account, account_number: 49)
+      employee1.account = FactoryGirl.create(:account)
       employee1.save!
     end
 
@@ -196,8 +214,8 @@ describe "Lepidlo basic list" do
       it "shows as link" do    
         visit employees_path
         
-        expect(page).to have_content("Account 49")
-        expect(page).to have_selector(:link_or_button, "Account 49")
+        click_on "Account #{employee1.account.account_number}"
+        expect(current_path).to eq account_path(employee1.account)
       end
     end
 
@@ -208,8 +226,8 @@ describe "Lepidlo basic list" do
         ApplicationController.any_instance.stub(:current_ability).and_return(ability)
         visit employees_path    
 
-        expect(page).to have_content("Account 49")
-        expect(page).to_not have_selector(:link_or_button, "Account 49")
+        expect(page).to have_content("Account #{employee1.account.account_number}")
+        expect(page).to_not have_selector(:link_or_button, "Account #{employee1.account.account_number}")
       end
     end
   end
@@ -232,6 +250,8 @@ describe "Lepidlo basic list" do
         expect(page).to have_content('first task and second task')
         expect(page).to have_selector(:link_or_button, 'first task')
         expect(page).to have_selector(:link_or_button, 'second task')
+        click_on "first task"
+        expect(current_path).to eq task_path(employee1.tasks.first)
       end
     end
 
@@ -267,6 +287,8 @@ describe "Lepidlo basic list" do
         expect(page).to have_content('skill 1 and skill 2')
         expect(page).to have_selector(:link_or_button, 'skill 1')
         expect(page).to have_selector(:link_or_button, 'skill 2')
+        click_on "skill 1"
+        expect(current_path).to eq skill_path(employee1.skills.first)
       end
     end
 
@@ -357,18 +379,7 @@ describe "Lepidlo basic list" do
   end
 
     #TODO what to test:
-    # shows only if ability is provided
-    # filter:
-    #   filter by belongs_to
-    #   filter by has_many
-    #   filter by boolean
-    #   filter by date
-    #   filter by _contains
-    #   filter by _eq
     # sorting:
     #   ....
-    #
-    #pagination (max row per page)
-    #pagination - info about max items
 
 end
