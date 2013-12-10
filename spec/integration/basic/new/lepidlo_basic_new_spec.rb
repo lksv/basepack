@@ -14,7 +14,6 @@ describe "Lepidlo Basic Show" do
     end
 
     it "shows \"New Model\"" do
-      # TODO without styling
       expect(page).to have_content("Employee / New")
     end
 
@@ -24,8 +23,6 @@ describe "Lepidlo Basic Show" do
     end
 
     it "shows non-required fields as \"Optional\"" do
-      # TODO rails_admin has it as id not class
-      # expect(page).to have_selector(".employee_income .help-block", :text => "Optional")
       expect(page).to have_selector(".employee_income .hint", :text => "Optional")
     end
   end
@@ -50,12 +47,14 @@ describe "Lepidlo Basic Show" do
     end
 
     it "shows selects" do
-      pending "select box is missing"
-      save_and_open_page
-      expect(page).to have_selector("select#employee_account_id")
-      expect(page).to have_selector("select#employee_position_id")
-      expect(page).to have_selector("select#employee_tasks_ids")
-      expect(page).to have_selector("select#employee_skills_ids")
+      # js: true
+      # sleep 100
+      # TODO
+      pending "has_one Account not displayed"
+      expect(page).to have_selector("select#employee_account")
+      expect(page).to have_selector("select#employee_position")
+      expect(page).to have_selector("select#employee_tasks")
+      expect(page).to have_selector("select#employee_skills")
     end
   end
 

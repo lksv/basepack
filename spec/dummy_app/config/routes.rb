@@ -19,7 +19,8 @@ Dummy::Application.routes.draw do
     post   'merge',       :on => :member
   end
 
-  resources :employees, :tasks, :positions, concerns: [:resourcable]
+  resources :employees, :tasks, :positions, :skills, :accounts, concerns: [:resourcable]
   resources :users, concerns: [:resourcable]
+
 
 end

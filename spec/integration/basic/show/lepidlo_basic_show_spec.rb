@@ -129,7 +129,6 @@ describe "Lepidlo Basic Show" do
   end
 
 
-=begin
   describe "GET employees/123this-id-doesnt-exist" do
     it "raises NotFound" do
       visit 'employees/123this-id-doesnt-exist'
@@ -137,6 +136,7 @@ describe "Lepidlo Basic Show" do
     end
   end
 
+=begin
   describe "show with belongs_to association" do
     before(:each) do
       employee = FactoryGirl.create :employee

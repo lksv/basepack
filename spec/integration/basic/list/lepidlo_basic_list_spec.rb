@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "Lepidlo basic list" do
   # subject { page }
   
-  # TODO touch, is it ok?
   let(:employee1) { FactoryGirl.create :employee }
   let(:employee2) { FactoryGirl.create :employee }
   
@@ -14,6 +13,7 @@ describe "Lepidlo basic list" do
   describe "responses" do
     
     it "success code with :html " do
+      employees
       visit employees_path
       expect(page.driver.status_code).to eq 200 
     end
@@ -32,7 +32,6 @@ describe "Lepidlo basic list" do
       end
     end
 
-    # TODO check
     it "responses with :xml" do
       employees
       visit employees_path(:format => :xml)
@@ -43,7 +42,6 @@ describe "Lepidlo basic list" do
         expect(employee.xpath('id')).to_not be_empty
         expect(employee.xpath('name')).to_not be_empty
         expect(employee.xpath('email')).to_not be_empty
-        # TODO underscores are gone, ok?
         expect(employee.xpath('created-at')).to_not be_empty
         expect(employee.xpath('updated-at')).to_not be_empty
       end
@@ -199,8 +197,7 @@ describe "Lepidlo basic list" do
         visit employees_path
         
         expect(page).to have_content("Account 49")
-        # TODO - does not displays link
-        # expect(page).to have_selector(:link_or_button, "Account 49")
+        expect(page).to have_selector(:link_or_button, "Account 49")
       end
     end
 
@@ -268,16 +265,15 @@ describe "Lepidlo basic list" do
       it "shows as links" do
         visit employees_path
         expect(page).to have_content('skill 1 and skill 2')
-        # TODO why there are not links?
-        # expect(page).to have_selector(:link_or_button, 'skill 1')
-        # expect(page).to have_selector(:link_or_button, 'skill 2')
+        expect(page).to have_selector(:link_or_button, 'skill 1')
+        expect(page).to have_selector(:link_or_button, 'skill 2')
       end
     end
 
     context "when has no access" do
       it "shows only text" do
         ability.can :manage, :all
-        ability.cannot :show, Task
+        ability.cannot :show, Skill
         ApplicationController.any_instance.stub(:current_ability).and_return(ability)
 
         visit employees_path
@@ -319,7 +315,6 @@ describe "Lepidlo basic list" do
 
   end
 
-  # TODO these filters should run without two employees created in before block
   describe "filters" do
     before(:each) do
       @employee1 = FactoryGirl.create(:employee, name: 'xxx')

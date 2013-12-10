@@ -9,12 +9,10 @@ require 'faker'
 require 'capybara/rspec'
 require 'devise'
 require 'warden'
+require 'capybara/poltergeist'
 
 Rails.backtrace_cleaner.remove_silencers!
-
-#TODO - use poltergeist in the future
-#require 'capybara/poltergeist'
-#Capybara.javascript_driver = :poltergeist
+Capybara.javascript_driver = :poltergeist
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
