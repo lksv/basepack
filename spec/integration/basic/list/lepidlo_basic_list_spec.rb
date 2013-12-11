@@ -345,7 +345,7 @@ describe "Lepidlo basic list" do
     end
 
     describe "default filter" do
-      before(:each) do
+      before(:all) do
         EmployeesController.default_query do
           { "f[name_eq]" => "xxx" }
         end
@@ -375,11 +375,43 @@ describe "Lepidlo basic list" do
       expect(page).to have_content(@employee1.name)
       expect(page).to_not have_content(@employee2.name)
       expect(page).to have_content(@employee3.name)
-    end  
+    end
   end
 
-    #TODO what to test:
-    # sorting:
-    #   ....
+  describe "sorting" do
+    before(:each) do
+      @employee1 = FactoryGirl.create(:employee, name: 'xxx')
+      @employee2 = FactoryGirl.create(:employee, name: 'yyy')
+      @employee3 = FactoryGirl.create(:employee, name: 'xxxx')
+    end
+
+    it "sorts by name asceding" do
+      visit employees_path('f[s]' => 'name asc')
+      expect(page).to have_selector("tbody tr:first", "yyy")
+      expect(page).to have_selector("tbody tr:nth(2)", "xxxx")
+      expect(page).to have_selector("tbody tr:nth(3)", "xxx")
+    end 
+
+    it "sorts by name descending" do
+      visit employees_path('f[s]' => 'name desc')
+      expect(page).to have_selector("tbody tr:first", "xxx")
+      expect(page).to have_selector("tbody tr:nth(2)", "xxxx")
+      expect(page).to have_selector("tbody tr:nth(3)", "yyy")
+    end 
+
+    it "sorts by date asceding" do
+      visit employees_path('f[s]' => 'created_at asc')
+      expect(page).to have_selector("tbody tr:first", @employee1.created_at)
+      expect(page).to have_selector("tbody tr:nth(2)", @employee2.created_at)
+      expect(page).to have_selector("tbody tr:nth(3)", @employee3.created_at)
+    end
+
+    it "sorts by date asceding" do
+      visit employees_path('f[s]' => 'created_at desc')
+      expect(page).to have_selector("tbody tr:first", @employee3.created_at)
+      expect(page).to have_selector("tbody tr:nth(2)", @employee2.created_at)
+      expect(page).to have_selector("tbody tr:nth(3)", @employee1.created_at)
+    end
+  end
 
 end
