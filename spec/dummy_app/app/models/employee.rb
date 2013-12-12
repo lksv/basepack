@@ -19,4 +19,14 @@ class Employee < ActiveRecord::Base
   has_and_belongs_to_many :skills
 
   validates_presence_of :name, :email
+  validates_uniqueness_of :email, on: :create, message: "must be unique"
+  validate :is_allowed?, :on => :create
+
+  def is_allowed?
+    # black list
+    is_allowed = ["forbidden@mail.com"].exclude?(email)
+    errors[:base] << "This email is forbidden." unless is_allowed
+    is_allowed
+  end
+
 end
