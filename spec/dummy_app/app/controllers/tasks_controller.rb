@@ -1,0 +1,3 @@
+class TasksController < ResourcesController
+
+end

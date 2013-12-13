@@ -6,7 +6,7 @@ ruby '2.0.0'
 # development dependencies will be added by default to the :development group.
 gemspec
 
-group :test do
+group :test, :development do
   gem 'cancan'
   gem 'devise'
   gem 'rspec-rails'
@@ -18,9 +18,19 @@ group :test do
   gem 'dragonfly', '>= 0.9'
   gem 'rack-cache', :require => 'rack/cache'
   gem 'paperclip', '>= 3.4'
-  #gem 'poltergeist' TODO: use it in the future
   gem 'timecop'
   gem 'settingslogic'
+  gem 'ransack'
+
+  gem 'poltergeist'
+  gem 'jquery-rails'
+  gem "jquery-turbolinks"
+  gem "turbolinks"
+  gem "bootbox-rails"
+  gem 'bootstrap-sass'
+  gem 'launchy'
+  gem "twitter-bootstrap-rails"
+  gem "selenium-webdriver"
 end
 
 # Declare any dependencies that are still in development here instead of in

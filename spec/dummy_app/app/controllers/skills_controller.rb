@@ -1,0 +1,3 @@
+class SkillsController < ResourcesController
+
+end
