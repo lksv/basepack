@@ -244,15 +244,17 @@ describe "Lepidlo basic list" do
     end
   end
 
-  describe "has_many association" do
+  describe "has_many through association" do
     before(:each) do
       RailsAdmin.config Employee do
         list do
           field :tasks
         end
       end
-      employee1.tasks.build(description: 'first task')
-      employee1.tasks.build(description: 'second task')
+      task1 = FactoryGirl.build(:task, description: 'first task')
+      task2 = FactoryGirl.build(:task, description: 'second task')
+      project1 = FactoryGirl.build(:project, tasks: [task1, task2])
+      employee1.projects << project1
       employee1.save!
     end
 
@@ -402,14 +404,14 @@ describe "Lepidlo basic list" do
       expect(page).to have_selector("tbody tr:first", "yyy")
       expect(page).to have_selector("tbody tr:nth(2)", "xxxx")
       expect(page).to have_selector("tbody tr:nth(3)", "xxx")
-    end 
+    end
 
     it "sorts by name descending" do
       visit employees_path('f[s]' => 'name desc')
       expect(page).to have_selector("tbody tr:first", "xxx")
       expect(page).to have_selector("tbody tr:nth(2)", "xxxx")
       expect(page).to have_selector("tbody tr:nth(3)", "yyy")
-    end 
+    end
 
     it "sorts by date asceding" do
       visit employees_path('f[s]' => 'created_at asc')

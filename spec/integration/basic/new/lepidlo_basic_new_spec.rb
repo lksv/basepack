@@ -27,13 +27,14 @@ describe "Lepidlo Basic Show" do
     end
   end
 
-  describe "GET /employees/new with has-one/belongs_to/has_many/habtm association" do
+  describe "GET /employees/new with has-one/belongs_to/has_many through/habtm association" do
     before(:each) do
       employee = FactoryGirl.create :employee  #TODO FactoryGirl.create :empoyee_with_all_associations
-      employee.account = FactoryGirl.create :account
-      employee.position = FactoryGirl.create :position
-      employee.tasks = 2.times.map { FactoryGirl.create :task }
-      employee.skills = 2.times.map { FactoryGirl.create :skill }
+      employee.account = FactoryGirl.build :account
+      employee.position = FactoryGirl.build :position
+      tasks = 2.times.map { FactoryGirl.build :task }
+      employee.projects << FactoryGirl.build(:project, tasks: tasks)
+      employee.skills = 2.times.map { FactoryGirl.build :skill }
       employee.save!
 
       RailsAdmin.config Employee do

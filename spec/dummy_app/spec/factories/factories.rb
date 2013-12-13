@@ -10,6 +10,10 @@ FactoryGirl.define do
     name { Faker::Name.title }
   end
 
+  factory :project do
+    sequence(:name) { |n| "project #{n}"}
+  end
+
   factory :task do
     sequence(:name) { |n| "task #{n}" }
     description { Faker::Lorem.sentence }

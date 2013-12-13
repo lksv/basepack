@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131207081215) do
+ActiveRecord::Schema.define(version: 20131213195422) do
 
   create_table "accounts", force: true do |t|
     t.integer  "account_number"
@@ -73,6 +73,16 @@ ActiveRecord::Schema.define(version: 20131207081215) do
     t.datetime "updated_at"
   end
 
+  create_table "projects", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "employee_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "projects", ["employee_id"], name: "index_projects_on_employee_id"
+
   create_table "skills", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -82,12 +92,12 @@ ActiveRecord::Schema.define(version: 20131207081215) do
   create_table "tasks", force: true do |t|
     t.string   "name"
     t.text     "description"
-    t.integer  "employee_id"
+    t.integer  "project_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "tasks", ["employee_id"], name: "index_tasks_on_employee_id"
+  add_index "tasks", ["project_id"], name: "index_tasks_on_project_id"
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

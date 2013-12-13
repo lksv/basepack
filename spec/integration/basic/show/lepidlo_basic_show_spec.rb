@@ -9,7 +9,7 @@ describe "Lepidlo Basic Show" do
   describe "responses" do
     it "success code with :html " do
       visit employee_path(id: employee.id)
-      expect(page.driver.status_code).to eq 200 
+      expect(page.driver.status_code).to eq 200
     end
 
     it "raises NotFound" do
@@ -192,14 +192,17 @@ describe "has_one association" do
     end
   end
 
-  describe "has_many association" do
+  describe "has_many through association" do
     before(:each) do
-      @task1 = FactoryGirl.create :task, :employee_id => employee.id, description: "first task"
-      @task2 = FactoryGirl.create :task, :employee_id => employee.id, description: "second task"
-
       RailsAdmin.config Employee do
         field :tasks
       end
+
+      task1 = FactoryGirl.build(:task, description: 'first task')
+      task2 = FactoryGirl.build(:task, description: 'second task')
+      project1 = FactoryGirl.build(:project, tasks: [task1, task2])
+      employee.projects << project1
+      employee.save!
     end
 
     context "when has access" do
