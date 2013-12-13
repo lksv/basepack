@@ -24,11 +24,22 @@ RSpec.configure do |config|
 
   config.include Capybara::DSL
   config.mock_with :rspec
-  config.use_transactional_fixtures = true
   config.infer_base_class_for_anonymous_controllers = false
-  # config.include Warden::Test::Helpers
   config.include Devise::TestHelpers, :type => :controller
-  # config.order = "random"
+  # config.order = "random"    #FIXME: uncomment this and fix the tests
+
+  config.before(:each) do
+    DatabaseCleaner.strategy = (example.metadata[:js]) ? :truncation : :transaction
+
+    DatabaseCleaner.start
+    #RailsAdmin::Config.reset  #TODO!!!
+    RailsAdmin::AbstractModel.reset
+    RailsAdmin::Config.yell_for_non_accessible_fields = false
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
 
   # config.before(:each) do
     #Warden.test_mode!
@@ -37,6 +48,12 @@ RSpec.configure do |config|
 
     # sign_in(user, :scope => :user)
   # end
+  # config.after(:each) do
+  #   Warden.test_reset!
+  # end
+
+
+  config.include LepidloHelper #, type: :feature
 end
 
 

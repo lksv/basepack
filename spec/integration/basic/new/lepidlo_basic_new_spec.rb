@@ -29,13 +29,13 @@ describe "Lepidlo Basic Show" do
 
   describe "GET /employees/new with has-one/belongs_to/has_many/habtm association" do
     before(:each) do
-      employee = FactoryGirl.create :employee
+      employee = FactoryGirl.create :employee  #TODO FactoryGirl.create :empoyee_with_all_associations
       employee.account = FactoryGirl.create :account
       employee.position = FactoryGirl.create :position
       employee.tasks = 2.times.map { FactoryGirl.create :task }
       employee.skills = 2.times.map { FactoryGirl.create :skill }
       employee.save!
-      
+
       RailsAdmin.config Employee do
         field :account
         field :position
@@ -66,19 +66,34 @@ describe "Lepidlo Basic Show" do
       visit new_employee_path(:employee => {:name => 'Sam'})
       expect(page).to have_css('input[value=Sam]')
     end
-    
-=begin
-    it "prepropulates belongs to relationships" do
-      @position = FactoryGirl.create :position, :name => "belongs_to association prepopulated"
-      visit new_employee_path(:associations => { :position => @position.id } )
-      expect(page).to have_css("select#player_position_id option[selected='selected'][value='#{@position.id}']")
+
+    it "prepropulates belongs to relationships", js: true do
+      RailsAdmin.config Employee do
+        field :name
+        field :position
+      end
+
+      position = FactoryGirl.create(:position)
+
+      visit new_employee_path(:employee => { position_id: position.id } )
+
+      expect(page).to have_select2('Position', selected: position.to_label)
     end
 
-    it "prepropulates has_many relationships" do
-      @employee = FactoryGirl.create :employee, :name => "has_many association prepopulated"
-      visit new_position_path(:associations => { :employees => @employee.id } )
-      expect(page).to have_css("select#position_employee_ids option[selected='selected'][value='#{@employee.id}']")
-    end
-=end
+    #it "prepropulates has_many relationships", js: true do
+    #  RailsAdmin.config Employee do
+    #    field :name
+    #    field :tasks
+    #  end
+
+    #  employee = FactoryGirl.build :employee, :name => "has_many association prepopulated"
+    #  employee.tasks = 2.times.map { FactoryGirl.build :task }
+    #  employee.save!
+
+    #  visit new_employee_path(:employee => { :task_ids => employee.task_ids } )
+
+    #  expect(page).to have_select2( 'Tasks', selected: employee.tasks[0].to_label )
+    #  expect(page).to have_select2( 'Tasks', selected: employee.tasks[1].to_label )
+    #end
   end
 end

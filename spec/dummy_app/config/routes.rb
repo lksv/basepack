@@ -22,5 +22,5 @@ Dummy::Application.routes.draw do
   resources :employees, :tasks, :positions, :skills, :accounts, concerns: [:resourcable]
   resources :users, concerns: [:resourcable]
 
-
+  root 'employees#index'
 end

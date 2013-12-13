@@ -11,12 +11,11 @@ FactoryGirl.define do
   end
 
   factory :task do
-    sequence :name do |n| 
-      "task #{n}"
-    end
+    sequence(:name) { |n| "task #{n}" }
+    description { Faker::Lorem.sentence }
   end
 
-  factory :account do 
+  factory :account do
     account_number Faker::Number.number(3)
   end
 
