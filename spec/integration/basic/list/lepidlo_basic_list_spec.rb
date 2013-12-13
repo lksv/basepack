@@ -2,20 +2,20 @@ require 'spec_helper'
 
 describe "Lepidlo basic list" do
   # subject { page }
-  
+
   let(:employee1) { FactoryGirl.create :employee }
   let(:employee2) { FactoryGirl.create :employee }
-  
+
   let(:employees) { [employee1, employee2] }
-  
+
   let(:ability) { Object.new.extend(CanCan::Ability) }
-  
+
   describe "responses" do
-    
+
     it "success code with :html " do
       employees
       visit employees_path
-      expect(page.driver.status_code).to eq 200 
+      expect(page.driver.status_code).to eq 200
     end
 
     it "responses with :json" do
@@ -47,6 +47,19 @@ describe "Lepidlo basic list" do
       end
 
     end
+
+    context "not authorized" do
+      it "rejects list" do
+        ability.can :manage, :all
+        ability.cannot :index, Employee
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
+        visit employees_path
+        expect(page.driver.status_code).not_to eq 200
+      end
+    end
+
+
+
   end
 
   describe "actions" do
@@ -68,7 +81,6 @@ describe "Lepidlo basic list" do
       expect(current_path).to eq employee_path(id: employee1.id)
     end
 
-    
     it "displays edit page" do
       employee1
       visit employees_path
@@ -141,13 +153,13 @@ describe "Lepidlo basic list" do
           end
         end
       end
-      
+
       it "when true" do
         employee1.update_attributes(bonus: true)
         visit employees_path()
         expect(page).to have_content("Bonus")
         expect(page).to have_content("✓")
-        
+
       end
 
       it "when false" do
@@ -211,9 +223,9 @@ describe "Lepidlo basic list" do
     end
 
     context "when has access" do
-      it "shows as link" do    
+      it "shows as link" do
         visit employees_path
-        
+
         click_on "Account #{employee1.account.account_number}"
         expect(current_path).to eq account_path(employee1.account)
       end
@@ -224,7 +236,7 @@ describe "Lepidlo basic list" do
         ability.can :manage, :all
         ability.cannot :show, Account
         ApplicationController.any_instance.stub(:current_ability).and_return(ability)
-        visit employees_path    
+        visit employees_path
 
         expect(page).to have_content("Account #{employee1.account.account_number}")
         expect(page).to_not have_selector(:link_or_button, "Account #{employee1.account.account_number}")
@@ -367,7 +379,7 @@ describe "Lepidlo basic list" do
         expect(page).to have_content(@employee3.name)
       end
     end
-  
+
     it "correctly filters contains" do
       visit employees_path('f[name_cont]' => 'xxx')
 
