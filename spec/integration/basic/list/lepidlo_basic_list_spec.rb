@@ -58,8 +58,6 @@ describe "Lepidlo basic list" do
       end
     end
 
-
-
   end
 
   describe "actions" do
@@ -243,6 +241,45 @@ describe "Lepidlo basic list" do
       end
     end
   end
+
+  describe "has_many association" do
+    before(:each) do
+      RailsAdmin.config Employee do
+        list do
+          field :projects
+        end
+      end
+      
+      employee1.projects.build(name: 'first project') 
+      employee1.projects.build(name: 'second project') 
+      employee1.save!
+    end
+
+    context "when has access" do
+      it "shows as links" do
+        visit employees_path
+        expect(page).to have_content('first project and second project')
+        expect(page).to have_selector(:link_or_button, 'first project')
+        expect(page).to have_selector(:link_or_button, 'second project')
+        click_on "first project"
+        expect(current_path).to eq project_path(employee1.projects.first)
+      end
+    end
+
+    context "when has no access" do
+      it "shows only text" do
+        ability.can :manage, :all
+        ability.cannot :show, Project
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
+
+        visit employees_path
+        expect(page).to have_content('first project and second project')
+        expect(page).to_not have_selector(:link_or_button, 'first project')
+        expect(page).to_not have_selector(:link_or_button, 'second project')
+      end
+    end
+  end
+
 
   describe "has_many through association" do
     before(:each) do

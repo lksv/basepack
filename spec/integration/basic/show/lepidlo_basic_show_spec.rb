@@ -159,7 +159,7 @@ describe "Lepidlo Basic Show" do
 
   end
 
-describe "has_one association" do
+  describe "has_one association" do
     before(:each) do
       RailsAdmin.config Employee do
         list do
@@ -188,6 +188,42 @@ describe "has_one association" do
 
         expect(page).to have_content("Account #{employee.account.account_number}")
         expect(page).to_not have_selector(:link_or_button, "Account #{employee.account.account_number}")
+      end
+    end
+  end
+
+  describe "has_many through association" do
+    before(:each) do
+      RailsAdmin.config Employee do
+        field :projects
+      end
+
+      employee.projects.build(name: 'first project') 
+      employee.projects.build(name: 'second project') 
+      employee.save!
+    end
+
+    context "when has access" do
+      it "shows as links" do
+        visit employee_path(:id => employee.id)
+        expect(page).to have_content('first project and second project')
+        expect(page).to have_selector(:link_or_button, 'first project')
+        expect(page).to have_selector(:link_or_button, 'second project')
+        click_on "first project"
+        expect(current_path).to eq project_path(employee.projects.first)
+      end
+    end
+
+    context "when has no access" do
+      it "shows as text" do
+        ability.can :manage, :all
+        ability.cannot :show, Project
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
+        visit employee_path(:id => employee.id)
+
+        expect(page).to have_content('first project and second project')
+        expect(page).to_not have_selector(:link_or_button, 'first project')
+        expect(page).to_not have_selector(:link_or_button, 'second project')
       end
     end
   end

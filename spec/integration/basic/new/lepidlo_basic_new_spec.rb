@@ -27,7 +27,7 @@ describe "Lepidlo Basic Show" do
     end
   end
 
-  describe "GET /employees/new with has-one/belongs_to/has_many through/habtm association" do
+  describe "GET /employees/new with has-one/belongs_to/has_many/has_many through/habtm association" do
     before(:each) do
       employee = FactoryGirl.create :employee  #TODO FactoryGirl.create :empoyee_with_all_associations
       employee.account = FactoryGirl.build :account
@@ -54,6 +54,7 @@ describe "Lepidlo Basic Show" do
       pending "has_one Account not displayed"
       expect(page).to have_selector("select#employee_account")
       expect(page).to have_selector("select#employee_position")
+      expect(page).to have_selector("select#employee_projects")
       expect(page).to have_selector("select#employee_tasks")
       expect(page).to have_selector("select#employee_skills")
     end
