@@ -58,52 +58,122 @@ describe "Lepidlo basic list" do
       end
     end
 
+    it "does not allow to change id" do
+      pending "it DOES change id and it shouldn't, check printings"
+
+      id = employee1.id
+      # p Employee.all
+      page.driver.submit :put, "/employees/#{employee1.id}", { employee: { id: id + 1 } }
+      # p Employee.all
+      expect(page.driver.status_code).to_not eq 200
+
+      employee1 = Employee.order("updated_at desc").first
+      expect(employee1.id).to eq id
+    end
+
   end
 
   describe "actions" do
-    it "has Show, Edit and Delete links" do
-      employee1
-      visit employees_path
+    context "authorized" do      
+      it "has Show, Add new, Edit and Delete links" do
+        employee1
+        visit employees_path
 
-      expect(page.driver.status_code).to eq 200
-      expect(page).to have_selector(:link_or_button, "Show")
-      expect(page).to have_selector(:link_or_button, "Edit")
-      expect(page).to have_selector(:link_or_button, "Add new")
-      expect(page).to have_selector(:link_or_button, "Delete")
-    end
-
-    it "displays show page" do
-      employee1
-      visit employees_path
-      click_on "Show"
-      expect(current_path).to eq employee_path(id: employee1.id)
-    end
-
-    it "displays edit page" do
-      employee1
-      visit employees_path
-      click_on "Edit"
-      expect(current_path).to eq edit_employee_path(id: employee1.id)
-    end
-
-    it "displays new page" do
-      visit employees_path
-      click_on "Add new"
-      expect(current_path).to eq new_employee_path
-    end
-
-    it "deletes an employee" do
-      employees
-      visit employees_path
-
-      within("tbody tr:first") do
-        click_on "Delete"
+        expect(page.driver.status_code).to eq 200
+        expect(page).to have_selector(:link_or_button, "Show")
+        expect(page).to have_selector(:link_or_button, "Edit")
+        expect(page).to have_selector(:link_or_button, "Add new")
+        expect(page).to have_selector(:link_or_button, "Delete")
       end
 
-      expect(page).to_not have_content(employees[0].name)
-      expect(page).to have_content(employees[1].name)
-      expect(page).to have_css("tbody tr", :count => 1)
+      it "displays show page" do
+        employee1
+        visit employees_path
+        click_on "Show"
+        expect(current_path).to eq employee_path(id: employee1.id)
+      end
+
+      it "displays edit page" do
+        employee1
+        visit employees_path
+        click_on "Edit"
+        expect(current_path).to eq edit_employee_path(id: employee1.id)
+      end
+
+      it "displays new page" do
+        visit employees_path
+        click_on "Add new"
+        expect(current_path).to eq new_employee_path
+      end
+
+      it "deletes an employee" do
+        employees
+        visit employees_path
+
+        within("tbody tr:first") do
+          click_on "Delete"
+        end
+
+        expect(page).to_not have_content(employees[0].name)
+        expect(page).to have_content(employees[1].name)
+        expect(page).to have_css("tbody tr", :count => 1)
+      end
     end
+
+    context "no authorized" do
+      before(:each) do
+        ability.can :manage, :all
+        ApplicationController.any_instance.stub(:current_ability).and_return(ability)
+      end
+
+      it "without Show link and access" do
+        ability.cannot :show, Employee
+      
+        employee1
+        visit employees_path
+        expect(page).to have_no_selector(:link_or_button, "Show")
+
+        visit employee_path(employee1)
+        expect(page.driver.status_code).to_not eq 200
+      end
+
+      it "without Edit link and access" do
+        ability.cannot :edit, Employee
+      
+        employee1
+        visit employees_path
+        expect(page).to have_no_selector(:link_or_button, "Edit")
+
+        visit edit_employee_path(employee1)
+        expect(page.driver.status_code).to_not eq 200
+      end
+
+      it "without Add new link and access" do
+        pending "It should not display new without permissions to new, works with cannot :create"
+        ability.cannot :new, Employee
+      
+        visit employees_path
+        expect(page).to have_no_selector(:link_or_button, "Add new")
+
+        visit new_employee_path
+        expect(page.driver.status_code).to_not eq 200
+      end
+
+      it "without Delete link and permission" do
+        ability.cannot :destroy, Employee
+      
+        employee1
+        visit employees_path
+        expect(page).to have_no_selector(:link_or_button, "Delete")
+
+        page.driver.submit :delete, "/employees/#{employee1.id}", {}
+        expect(page.driver.status_code).to_not eq 200
+
+        visit employees_path
+        expect(page).to have_css("tbody tr", :count => 1)
+      end      
+    end
+
   end
 
   describe "fields without association" do
