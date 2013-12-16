@@ -1,6 +1,7 @@
 Basepack
 =======
 [![Build Status](https://api.travis-ci.org/lksv/basepack.png?branch=master)](http://travis-ci.org/lksv/base_pack)
+[![Dependency Status](https://gemnasium.com/lksv/basepack.png)](https://gemnasium.com/lksv/basepack)
 
 **Basepack** is a Ruby on Rails framework for fast creating of information
 systems.
