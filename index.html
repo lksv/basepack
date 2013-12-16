@@ -41,12 +41,12 @@
         <h2>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<p>This tutorial is designed for learning basepack which is based on Ruby on Rails framework. So previous experience with Ruby on Rails is necessary but you do not need to be an expert. There is the <a href="https://github.com/lksv">README</a> for shorter introduction and demonstration of basepack.  </p>
+<p>This tutorial is designed for learning basepack which is based on Ruby on Rails framework. So&nbsp;previous experience with Ruby on Rails is necessary but you do not need to be an expert. There is the <a href="https://github.com/lksv/basepack">README</a> for shorter introduction of basepack and there is a <a href="http://basepack-example.herokuapp.com/">demo application</a>. But in order to learn basepack you would need to build such application yourself and that is exactly what this tutorial will walk you through.</p>
 
 <p>Basepack is a collection of gems (which are useful in any application) tied together with additional features on top of it. 
-Installing basepack's gem really enhances the power of Ruby on Rails. And remember you can still use everything what development in Ruby on Rails provides. For example use basepack's features only in parts of application.</p>
+Installing basepack's gem really enhances the power of Ruby on Rails. And remember you can still use everything what development in Ruby on Rails provides. For example use basepack's features only in some parts of application.</p>
 
-<p>For easy start it is highly recommended that you are familiar with gems below (you have used them at least in one application) because these gems are essential part of basepack. Although there is no need to worry if you do not know them you will be supplied with additional links to related sections through all tutorial. </p>
+<p>For easy start it is recommended that you are familiar with gems below (you have used them at least in one application) because these gems are essential part of basepack. Although there is no need to worry if you do not know them yet. You will be supplied with additional links to related sections during all tutorial. </p>
 
 <ul>
 <li><a>Devise</a></li>
@@ -56,8 +56,9 @@ Installing basepack's gem really enhances the power of Ruby on Rails. And rememb
 <li><a href="https://github.com/josevalim/inherited_resources">InheritedResources</a></li>
 <li><a href="https://github.com/plataformatec/simple_form">SimpleForm</a></li>
 <li><a href="https://github.com/ryanb/nested_form">Nested-form</a></li>
-</ul><p>And being familiar with these may also help:</p>
+</ul>
 
+<p>And being familiar with these may also help:</p>
 <ul>
 <li><a href="https://github.com/activerecord-hackery/ransack">Ransack</a></li>
 <li><a href="https://github.com/amatsuda/kaminari">Kaminari</a></li>
@@ -78,13 +79,13 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 <h2>
 <a name="first-application-with-basepack" class="anchor" href="#first-application-with-basepack"><span class="octicon octicon-link"></span></a>First application with basepack</h2>
 
-<p>In this tutorial you will create issue tracking application, let's start by creating new rails application.</p>
+<p>Without further ado let's jump in and start building issue tracking application. Create new rails application in your console.</p>
 
 <div class="highlight highlight-console"><pre><span class="go">rails new basepack_tutorial</span>
 <span class="go">cd basepack_tutorial</span>
 </pre></div>
 
-<p>Then add basepack gem to the application and run bundle to install it with all its dependancies.</p>
+<p>Add basepack gem to the application and run bundle to install it with all its dependancies.</p>
 
 <blockquote>
 <p>Gemfile:</p>
@@ -103,18 +104,13 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 
 <p>The basepack generator notices the absence of cancan and devise files and offers you running generator for them as well.</p>
 
-<p>Then it asks for confirmation to remove application.html.erb in order to use own application.html.haml with related partials (header, navigation, etc.). You can see how it looks in demo application.</p>
-
-
-
-
-
-
+<p>Then it asks for confirmation to remove application.html.erb in order to use own application.html.haml with related partials (header, navigation, etc.). You can see how this basepack's template looks like in <a href="http://basepack-example.herokuapp.com/">demo application</a>. You can without fear type yes to confirm all suggestions.</p>
 
 
 
 <p>Here is the summary of what generator did:</p>
 
+<!-- TODO - divide it by cancan, devise and basepack -->
 <ul>
 <li>Added assets to <code>application.js</code> manifest file</li>
 <li>Created new stylesheet <code>app/assets/stylesheets/basepack_and_overrides.css</code>
@@ -129,14 +125,15 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 <li>Created new models Import and Filter and database tables for them in migrations</li>
 <li>Created localization file <code>config/locales/basepack.en.yml</code>
 </li>
-<li>Created new resources controller</li>
+<li>Created new resources controller <code>app/controllers/resources_controller.rb</code></li>
 <li>Replaced <code>application.html.erb</code> </li>
 <li>Created partials used in basepack's template</li>
 <li>Added new <a href="http://guides.rubyonrails.org/routing.html#routing-concerns">concern</a> to routes</li>
 <li>Created initializers for rails_admin and dragonfly</li>
 <li>Created new filters controller</li>
-</ul><p>Last step in installation is to define inital ability in <code>app/models/ability.rb</code>. For now you can allow anybody to perform any action and then migrate database.</p>
+</ul>
 
+<p>Last step in installation is to define inital ability in <code>app/models/ability.rb</code>. For now you can allow anybody to perform any action and then migrate database.</p>
 <blockquote>
 <p>app/models/ability.rb:</p>
 
@@ -147,7 +144,7 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 <div class="highlight highlight-console"><pre><span class="go">rake db:migrate</span>
 </pre></div>
 
-<p>Everything is set up and ready to be used. Our application will need to track projects, which will have a lot of issues (has_many). Use scaffolding to create these resources. Functionality of scaffolding has been modified by basepack.</p>
+<p>Everything is set up and ready to be used but it has no data to work with. So our application needs to track projects, which will have a lot of issues (has_many). Use scaffolding to create these resources. Functionality of scaffolding is now modified by basepack.</p>
 
 <div class="highlight highlight-console"><pre><span class="go">rails g scaffold Project name description:text start:date finish:date</span>
 <span class="go">rails g scaffold Issue name description:text status:string resolution:string project:references user:references</span>
@@ -160,12 +157,10 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 </pre></div>
 
 
-
-<p>In comparision with basic scaffolding it includes importing, exporting of resources, pagination through records, breadcrumb table columns are sortable. It supports searching and you can save filters (more about filters later).</p>
-
+<p>In comparision with basic scaffolding it includes importing and exporting of resources. Records in index action are paginated by default. You can perform complex searching and save frequent searches as filters or sort by individual columns. It displays breadcrumb (links with path e.g ) and many more. </p>
 
 
-<p>After scaffolding your resources, you can customize fields used in individual actions by <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">Railsdmin DSL</a>.</p>
+<p>After scaffolding your resources, you can customize fields used in individual actions by <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">Railsdmin DSL</a>. This domain specific language allows you to quickly customize how your views look like. Take a time and really browse through its configuring possibilities(visibility, ordering, labels, formatting, ...) </p>
 
 <blockquote>
 <p>app/models/project.rb:</p>
@@ -173,45 +168,44 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 <div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Project</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">has_many</span> <span class="ss">:issues</span><span class="p">,</span> <span class="n">inverse_of</span><span class="p">:</span> <span class="ss">:project</span>
 </pre></div>
-</blockquote>
 
-<p>rails_admin do
+<pre><code>
+  rails_admin do
     list do
       # only these fields(name, finish) will be displayed in this order
       field :name
       field :finish
-    end</p>
+    end
 
-<pre><code>edit do
-  field :name
-  # add rich text editor as a field type
-  field :description, :wysihtml5
-  field :start
-  field :finish
- end 
+    edit do
+      field :name
+      # add rich text editor as a field type
+      field :description, :wysihtml5
+      field :start
+      field :finish
+    end 
 
- show do
-   field :name
-   field :description
-   field :start
-   field :finish
- end 
-</code></pre>
-
-<p>end 
-end</p>
-
-<pre><code>
-
-&gt; app/models/issue.rb:
-```ruby
-class Issue &lt; ActiveRecord::Base
-  belongs_to :project, inverse_of: :issues
+    show do
+      field :name
+      field :description
+      field :start
+      field :finish
+    end 
+  end
 end
 </code></pre>
+</blockquote>
 
 
-
+<blockquote>
+  <pre><code>
+  &gt; app/models/issue.rb:
+  ```ruby
+  class Issue &lt; ActiveRecord::Base
+    belongs_to :project, inverse_of: :issues
+  end
+  </code></pre>
+</blockquote>
 
 
 <p>IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of <strong>basepack</strong>, see <a href="http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations">Rails documentation</a> for explaination.</p>
