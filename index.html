@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Basepack by lksv</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/lksv/basepack">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/lksv/basepack/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/lksv/basepack/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Basepack</h1>
+          <p></p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/lksv">lksv</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="basepack" class="anchor" href="#basepack"><span class="octicon octicon-link"></span></a>Basepack</h1>
+
+<p><a href="http://travis-ci.org/lksv/base_pack"><img src="https://api.travis-ci.org/lksv/basepack.png?branch=master" alt="Build Status"></a>
+<a href="https://gemnasium.com/lksv/basepack"><img src="https://gemnasium.com/lksv/basepack.png" alt="Dependency Status"></a></p>
+
+<p><strong>Basepack</strong> is a Ruby on Rails framework for quick creation of information
+systems.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Quick development of forms - generates forms for resource by short DSL metadata
+settings.</li>
+<li>Rich set of business types support (datetime, wysiwig, tags, phone number, ...)</li>
+<li>Search and filtering, saved filters</li>
+<li>Automatic form validation</li>
+<li>Import and Export functionality for resource</li>
+<li>Easy way to create custom actions</li>
+<li>Authentication (via <a>Devise</a>)</li>
+<li>Authorization (via <a href="https://github.com/ryanb/cancan.git">Cancan</a>)</li>
+</ul><h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p><a href="https://github.com/lksv/basepack/wiki/Tutorial">Turorial</a></p>
+
+<p>See project <a href="https://github.com/lksv/basepack/wiki">wiki</a>.</p>
+
+<h2>
+<a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
+
+<p><em>currently we are preparing 
+<a href="https://github.com/zorec/basepack_example">basepace_example application</a></em></p>
+
+<p>The running application will be available at <a href="http://basepack-example.herokuapp.com/">http://basepack-example.herokuapp.com/</a></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>In your <code>Gemfile</code>, add the following dependencies:</p>
+
+<pre><code>gem "basepack",      git: "https://github.com/lksv/basepack.git"
+</code></pre>
+
+<p>Run:</p>
+
+<pre><code>bundle install
+</code></pre>
+
+<p>And then run:</p>
+
+<pre><code>rails g basepack:install
+</code></pre>
+
+<p>This generator will install <strong>Basepack</strong>, 
+<a href="https://github.com/plataformatec/devise">Devise</a> and
+<a href="https://github.com/ryanb/cancan.git">CanCan</a> and following gems</p>
+
+<ul>
+<li>inherited_resources</li>
+<li>ransack</li>
+<li>kaminari</li>
+<li>simple_form</li>
+<li>settingslogic</li>
+<li>twitter-bootstrap-rails</li>
+<li>bootbox-rails</li>
+</ul><p>if you don't already have them installed.</p>
+
+<p>Define inital ability in <code>app/models/ability.rb</code>. You can put <code>can
+:manage, :all</code> to enable anybody to perform any
+action on any object. See more on <a href="https://github.com/ryanb/cancan/wiki/Defining-Abilities">CanCan
+wiki</a>.</p>
+
+<p>Migrate your database and start the server:</p>
+
+<pre><code>rake db:migrate
+rails s
+</code></pre>
+
+<h2>
+<a name="generator-usage" class="anchor" href="#generator-usage"><span class="octicon octicon-link"></span></a>Generator usage</h2>
+
+<p>You can easily generate new resource (scaffold for the resource) by
+<code>rails g scaffold NAME [field[:type][:index] field[:type][:index]] [options]</code>.
+E.g.</p>
+
+<pre><code>rails g scaffold Project name short_description description:text start:date finish:date
+rails g scaffold Task name description:text project:references user:references
+</code></pre>
+
+<p>Then 
+<code>rake db:migrate</code>
+<code>rails s</code></p>
+
+<p>Notice that files for views are not generated (directories appp/views/projects and appp/views/tasks are empty), but all RESTful actions are working correctly. It is because views iherit default structure and you can easily override these defaults by creating appropriate files.</p>
+
+<h2>
+<a name="basic-usage" class="anchor" href="#basic-usage"><span class="octicon octicon-link"></span></a>Basic usage</h2>
+
+<p>After scaffolding your resources, you can customize fields used in individual actions by <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">Railsdmin DSL</a></p>
+
+<p>File <code>app/models/project.rb</code>:</p>
+
+<pre><code>class Project &lt; ActiveRecord::Base
+  has_many :tasks, inverse_of: :project
+  validates :name, :short_description, presence: true
+
+  rails_admin do
+    list do
+      field :name
+      field :short_description
+      field :finish
+    end
+
+    edit do
+      field :name
+      field :short_description
+      field :description, :wysihtml5
+      field :start
+      field :finish
+     end 
+
+     show do
+       field :name
+       field :description
+       field :start
+       field :finish
+     end 
+  end 
+end
+</code></pre>
+
+<p>File <code>app/models/task.rb</code></p>
+
+<pre><code>class Task &lt; ActiveRecord::Base
+  belongs_to :project, inverse_of: :tasks
+  belongs_to :user
+end
+</code></pre>
+
+<p>IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of <strong>Basepack</strong>, see <a href="http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations">Rails documentation</a> for explaination.</p>
+
+<p>Another difference is controllers which inherit from ResourcesController. Full inheritance hierarchy looks this way:</p>
+
+<pre><code>ProjectsController &lt; ResourcesController &lt; Basepack::BaseController &lt; InheritedResources::Base
+</code></pre>
+
+<p>If you are not familiar with <a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>, take a look at it.  </p>
+
+<p>Basepack::BaseController adds to it:</p>
+
+<ul>
+<li>strong parameters handling</li>
+<li>
+<code>options</code> method</li>
+<li>
+<code>taggings</code> method</li>
+<li>
+<code>build_resource</code> method</li>
+</ul><p>You do NOT need to define permitted parameters anymore. It is defined by RailsAdmin DSL, more precisely by what you set as visible in edit action. 
+So file <code>app/models/project.rb</code>:</p>
+
+<pre><code>class Project &lt; ActiveRecord::Base
+  ...
+    edit do
+      field :name
+      field :short_description
+      field :description, :wysihtml5
+      field :start
+      field :finish
+     end 
+  ...
+end
+</code></pre>
+
+<p>implicitly sets permitted params which could be written as:</p>
+
+<pre><code>def permitted_params
+  params.permit(:project =&gt; [:name, :short_description, :description, :start, :finish])
+end
+</code></pre>
+
+<p>in your projects controller. You can override these implicit settings by creating this method in case you want it.</p>
+
+<h2>
+<a name="basic-architecture-background" class="anchor" href="#basic-architecture-background"><span class="octicon octicon-link"></span></a>Basic Architecture Background</h2>
+
+<p><strong>Basepack</strong> is build on the top of several gems:</p>
+
+<ul>
+<li>
+<a href="https://github.com/plataformatec/devise">Device</a> for Authentication</li>
+<li>
+<a href="https://github.com/ryanb/cancan.git">CanCan</a> for Authorization</li>
+<li>
+<a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>
+makes your controllers inherit all restful actions.</li>
+<li>
+<a href="https://github.com/plataformatec/simple_form">SimpleForm</a> for
+creating Forms.</li>
+<li>
+<a href="https://github.com/ryanb/nested_form">nested-form</a> for handling
+multiple models in a single form</li>
+<li><a href="https://github.com/thomas-mcdonald/bootstrap-sass">bootstrap-sass</a></li>
+<li>...<a href="basepack.gemspec">and others</a>
+</li>
+</ul><p>Althoug you can use <strong>Basepack</strong> without knowing anything of the
+background architecture it is recommended to get to know at least with:
+<a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>,
+<a href="https://github.com/ryanb/cancan.git">CanCan</a> and
+<a href="https://github.com/plataformatec/devise">Device</a>. </p>
+
+<p><strong>Basepack</strong> was also
+inspired by <a href="https://github.com/sferik/rails_admin">RailsAdmin</a> and
+still using <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">RailsAdmin
+DSL</a> for defining the forms.</p>
+
+<p>TODO - explain the concept. Class <code>Basepack::Form::Base</code> and <code>Basepack::Form::Fields::Base</code>.
+Controller action as <code>&lt;form_name&gt;_form_for</code> and <code>form_factory_rails_admin</code>.</p>
+
+<h2>
+<a name="customining-views" class="anchor" href="#customining-views"><span class="octicon octicon-link"></span></a>Customining Views</h2>
+
+<h2>
+<a name="customizing-form-view" class="anchor" href="#customizing-form-view"><span class="octicon octicon-link"></span></a>Customizing Form View</h2>
+
+<h1>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h1>
+
+<p>This project rocks and uses LGPL-LICENSE.</p>
+
+<h1>
+<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h1>
+
+<p><a href="https://github.com/sferik/rails_admin">RailsAdmin</a> field forms was
+originaly taken from rails-admin.</p>
+
+<p><a href="https://github.com/tb/nested_form_ui">nested_form_ui</a> - stylesheed and
+code for orderable was inspired by this project.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-46491076-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
