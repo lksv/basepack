@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "RailsAdmin Basic Create" do
-  
+
   describe "create without association" do
 
     it "creates an object with correct attributes" do

@@ -172,7 +172,10 @@ module Basepack
 
       def sanitize_params(params)
         new_params = params.dup
-        allowed = [ :id, :_destroy ]
+        allowed = [ 
+          # :id,   #FIXME: checkme: has to be not allowed by default, but what about nested forms?
+          :_destroy 
+        ]
 
         visible_fields.each do |f|
           next if f.read_only? or f.inverse_of_nested_in?

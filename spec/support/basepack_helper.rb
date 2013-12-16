@@ -15,6 +15,20 @@ module BasepackHelper
     end
   end
 
+  def have_selector2(locator, options)
+    select2_container = first("label", text: locator).
+      find(:xpath, '..').
+      find(".select2-container")
+
+    select2_container.find(".select2-choice").click
+    find(:css, "div[style*=block].select2-drop-active input[type=text].select2-input").set(options[:selected])
+    sleep 5
+
+    within(select2_container) do
+      have_selector(".select2-drop li", text: options[:selected])
+    end
+  end
+
   def select2(value, options = {})
     #TODO: maybe inspire by: https://gist.github.com/onyxrev/6970632 which is more clear solution
 

@@ -58,23 +58,10 @@ describe "Basepack basic list" do
       end
     end
 
-    it "does not allow to change id" do
-      pending "it DOES change id and it shouldn't, check printings"
-
-      id = employee1.id
-      # p Employee.all
-      page.driver.submit :put, "/employees/#{employee1.id}", { employee: { id: id + 1 } }
-      # p Employee.all
-      expect(page.driver.status_code).to_not eq 200
-
-      employee1 = Employee.order("updated_at desc").first
-      expect(employee1.id).to eq id
-    end
-
   end
 
   describe "actions" do
-    context "authorized" do      
+    context "authorized" do
       it "has Show, Add new, Edit and Delete links" do
         employee1
         visit employees_path
@@ -128,7 +115,7 @@ describe "Basepack basic list" do
 
       it "without Show link and access" do
         ability.cannot :show, Employee
-      
+
         employee1
         visit employees_path
         expect(page).to have_no_selector(:link_or_button, "Show")
@@ -139,7 +126,7 @@ describe "Basepack basic list" do
 
       it "without Edit link and access" do
         ability.cannot :edit, Employee
-      
+
         employee1
         visit employees_path
         expect(page).to have_no_selector(:link_or_button, "Edit")
@@ -149,9 +136,8 @@ describe "Basepack basic list" do
       end
 
       it "without Add new link and access" do
-        pending "It should not display new without permissions to new, works with cannot :create"
-        ability.cannot :new, Employee
-      
+        ability.cannot :create, Employee
+
         visit employees_path
         expect(page).to have_no_selector(:link_or_button, "Add new")
 
@@ -161,7 +147,7 @@ describe "Basepack basic list" do
 
       it "without Delete link and permission" do
         ability.cannot :destroy, Employee
-      
+
         employee1
         visit employees_path
         expect(page).to have_no_selector(:link_or_button, "Delete")
@@ -171,7 +157,7 @@ describe "Basepack basic list" do
 
         visit employees_path
         expect(page).to have_css("tbody tr", :count => 1)
-      end      
+      end
     end
 
   end
@@ -319,7 +305,7 @@ describe "Basepack basic list" do
           field :projects
         end
       end
-      
+
       employee1.projects.build(name: 'first project') 
       employee1.projects.build(name: 'second project') 
       employee1.save!
@@ -455,55 +441,20 @@ describe "Basepack basic list" do
       expect(find('.pagination ul li:last')).to have_content("Last »")
       expect(find('.pagination ul li.active')).to have_content("2")
     end
-
-  end
-
-  describe "filters" do
-    before(:each) do
-      @employee1 = FactoryGirl.create(:employee, name: 'xxx')
-      @employee2 = FactoryGirl.create(:employee, name: 'yyy')
-      @employee3 = FactoryGirl.create(:employee, name: 'xxxx')
-    end
-
-    describe "default filter" do
-      before(:all) do
-        EmployeesController.default_query do
-          { "f[name_eq]" => "xxx" }
-        end
-      end
-
-      it "uses default filter when no search params provided" do
-        visit employees_path
-
-        expect(page).to have_content(@employee1.name)
-        expect(page).to have_no_content(@employee2.name)
-        expect(page).to have_css("tbody tr", :count => 1)
-      end
-
-      it "do not use default filter when search params provided" do
-        visit employees_path('f[name_not_eq]' => '123')
-
-        expect(page).to have_content(@employee1.name)
-        expect(page).to have_content(@employee2.name)
-        expect(page).to have_content(@employee3.name)
-      end
-    end
-
-    it "correctly filters contains" do
-      visit employees_path('f[name_cont]' => 'xxx')
-
-      expect(page).to have_css("tbody tr", :count => 2)
-      expect(page).to have_content(@employee1.name)
-      expect(page).to_not have_content(@employee2.name)
-      expect(page).to have_content(@employee3.name)
-    end
   end
 
   describe "sorting" do
+    let!(:employee1) { FactoryGirl.create(:employee, name: 'xxx') }
+    let!(:employee2) { FactoryGirl.create(:employee, name: 'yyy') }
+    let!(:employee3) { FactoryGirl.create(:employee, name: 'xxxx') }
+
     before(:each) do
-      @employee1 = FactoryGirl.create(:employee, name: 'xxx')
-      @employee2 = FactoryGirl.create(:employee, name: 'yyy')
-      @employee3 = FactoryGirl.create(:employee, name: 'xxxx')
+      RailsAdmin.config Employee do
+        list do
+          field :name
+          field :created_at
+        end
+      end
     end
 
     it "sorts by name asceding" do
@@ -521,17 +472,63 @@ describe "Basepack basic list" do
     end
 
     it "sorts by date asceding" do
+      visit employees_path
+      click_on 'Created at'
+
+      expect(page).to have_selector("tbody tr:first", employee1.created_at)
+      expect(page).to have_selector("tbody tr:nth(2)", employee2.created_at)
+      expect(page).to have_selector("tbody tr:nth(3)", employee3.created_at)
+
       visit employees_path('f[s]' => 'created_at asc')
-      expect(page).to have_selector("tbody tr:first", @employee1.created_at)
-      expect(page).to have_selector("tbody tr:nth(2)", @employee2.created_at)
-      expect(page).to have_selector("tbody tr:nth(3)", @employee3.created_at)
+      expect(page).to have_selector("tbody tr:first", employee1.created_at)
+      expect(page).to have_selector("tbody tr:nth(2)", employee2.created_at)
+      expect(page).to have_selector("tbody tr:nth(3)", employee3.created_at)
     end
 
     it "sorts by date asceding" do
       visit employees_path('f[s]' => 'created_at desc')
-      expect(page).to have_selector("tbody tr:first", @employee3.created_at)
-      expect(page).to have_selector("tbody tr:nth(2)", @employee2.created_at)
-      expect(page).to have_selector("tbody tr:nth(3)", @employee1.created_at)
+      expect(page).to have_selector("tbody tr:first", employee3.created_at)
+      expect(page).to have_selector("tbody tr:nth(2)", employee2.created_at)
+      expect(page).to have_selector("tbody tr:nth(3)", employee1.created_at)
+    end
+  end
+
+  describe "filters" do
+    let!(:employee1) { FactoryGirl.create(:employee, name: 'xxx') }
+    let!(:employee2) { FactoryGirl.create(:employee, name: 'yyy') }
+    let!(:employee3) { FactoryGirl.create(:employee, name: 'xxxx') }
+
+    describe "default filter" do
+      before(:all) do
+        EmployeesController.default_query do
+          { "f[name_eq]" => "xxx" }
+        end
+      end
+
+      it "uses default filter when no search params provided" do
+        visit employees_path
+
+        expect(page).to have_content(employee1.name)
+        expect(page).to have_no_content(employee2.name)
+        expect(page).to have_css("tbody tr", :count => 1)
+      end
+
+      it "do not use default filter when search params provided" do
+        visit employees_path('f[name_not_eq]' => '123')
+
+        expect(page).to have_content(employee1.name)
+        expect(page).to have_content(employee2.name)
+        expect(page).to have_content(employee3.name)
+      end
+    end
+
+    it "correctly filters contains" do
+      visit employees_path('f[name_cont]' => 'xxx')
+
+      expect(page).to have_css("tbody tr", :count => 2)
+      expect(page).to have_content(employee1.name)
+      expect(page).to_not have_content(employee2.name)
+      expect(page).to have_content(employee3.name)
     end
   end
 
