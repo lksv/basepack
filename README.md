@@ -3,12 +3,12 @@ Basepack
 [![Build Status](https://api.travis-ci.org/lksv/basepack.png?branch=master)](http://travis-ci.org/lksv/base_pack)
 [![Dependency Status](https://gemnasium.com/lksv/basepack.png)](https://gemnasium.com/lksv/basepack)
 
-**Basepack** is a Ruby on Rails framework for fast creating of information
+**Basepack** is a Ruby on Rails framework for quick creation of information
 systems.
 
 ## Features
 
-* Fast development of forms - generates forms for resource by short DSL metadata
+* Quick development of forms - generates forms for resource by short DSL metadata
   settings.
 * Rich set of business types support (datetime, wysiwig, tags, phone number, ...)
 * Search and filtering, saved filters
@@ -20,13 +20,16 @@ systems.
 
 ## Documentation
 
-TODO
+[Turorial](https://github.com/lksv/basepack/wiki/Tutorial)
+
+See project [wiki](https://github.com/lksv/basepack/wiki).
 
 ## Demo
 
-TODO:
-* link to running demo (heroku?)
-* link to github source
+*currently we are preparing 
+[basepace_example application](https://github.com/zorec/basepack_example)*
+
+The running application will be available at [http://basepack-example.herokuapp.com/](http://basepack-example.herokuapp.com/)
 
 ## Installation
 
@@ -210,8 +213,3 @@ originaly taken from rails-admin.
 
 [nested_form_ui](https://github.com/tb/nested_form_ui) - stylesheed and
 code for orderable was inspired by this project.
-
-## TODO
-* Generator - set proprely model inherites form ResourcesController add
-  include for imports
-* Add support of tags and wysihtml5 out of the box
