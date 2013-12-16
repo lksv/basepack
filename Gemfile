@@ -7,6 +7,7 @@ ruby '2.0.0'
 gemspec
 
 group :test, :development do
+  gem 'sqlite3'
   gem 'cancan'
   gem 'devise'
   gem 'rspec-rails'

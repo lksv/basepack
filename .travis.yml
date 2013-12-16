@@ -1,0 +1,16 @@
+bundler_args: --without development
+rvm:
+  - 2.0.0
+language: ruby
+matrix:
+  include:
+    - rvm: 2.0.0
+      env: CI_ORM=active_record CI_DB_ADAPTER=sqlite3
+  allow_failures:
+    - rvm: ruby-head
+  fast_finish: true
+before_script:
+  - cd spec/dummy_app
+  - bundle install
+  - bundle exec rake db:create db:migrate
+  - cd ../../
