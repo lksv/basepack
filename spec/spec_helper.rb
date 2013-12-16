@@ -53,7 +53,7 @@ RSpec.configure do |config|
   # end
 
 
-  config.include LepidloHelper #, type: :feature
+  config.include BasepackHelper #, type: :feature
 end
 
 

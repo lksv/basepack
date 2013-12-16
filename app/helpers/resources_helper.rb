@@ -30,7 +30,7 @@ module ResourcesHelper
     content_for :page_title do
       haml_tag :small, html_escape(title1)
       haml_concat html_escape(title2) if title2
-      if Lepidlo::Settings.help.title and options[:help] != false
+      if Basepack::Settings.help.title and options[:help] != false
         haml_tag "small.help" do
           haml_tag :a, href: help_path(options[:help] || title1.parameterize), title: "Nápověda" do
             haml_tag "i.icon-question-sign"
@@ -44,7 +44,7 @@ module ResourcesHelper
   end
 
   def model_config(resource_class)
-    Lepidlo::Utils.model_config(resource_class)
+    Basepack::Utils.model_config(resource_class)
   end
 
 end

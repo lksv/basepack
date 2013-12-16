@@ -25,7 +25,7 @@
 
     :javascript
       jQuery(function($) {
-        new Lepidlo.QueryForm($("#complex-filters-box"), $("#complex-filters-menu")).setup(#{form.setup.to_json});
+        new Basepack.QueryForm($("#complex-filters-box"), $("#complex-filters-menu")).setup(#{form.setup.to_json});
       });
 
     .modal-footer
@@ -36,7 +36,7 @@
         = button_tag class: 'btn', name: 'edit_ql', data: {"remote-form" => "parent=form", "remote-target" => "parent=.form-query"} do
           %i.icon-pencil
           =I18n.t('misc.modify_query')
-      - if Lepidlo::Settings.filters.model_name and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
+      - if Basepack::Settings.filters.model_name and can?(:create, Basepack::Settings.filters.model_name.constantize)
         = hidden_field_tag 'filter_name'
         = button_tag class: 'btn', id: 'filter-add', title: I18n.t('misc.save_filter') do
           %i.icon-plus

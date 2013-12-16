@@ -2,11 +2,11 @@
 - classes << ' btn-danger' if url_params.present? and (url_params.keys != ["f"] or url_params["f"].keys != ["s"]) # "f[s]" is OK
 - link_data = { toggle: "ajax-modal", params: url_params, width: "600px", backdrop: "static", "modal-overflow" => true, tabindex: "-1" }
 
-- if Lepidlo::Settings.filters.model_name and can?(:create, Lepidlo::Settings.filters.model_name.constantize)
+- if Basepack::Settings.filters.model_name and can?(:create, Basepack::Settings.filters.model_name.constantize)
   = link_to url, class: classes, data: link_data do
     %i.icon-search
     Filtr
-  - filters = Lepidlo::Settings.filters.model_name.constantize.active.where(filter_type: resource_class.to_s).to_a
+  - filters = Basepack::Settings.filters.model_name.constantize.active.where(filter_type: resource_class.to_s).to_a
   - if filters.present?
     %button{type: "button", class: classes + ' dropdown-toggle', 'data-toggle' => "dropdown"}
       %span{class: "caret"}

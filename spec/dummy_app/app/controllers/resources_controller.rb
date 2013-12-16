@@ -1,2 +1,2 @@
-class ResourcesController < Lepidlo::BaseController
+class ResourcesController < Basepack::BaseController
 end

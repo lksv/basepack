@@ -9,7 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require lepidlo
- *= require lepidlo_and_overrides
+ *= require basepack
+ *= require basepack_and_overrides
  *= require_tree .
  */

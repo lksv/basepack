@@ -8,7 +8,7 @@ require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
-require "lepidlo"
+require "basepack"
 
 module Dummy
   class Application < Rails::Application

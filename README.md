@@ -1,7 +1,7 @@
-Lepidlo
+Basepack
 =======
 
-**Lepidlo** is a Ruby on Rails framework for fast creating of information
+**Basepack** is a Ruby on Rails framework for fast creating of information
 systems.
 
 ## Features
@@ -30,7 +30,7 @@ TODO:
 
 In your `Gemfile`, add the following dependencies:
 
-    gem "lepidlo",      git: "https://github.com/lksv/lepidlo.git"
+    gem "basepack",      git: "https://github.com/lksv/basepack.git"
 
 Run:
 
@@ -38,9 +38,9 @@ Run:
 
 And then run:
 
-    rails g lepidlo:install
+    rails g basepack:install
 
-This generator will install **Lepidlo**, 
+This generator will install **Basepack**, 
 [Devise](https://github.com/plataformatec/devise) and
 [CanCan](https://github.com/ryanb/cancan.git) and following gems
 * inherited\_resources
@@ -121,18 +121,18 @@ class Task < ActiveRecord::Base
   belongs_to :user
 end
 ```
-IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of **Lepidlo**, see [Rails documentation](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations) for explaination.
+IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of **Basepack**, see [Rails documentation](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations) for explaination.
 
 
 Another difference is controllers which inherit from ResourcesController. Full inheritance hierarchy looks this way:
 ```
-ProjectsController < ResourcesController < Lepidlo::BaseController < InheritedResources::Base
+ProjectsController < ResourcesController < Basepack::BaseController < InheritedResources::Base
 ```
 
 
 If you are not familiar with [InheritedResources](https://github.com/josevalim/inherited_resources), take a look at it.  
 
-Lepidlo::BaseController adds to it:
+Basepack::BaseController adds to it:
 * strong parameters handling
 * ```options``` method
 * ```taggings``` method
@@ -165,7 +165,7 @@ in your projects controller. You can override these implicit settings by creatin
 
 ## Basic Architecture Background
 
-**Lepidlo** is build on the top of several gems:
+**Basepack** is build on the top of several gems:
 * [Device](https://github.com/plataformatec/devise) for Authentication
 * [CanCan](https://github.com/ryanb/cancan.git) for Authorization
 * [InheritedResources](https://github.com/josevalim/inherited_resources)
@@ -175,20 +175,20 @@ in your projects controller. You can override these implicit settings by creatin
 * [nested-form](https://github.com/ryanb/nested_form) for handling
   multiple models in a single form
 * [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass)
-* ...[and others](lepidlo.gemspec)
+* ...[and others](basepack.gemspec)
 
-Althoug you can use **Lepidlo** without knowing anything of the
+Althoug you can use **Basepack** without knowing anything of the
 background architecture it is recommended to get to know at least with:
 [InheritedResources](https://github.com/josevalim/inherited_resources),
 [CanCan](https://github.com/ryanb/cancan.git) and
 [Device](https://github.com/plataformatec/devise). 
 
-**Lepidlo** was also
+**Basepack** was also
 inspired by [RailsAdmin](https://github.com/sferik/rails_admin) and
 still using [RailsAdmin
 DSL](https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL) for defining the forms.
 
-TODO - explain the concept. Class ```Lepidlo::Form::Base``` and ```Lepidlo::Form::Fields::Base```.
+TODO - explain the concept. Class ```Basepack::Form::Base``` and ```Basepack::Form::Fields::Base```.
 Controller action as ```<form_name>_form_for``` and ```form_factory_rails_admin```.
 
 ## Customining Views

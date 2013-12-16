@@ -75,7 +75,7 @@ module FormHelper
   def form_sort_link(search, field, url_params = nil, html_options = {})
     raise TypeError, "First argument must be a Ransack::Search!" unless Ransack::Search === search
 
-    columns = Lepidlo::Utils.field_sortable_columns(field)
+    columns = Basepack::Utils.field_sortable_columns(field)
     return field.label.to_s if columns.blank?
 
     current = Hash[search.sorts.map {|s| [ s.name, s.dir == 'desc' ] }]
