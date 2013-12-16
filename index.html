@@ -38,246 +38,745 @@
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
 
-        <h1>
-<a name="basepack" class="anchor" href="#basepack"><span class="octicon octicon-link"></span></a>Basepack</h1>
+        <h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<p><a href="http://travis-ci.org/lksv/base_pack"><img src="https://api.travis-ci.org/lksv/basepack.png?branch=master" alt="Build Status"></a>
-<a href="https://gemnasium.com/lksv/basepack"><img src="https://gemnasium.com/lksv/basepack.png" alt="Dependency Status"></a></p>
+<p>This tutorial is designed for learning basepack which is based on Ruby on Rails framework. So previous experience with Ruby on Rails is necessary but you do not need to be an expert. There is the <a href="https://github.com/lksv">README</a> for shorter introduction and demonstration of basepack.  </p>
 
-<p><strong>Basepack</strong> is a Ruby on Rails framework for quick creation of information
-systems.</p>
+<p>Basepack is a collection of gems (which are useful in any application) tied together with additional features on top of it. 
+Installing basepack's gem really enhances the power of Ruby on Rails. And remember you can still use everything what development in Ruby on Rails provides. For example use basepack's features only in parts of application.</p>
 
-<h2>
-<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+<p>For easy start it is highly recommended that you are familiar with gems below (you have used them at least in one application) because these gems are essential part of basepack. Although there is no need to worry if you do not know them you will be supplied with additional links to related sections through all tutorial. </p>
 
 <ul>
-<li>Quick development of forms - generates forms for resource by short DSL metadata
-settings.</li>
-<li>Rich set of business types support (datetime, wysiwig, tags, phone number, ...)</li>
-<li>Search and filtering, saved filters</li>
-<li>Automatic form validation</li>
-<li>Import and Export functionality for resource</li>
-<li>Easy way to create custom actions</li>
-<li>Authentication (via <a>Devise</a>)</li>
-<li>Authorization (via <a href="https://github.com/ryanb/cancan.git">Cancan</a>)</li>
-</ul><h2>
-<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
-
-<p><a href="https://github.com/lksv/basepack/wiki/Tutorial">Turorial</a></p>
-
-<p>See project <a href="https://github.com/lksv/basepack/wiki">wiki</a>.</p>
-
-<h2>
-<a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
-
-<p><em>currently we are preparing 
-<a href="https://github.com/zorec/basepack_example">basepace_example application</a></em></p>
-
-<p>The running application will be available at <a href="http://basepack-example.herokuapp.com/">http://basepack-example.herokuapp.com/</a></p>
-
-<h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
-
-<p>In your <code>Gemfile</code>, add the following dependencies:</p>
-
-<pre><code>gem "basepack",      git: "https://github.com/lksv/basepack.git"
-</code></pre>
-
-<p>Run:</p>
-
-<pre><code>bundle install
-</code></pre>
-
-<p>And then run:</p>
-
-<pre><code>rails g basepack:install
-</code></pre>
-
-<p>This generator will install <strong>Basepack</strong>, 
-<a href="https://github.com/plataformatec/devise">Devise</a> and
-<a href="https://github.com/ryanb/cancan.git">CanCan</a> and following gems</p>
+<li><a>Devise</a></li>
+<li><a href="https://github.com/ryanb/cancan.git">Cancan</a></li>
+<li>
+<a href="https://github.com/sferik/rails_admin">Rails_admin</a> (especially <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">rails_admin DSL</a>)</li>
+<li><a href="https://github.com/josevalim/inherited_resources">InheritedResources</a></li>
+<li><a href="https://github.com/plataformatec/simple_form">SimpleForm</a></li>
+<li><a href="https://github.com/ryanb/nested_form">Nested-form</a></li>
+</ul><p>And being familiar with these may also help:</p>
 
 <ul>
-<li>inherited_resources</li>
-<li>ransack</li>
-<li>kaminari</li>
-<li>simple_form</li>
-<li>settingslogic</li>
-<li>twitter-bootstrap-rails</li>
-<li>bootbox-rails</li>
-</ul><p>if you don't already have them installed.</p>
+<li><a href="https://github.com/activerecord-hackery/ransack">Ransack</a></li>
+<li><a href="https://github.com/amatsuda/kaminari">Kaminari</a></li>
+<li><a href="https://github.com/thomas-mcdonald/bootstrap-sass">bootstrap-sass</a></li>
+</ul><p>The basepack requires rails 4 and ruby 2 or higher, these versions were used in this tutorial.</p>
 
-<p>Define inital ability in <code>app/models/ability.rb</code>. You can put <code>can
-:manage, :all</code> to enable anybody to perform any
-action on any object. See more on <a href="https://github.com/ryanb/cancan/wiki/Defining-Abilities">CanCan
-wiki</a>.</p>
+<div class="highlight highlight-console"><pre><span class="go">rails -v</span>
+<span class="go">ruby -v</span>
+</pre></div>
 
-<p>Migrate your database and start the server:</p>
+<blockquote>
+<p>Rails 4.0.0<br>
+ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
+</blockquote>
 
-<pre><code>rake db:migrate
-rails s
-</code></pre>
+
 
 <h2>
-<a name="generator-usage" class="anchor" href="#generator-usage"><span class="octicon octicon-link"></span></a>Generator usage</h2>
+<a name="first-application-with-basepack" class="anchor" href="#first-application-with-basepack"><span class="octicon octicon-link"></span></a>First application with basepack</h2>
 
-<p>You can easily generate new resource (scaffold for the resource) by
-<code>rails g scaffold NAME [field[:type][:index] field[:type][:index]] [options]</code>.
-E.g.</p>
+<p>In this tutorial you will create issue tracking application, let's start by creating new rails application.</p>
 
-<pre><code>rails g scaffold Project name short_description description:text start:date finish:date
-rails g scaffold Task name description:text project:references user:references
-</code></pre>
+<div class="highlight highlight-console"><pre><span class="go">rails new basepack_tutorial</span>
+<span class="go">cd basepack_tutorial</span>
+</pre></div>
 
-<p>Then 
-<code>rake db:migrate</code>
-<code>rails s</code></p>
+<p>Then add basepack gem to the application and run bundle to install it with all its dependancies.</p>
 
-<p>Notice that files for views are not generated (directories appp/views/projects and appp/views/tasks are empty), but all RESTful actions are working correctly. It is because views iherit default structure and you can easily override these defaults by creating appropriate files.</p>
+<blockquote>
+<p>Gemfile:</p>
 
-<h2>
-<a name="basic-usage" class="anchor" href="#basic-usage"><span class="octicon octicon-link"></span></a>Basic usage</h2>
+<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'basepack'</span>
+</pre></div>
+</blockquote>
 
-<p>After scaffolding your resources, you can customize fields used in individual actions by <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">Railsdmin DSL</a></p>
+<div class="highlight highlight-console"><pre><span class="go">bundle install</span>
+</pre></div>
 
-<p>File <code>app/models/project.rb</code>:</p>
+<p>This will create a new basepack generator for us let's use it right away.</p>
 
-<pre><code>class Project &lt; ActiveRecord::Base
-  has_many :tasks, inverse_of: :project
-  validates :name, :short_description, presence: true
+<div class="highlight highlight-console"><pre><span class="go">rails g basepack:install</span>
+</pre></div>
 
-  rails_admin do
+<p>The basepack generator notices the absence of cancan and devise files and offers you running generator for them as well.</p>
+
+<p>Then it asks for confirmation to remove application.html.erb in order to use own application.html.haml with related partials (header, navigation, etc.). You can see how it looks in demo application.</p>
+
+
+
+
+
+
+
+
+
+<p>Here is the summary of what generator did:</p>
+
+<ul>
+<li>Added assets to <code>application.js</code> manifest file</li>
+<li>Created new stylesheet <code>app/assets/stylesheets/basepack_and_overrides.css</code>
+</li>
+<li>Created new ability file <code>app/models/ability.rb</code>
+</li>
+<li>Added permissions for Filter to ability file</li>
+<li>Added gems to <code>Gemfile</code>
+</li>
+<li>Created <a href="https://github.com/binarylogic/settingslogic">settings file</a> <code>config/basepack-settings.yml</code>
+</li>
+<li>Created new models Import and Filter and database tables for them in migrations</li>
+<li>Created localization file <code>config/locales/basepack.en.yml</code>
+</li>
+<li>Created new resources controller</li>
+<li>Replaced <code>application.html.erb</code> </li>
+<li>Created partials used in basepack's template</li>
+<li>Added new <a href="http://guides.rubyonrails.org/routing.html#routing-concerns">concern</a> to routes</li>
+<li>Created initializers for rails_admin and dragonfly</li>
+<li>Created new filters controller</li>
+</ul><p>Last step in installation is to define inital ability in <code>app/models/ability.rb</code>. For now you can allow anybody to perform any action and then migrate database.</p>
+
+<blockquote>
+<p>app/models/ability.rb:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">can</span> <span class="ss">:manage</span><span class="p">,</span> <span class="ss">:all</span>
+</pre></div>
+</blockquote>
+
+<div class="highlight highlight-console"><pre><span class="go">rake db:migrate</span>
+</pre></div>
+
+<p>Everything is set up and ready to be used. Our application will need to track projects, which will have a lot of issues (has_many). Use scaffolding to create these resources. Functionality of scaffolding has been modified by basepack.</p>
+
+<div class="highlight highlight-console"><pre><span class="go">rails g scaffold Project name description:text start:date finish:date</span>
+<span class="go">rails g scaffold Issue name description:text status:string resolution:string project:references user:references</span>
+</pre></div>
+
+<p>Then migrate the database and run server.</p>
+
+<div class="highlight highlight-console"><pre><span class="go">rake db:migrate</span>
+<span class="go">rails s</span>
+</pre></div>
+
+
+
+<p>In comparision with basic scaffolding it includes importing, exporting of resources, pagination through records, breadcrumb table columns are sortable. It supports searching and you can save filters (more about filters later).</p>
+
+
+
+<p>After scaffolding your resources, you can customize fields used in individual actions by <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">Railsdmin DSL</a>.</p>
+
+<blockquote>
+<p>app/models/project.rb:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Project</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:issues</span><span class="p">,</span> <span class="n">inverse_of</span><span class="p">:</span> <span class="ss">:project</span>
+</pre></div>
+</blockquote>
+
+<p>rails_admin do
     list do
+      # only these fields(name, finish) will be displayed in this order
       field :name
-      field :short_description
       field :finish
-    end
+    end</p>
 
-    edit do
-      field :name
-      field :short_description
-      field :description, :wysihtml5
-      field :start
-      field :finish
-     end 
+<pre><code>edit do
+  field :name
+  # add rich text editor as a field type
+  field :description, :wysihtml5
+  field :start
+  field :finish
+ end 
 
-     show do
-       field :name
-       field :description
-       field :start
-       field :finish
-     end 
-  end 
+ show do
+   field :name
+   field :description
+   field :start
+   field :finish
+ end 
+</code></pre>
+
+<p>end 
+end</p>
+
+<pre><code>
+
+&gt; app/models/issue.rb:
+```ruby
+class Issue &lt; ActiveRecord::Base
+  belongs_to :project, inverse_of: :issues
 end
 </code></pre>
 
-<p>File <code>app/models/task.rb</code></p>
 
-<pre><code>class Task &lt; ActiveRecord::Base
-  belongs_to :project, inverse_of: :tasks
-  belongs_to :user
-end
-</code></pre>
 
-<p>IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of <strong>Basepack</strong>, see <a href="http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations">Rails documentation</a> for explaination.</p>
+
+
+<p>IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of <strong>basepack</strong>, see <a href="http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations">Rails documentation</a> for explaination.</p>
+
+<p>Notice that files for views are not generated (directories appp/views/projects and appp/views/issues are empty), but all RESTful(index, show, new, create, edit, update, destroy) actions are working correctly. It is because views iherit default look and you can easily override these defaults by creating appropriate files.</p>
 
 <p>Another difference is controllers which inherit from ResourcesController. Full inheritance hierarchy looks this way:</p>
 
-<pre><code>ProjectsController &lt; ResourcesController &lt; Basepack::BaseController &lt; InheritedResources::Base
-</code></pre>
+<div class="highlight highlight-ruby"><pre><span class="no">ProjectsController</span> <span class="o">&lt;</span> <span class="no">ResourcesController</span> <span class="o">&lt;</span> <span class="no">Basepack</span><span class="o">::</span><span class="no">BaseController</span> <span class="o">&lt;</span> <span class="no">InheritedResources</span><span class="o">::</span><span class="no">Base</span>
+</pre></div>
 
-<p>If you are not familiar with <a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>, take a look at it.  </p>
+<p>If you are not familiar with <a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>, now is a time to take a look at <a href="https://github.com/josevalim/inherited_resources">it</a>.  </p>
 
-<p>Basepack::BaseController adds to it:</p>
+<p><a href="https://github.com/lksv/basepack/blob/master/app/controllers/basepack/base_controller.rb">Basepack::BaseController</a> adds to inherited resources:</p>
 
 <ul>
-<li>strong parameters handling</li>
+<li>defining strong parameters</li>
 <li>
 <code>options</code> method</li>
 <li>
 <code>taggings</code> method</li>
 <li>
 <code>build_resource</code> method</li>
-</ul><p>You do NOT need to define permitted parameters anymore. It is defined by RailsAdmin DSL, more precisely by what you set as visible in edit action. 
-So file <code>app/models/project.rb</code>:</p>
+<li>...</li>
+</ul><p>It will be disscussed later in tutorial except defining strong parameters. You just neeed to know that you don't have to define permitted parameters anymore. It is defined by RailsAdmin DSL, more precisely by what you set as visible in edit action. </p>
 
-<pre><code>class Project &lt; ActiveRecord::Base
-  ...
-    edit do
-      field :name
-      field :short_description
-      field :description, :wysihtml5
-      field :start
-      field :finish
-     end 
-  ...
-end
-</code></pre>
+<blockquote>
+<p>app/models/project.rb:</p>
 
-<p>implicitly sets permitted params which could be written as:</p>
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Project</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+    <span class="n">edit</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="ss">:name</span>
+      <span class="n">field</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:wysihtml5</span>
+      <span class="n">field</span> <span class="ss">:start</span>
+      <span class="n">field</span> <span class="ss">:finish</span>
+     <span class="k">end</span> 
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+<span class="k">end</span>
+</pre></div>
+</blockquote>
 
-<pre><code>def permitted_params
-  params.permit(:project =&gt; [:name, :short_description, :description, :start, :finish])
-end
-</code></pre>
+<p>This implicitly sets permitted params which could be written as follows:</p>
 
-<p>in your projects controller. You can override these implicit settings by creating this method in case you want it.</p>
+<div class="highlight highlight-ruby"><pre><span class="k">def</span> <span class="nf">permitted_params</span>
+  <span class="n">params</span><span class="o">.</span><span class="n">permit</span><span class="p">(</span><span class="ss">:project</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:start</span><span class="p">,</span> <span class="ss">:finish</span><span class="o">]</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+
+<p>You can override these implicit settings by creating this method in case you want it.</p>
 
 <h2>
-<a name="basic-architecture-background" class="anchor" href="#basic-architecture-background"><span class="octicon octicon-link"></span></a>Basic Architecture Background</h2>
+<a name="nested-resource" class="anchor" href="#nested-resource"><span class="octicon octicon-link"></span></a>Nested Resource</h2>
 
-<p><strong>Basepack</strong> is build on the top of several gems:</p>
+<p>As you can read in <a href="http://guides.rubyonrails.org/routing.html#nested-resources">RailsGuides</a> nested resource is a way how to express parent-children relationship in routes.
+In our application it make sense to nest issues to projects because they are logical children of projects.</p>
+
+<blockquote>
+<p>config/routes.rb:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">resources</span> <span class="ss">:projects</span><span class="p">,</span> <span class="ss">concerns</span><span class="p">:</span> <span class="ss">:resourcable</span> <span class="k">do</span>
+  <span class="n">resources</span> <span class="ss">:issues</span><span class="p">,</span> <span class="ss">concerns</span><span class="p">:</span> <span class="ss">:resourcable</span>
+<span class="k">end</span>
+</pre></div>
+</blockquote>
+
+<p>You can use <a href="https://github.com/josevalim/inherited_resources#belongs-to">belongs_to</a> to reflect this relationship in controller. And it ensures that:</p>
 
 <ul>
-<li>
-<a href="https://github.com/plataformatec/devise">Device</a> for Authentication</li>
-<li>
-<a href="https://github.com/ryanb/cancan.git">CanCan</a> for Authorization</li>
-<li>
-<a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>
-makes your controllers inherit all restful actions.</li>
-<li>
-<a href="https://github.com/plataformatec/simple_form">SimpleForm</a> for
-creating Forms.</li>
-<li>
-<a href="https://github.com/ryanb/nested_form">nested-form</a> for handling
-multiple models in a single form</li>
-<li><a href="https://github.com/thomas-mcdonald/bootstrap-sass">bootstrap-sass</a></li>
-<li>...<a href="basepack.gemspec">and others</a>
-</li>
-</ul><p>Althoug you can use <strong>Basepack</strong> without knowing anything of the
-background architecture it is recommended to get to know at least with:
-<a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>,
-<a href="https://github.com/ryanb/cancan.git">CanCan</a> and
-<a href="https://github.com/plataformatec/devise">Device</a>. </p>
+<li>nested resource is really present in parent resource</li>
+<li>you have permission to access not just nested resource, but parent resource as well</li>
+</ul><p>For example when an user enters url /projects/1/issues/2. In that case issue with id 2 must belong to project with id 1. 
+And it checks user permissions for project with id 1 because it could be a security vulnerability if user could read issues on project he has no permitted access.</p>
 
-<p><strong>Basepack</strong> was also
-inspired by <a href="https://github.com/sferik/rails_admin">RailsAdmin</a> and
-still using <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">RailsAdmin
-DSL</a> for defining the forms.</p>
+<p>Option <a href="https://github.com/josevalim/inherited_resources#optional-belongs-to">optional</a> allows to display issues independantly of parent resource. </p>
 
-<p>TODO - explain the concept. Class <code>Basepack::Form::Base</code> and <code>Basepack::Form::Fields::Base</code>.
-Controller action as <code>&lt;form_name&gt;_form_for</code> and <code>form_factory_rails_admin</code>.</p>
+<blockquote>
+<p>app/controllers/issues_controller.rb:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">IssuesController</span> <span class="o">&lt;</span> <span class="no">ResourcesController</span>
+  <span class="n">belongs_to</span> <span class="ss">:project</span><span class="p">,</span> <span class="ss">optional</span><span class="p">:</span> <span class="kp">true</span>
+<span class="k">end</span>
+</pre></div>
+</blockquote>
+
+<p>There is one more thing related to nested resource. When you are creating new project you may also want to create new issues. You need to explicitly allow this with <a href="http://api.rubyonrails.org/classes/ActiveRecord/NestedAttributes/ClassMethods.html#method-i-accepts_nested_attributes_for">accepts_nested_attributes_for</a> method.</p>
+
+<blockquote>
+<p>app/models/project.rb:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Project</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">accepts_nested_attributes_for</span> <span class="ss">:issues</span>
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+    <span class="n">edit</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="ss">:name</span>
+      <span class="n">field</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:wysihtml5</span>
+      <span class="n">field</span> <span class="ss">:start</span>
+      <span class="n">field</span> <span class="ss">:finish</span>
+      <span class="n">field</span> <span class="ss">:issues</span> <span class="c1"># display nested resource</span>
+     <span class="k">end</span> 
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+<span class="k">end</span>
+</pre></div>
+</blockquote>
+
+
 
 <h2>
-<a name="customining-views" class="anchor" href="#customining-views"><span class="octicon octicon-link"></span></a>Customining Views</h2>
+<a name="project-show-page" class="anchor" href="#project-show-page"><span class="octicon octicon-link"></span></a>Project show page</h2>
+
+<p>Suppose I want to see on project show page all issues associated with that project. To do that you can customize default show page by creating appropriate view file. </p>
+
+<p>You can use <a href="https://github.com/project" class="user-mention">@project</a> instance variable to output project's information or better render partials which will display project as it was defined in rails_admin's show block.</p>
+
+<blockquote>
+<p>app/views/projects/show.html.erb:</p>
+
+<div class="highlight highlight-rhtml"><pre><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'header'</span> <span class="cp">%&gt;</span>
+<span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'show'</span> <span class="cp">%&gt;</span>
+</pre></div>
+</blockquote>
+
+
+
+<p>Usually you want to display content the way it is defined in rails_admin <a href="https://github.com/sferik/rails_admin/wiki#sections">sections</a> (e.g. show, list, edit, ...). There are defined helper methods for some of these sections
+which will use configuration from rails_admin block.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">edit_form_for</span><span class="p">(</span><span class="n">resource_or_chain</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{})</span>
+<span class="n">show_form_for</span><span class="p">(</span><span class="n">resource_or_chain</span><span class="p">)</span>
+<span class="n">list_form_for</span><span class="p">(</span><span class="n">query_form</span><span class="p">)</span>
+<span class="n">query_form_for</span><span class="p">(</span><span class="n">class_or_chain</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{})</span>
+<span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</pre></div>
+
+<p>These methods returns content of section for specific resource let's call it instnce of form. Actually it is a instance of <code>Basepack::Forms</code> class. 
+Resource chain is a sequence (array) of resources in case of nested resources. You can see this sequence in a breadcrumb and you have also access to <code>association_chain</code> which is an empty array in project's show page. But if projects were nested resource for users e.g. url organization/3/users/2/projects/1 than <code>association_chain</code> would contain third organization object and second user.</p>
+
+<p>In your views, you will get the following helpers:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">resource</span>                       <span class="c1">#=&gt; @project</span>
+<span class="n">collection</span>                     <span class="c1">#=&gt; @projects (with pagination)</span>
+<span class="n">collection_without_pagination</span>  <span class="c1">#=&gt; @projects (without pagination)</span>
+<span class="n">resource_class</span>                 <span class="c1">#=&gt; Project</span>
+<span class="n">association_chain</span>              <span class="c1">#=&gt; array of resources</span>
+</pre></div>
+
+<p>As you might expect, collection, collection_without_pagination (@projects instance variable) is only available on index actions.</p>
+
+<p>That means you can use <code>show_form_for</code> to get the same content as in show page of every issue in current project. For displaying you have to use <code>form_render</code> because <code>render</code> does not know how to render instances of basepack forms (in this case  <code>Basepack::Forms::Show</code> object). </p>
+
+<blockquote>
+<p>app/views/projects/show.html.erb:</p>
+
+<div class="highlight highlight-rhtml"><pre><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'header'</span> <span class="cp">%&gt;</span>
+<span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'show'</span> <span class="cp">%&gt;</span>
+</pre></div>
+</blockquote>
+
+<h3>
+<a name="issues" class="anchor" href="#issues"><span class="octicon octicon-link"></span></a>Issues</h3>
+
+<p>&lt;% resource.issues.each do |issue| %&gt;
+  &lt;%= form_render show_form_for(issue) %&gt;
+&lt;% end %&gt;</p>
+
+<pre><code>
+Furthermore these helpers for retrieving content of forms have pair variant without ```_for``` at the end which already contains retrieved content in appropriate actions. For example in projects show page ```show_form``` is equivalent to show_form_for(resource).
+```ruby
+edit_form
+show_form
+list_form
+query_for
+...
+</code></pre>
+
+
+
+
 
 <h2>
-<a name="customizing-form-view" class="anchor" href="#customizing-form-view"><span class="octicon octicon-link"></span></a>Customizing Form View</h2>
+<a name="default-query" class="anchor" href="#default-query"><span class="octicon octicon-link"></span></a>Default query</h2>
 
-<h1>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h1>
+<p>Imagine that there were many (hundred) projects especially these which already ended and every time you enter project index you see these passed projects and you have to search within them. It would be better to change default query which is currently just display all projects in order as they are in database (most of the time it is order in which they were created).</p>
 
-<p>This project rocks and uses LGPL-LICENSE.</p>
+<p>And if you are familiar with <a href="https://github.com/activerecord-hackery/ransack">ransack</a> it is really simple to change this default query. You just need to call method <code>default_query</code> in appropriate controller, which returns a hash of parameters for search. 
+Basepack uses ransack under hood uses, but you have to use <code>f</code> as a default param key for search (instead of <code>q</code>) and for searching use <code>f[s]</code>.</p>
 
-<h1>
-<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h1>
+<blockquote>
+<p>app/controllers/projects_controller.rb:</p>
 
-<p><a href="https://github.com/sferik/rails_admin">RailsAdmin</a> field forms was
-originaly taken from rails-admin.</p>
+<pre><code>class ProjectsController &lt; ResourcesController
+  default_query do
+    { # display projects which haven't ended yet (end today or later)
+      "f[end_gteq_null]" =&gt; Date.today,
+</code></pre>
+</blockquote>
 
-<p><a href="https://github.com/tb/nested_form_ui">nested_form_ui</a> - stylesheed and
-code for orderable was inspired by this project.</p>
+<pre><code>  # sorted by start of project 
+  "f[s]" =&gt; 'start asc'
+}
+</code></pre>
+
+<p>end
+end</p>
+
+<pre><code>
+In case you have not worked with ransack you can watch [railscast episode](http://railscasts.com/episodes/370-ransack) by Ryan Bates for great introduction.
+
+## Tagged issues
+In this chapter you will give user possibility to add tags to issues with [acts-as-taggable-on](https://github.com/mbleigh/acts-as-taggable-on) gem so first step is straightforward.
+
+&gt; Gemfile:
+```ruby
+gem "acts-as-taggable-on"
+</code></pre>
+
+
+
+<p>Then follow post installation <a href="https://github.com/mbleigh/acts-as-taggable-on#post-installation">instructions</a> and create migration by generator and migrate the database: </p>
+
+<div class="highlight highlight-console"><pre><span class="go">rails g acts_as_taggable_on:migration</span>
+<span class="go">rake db:migrate</span>
+</pre></div>
+
+<p>The created model is located in different namespace which means basepack will not detect it automatically and you have to include it manually in the rails_admin configuration file.</p>
+
+<blockquote>
+<p>config/initializers/rails_admin.rb:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">config</span><span class="o">.</span><span class="n">included_models</span> <span class="o">=</span> <span class="no">Basepack</span><span class="o">::</span><span class="no">Utils</span><span class="o">.</span><span class="n">detect_models</span> <span class="o">+</span> <span class="o">[</span><span class="s1">'ActsAsTaggableOn::Tag'</span><span class="o">]</span>
+</pre></div>
+
+<p>Mark issues model as taggabale with <code>acts_as_taggable</code> which will provide new methods for working with tags as specified in <a href="https://github.com/mbleigh/acts-as-taggable-on#usage">usage section</a>. </p>
+</blockquote>
+
+<p>Especially interesting is method <code>tag_list=</code> for setting tags and <code>tag_list</code> for retrieving tags. It is enough just to display tag_list field and you are done.
+Actually almost done because associations added by <code>acts_as_taggable</code> to make it work are also displayed as fields (Tags, Base list) so can exclude them at beginning.</p>
+
+<blockquote>
+<p>app/models/issues.rb</p>
+
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Issue</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+  <span class="n">acts_as_taggable</span>
+</pre></div>
+</blockquote>
+
+<p>rails_admin do
+    exclude_fields :base_tags, :tags</p>
+
+<pre><code># display tags in show actions
+show do
+  include_fields :tag_list
+end
+
+edit do
+  # tags entered in comma separated syntax
+  field :tag_list
+end
+</code></pre>
+
+<p>end
+end</p>
+
+<pre><code>
+To make it even better render the tag_list field with basepack's [partial](https://github.com/lksv/basepack/blob/master/app/views/forms/edit/_tag_list_with_suggestions.html.haml?source=c) which uses select2 and provides autocompletion by making ajax calls to taggings method of particular controller (IssuesController in this case)
+
+&gt; app/models/issues.rb
+```ruby 
+  edit do
+    # tags entered in comma separated syntax
+    field :tag_list
+  end
+</code></pre>
+
+<p>If you want you can enable actions (new, edit, show, ...) for ActsAsTaggableOn::Tag model just add routes for these actions.</p>
+
+<blockquote>
+<p>routes.rb</p>
+
+<div class="highlight highlight-ruby"><pre>  <span class="n">resources</span> <span class="ss">:acts_as_taggable_on_tags</span><span class="p">,</span> <span class="ss">:filters</span><span class="p">,</span> <span class="ss">concerns</span><span class="p">:</span> <span class="ss">:resourcable</span>
+</pre></div>
+</blockquote>
+
+<p>And create controller to properly handle all routes.</p>
+
+<blockquote>
+<p>app/controllers/acts_as_taggable_on_tags_controller.rb</p>
+
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">ActsAsTaggableOnTagsController</span> <span class="o">&lt;</span> <span class="no">ResourcesController</span>
+  <span class="c1"># set default model (Tag is in different namespace) see https://github.com/josevalim/inherited_resources#overwriting-defaults</span>
+  <span class="n">defaults</span> <span class="n">resource_class</span><span class="p">:</span> <span class="no">ActsAsTaggableOn</span><span class="o">::</span><span class="no">Tag</span>
+<span class="k">end</span>
+</pre></div>
+</blockquote>
+
+<h2>
+<a name="dynamicly-showed-and-hidden-attributes" class="anchor" href="#dynamicly-showed-and-hidden-attributes"><span class="octicon octicon-link"></span></a>Dynamicly showed and hidden attributes</h2>
+
+<p>Sometimes you need to hide or display field depending on the entered value of other field in new/edit form. 
+When you take a look at this table you will see that it is exactly what you need right now. Because resolution can be added only to closed bugs (with resolved or verified status) as you can see in this table.</p>
+
+<table>
+<thead><tr>
+<td>
+        <h4>
+<a name="status" class="anchor" href="#status"><span class="octicon octicon-link"></span></a>Status</h4>
+      </td>
+
+      <td>
+        <h4>
+<a name="resolution" class="anchor" href="#resolution"><span class="octicon octicon-link"></span></a>Resolution</h4>
+      </td>
+    </tr></thead>
+<tbody>
+<tr>
+<td colspan="2">Open bugs</td>
+  </tr>
+<tr>
+<td>
+      <dl>
+<dd>Unconfirmed</dd>
+        <dd>New</dd>
+        <dd>Assigned</dd>
+        <dd>Reopened</dd>
+        <dd>Ready</dd>
+      </dl>
+</td>
+
+    <td>
+      No resolution yet.
+    </td>
+  </tr>
+<tr>
+<td colspan="2">Closed bugs</td>
+  </tr>
+<tr>
+<td>
+      <dl>
+<dd>Resolved</dd>
+        <dd>Verified</dd>
+      </dl>
+</td>
+
+    <td>
+      <dl>
+<dd>Fixed</dd>
+        <dd>Invalid</dd>
+        <dd>Wontfix</dd>
+        <dd>Duplicate</dd>
+        <dd>Worksforme</dd>
+        <dd>Incomplete</dd>
+      </dl>
+</td>
+  </tr>
+</tbody>
+</table><p>First of all, you need to display status and resoultion field as a select box to limit possible values. You can use enum field type and than define model method with array of values which will be displayed as select box options. Check out rails_admin's <a href="https://github.com/sferik/rails_admin/wiki/Enumeration">:enum field type</a> wiki page for more.</p>
+
+<blockquote>
+<p>app/models/issues</p>
+
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Issue</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<span class="o">.</span><span class="n">.</span><span class="o">.</span>
+  <span class="n">rails_admin</span> <span class="k">do</span>
+    <span class="c1"># show ...</span>
+    <span class="c1"># list ...</span>
+</pre></div>
+</blockquote>
+
+<pre><code>edit do
+  field :name
+  field :description
+  field :project
+  # set type of status and resolution to enem
+  field :status, :enum
+  field :resolution, :enum
+end
+</code></pre>
+
+<p>end</p>
+
+<p># method for retrieving potencial values for status field
+  def status_enum
+    ["Unconfirmed", "New", "Assigned", "Reopened", "Ready", "Resolved", "Verified"]
+  end</p>
+
+<p># method for retrieving potencial values for resolution field
+  def resolution_enum
+    ["Fixed", "Invalid", "Wontfix", "Worksforme", "Incomplete"]
+  end
+end</p>
+
+<pre><code>
+As table shows resolution needs to be displayed only when status is either "Resolved" or "Verified". In all other cases resolution should be hidden. Thanks to basepack you can easily do this.
+
+&gt; app/models/issues.rb
+```ruby
+...
+  field :status, :enum do
+    html_attributes do
+    { 
+      data: { 
+        "dynamic-fields" =&gt; [
+          { condition: ["Unconfirmed", "New", "Assigned", "Reopened", "Ready"], field_actions: { resolution: { visible: false }} },
+          { condition: ["Resolved", "Verified"], field_actions: { resolution: { visible: true  }} },
+        ]   
+      }   
+    }   
+    end 
+  end
+</code></pre>
+
+<p>Let's explain it step by step. You can add html attributes(like class, id, etc.) in configuration of any field through <code>html_attributes</code>. Data hash is used for custom data attributes for many purposes like marking ajax requests or date picker in Rails. Basepack uses it too. In addition to dynamicly showed / hidden attributes for <a href="https://github.com/lksv/basepack/wiki/Getting-started#dependant-select-boxes">dependant select boxes</a> and some field types like wysihtml5.</p>
+
+<div class="highlight highlight-ruby"><pre>  <span class="n">html_attributes</span> <span class="k">do</span>
+    <span class="p">{</span> 
+      <span class="ss">class</span><span class="p">:</span> <span class="s2">"my_css_class"</span><span class="p">,</span>
+      <span class="ss">data</span><span class="p">:</span> <span class="p">{</span> 
+        <span class="c1"># this will add data-name attribute to field </span>
+        <span class="s2">"name"</span> <span class="o">=&gt;</span> <span class="s2">"John"</span><span class="p">,</span>
+
+        <span class="c1"># this will add data-city attribute to field </span>
+        <span class="s2">"city"</span> <span class="o">=&gt;</span> <span class="s2">"Brno"</span>
+      <span class="p">}</span>  
+  <span class="k">end</span>
+</pre></div>
+
+<p>The only missing part is "dynamic-fields" attribute which will be processed by basepack. It contains list (array) of conditions and related actions (hash) when condition is met. Condition is true when given field (in this case status) is equal to any of the values specified in condition array.</p>
+
+<div class="highlight highlight-ruby"><pre>  <span class="s2">"dynamic-fields"</span> <span class="o">=&gt;</span> <span class="o">[</span>
+    <span class="p">{</span>
+      <span class="c1"># when this field has one of these values -&gt; fieds_actions are executed </span>
+      <span class="ss">condition</span><span class="p">:</span> <span class="o">[</span><span class="s2">"Unconfirmed"</span><span class="p">,</span> <span class="s2">"New"</span><span class="p">,</span> <span class="s2">"Assigned"</span><span class="p">,</span> <span class="s2">"Reopened"</span><span class="p">,</span> <span class="s2">"Ready"</span><span class="o">]</span><span class="p">,</span>
+      <span class="c1"># set visibility of resolution to false (= hide resolution field)</span>
+      <span class="n">field_actions</span><span class="p">:</span> <span class="p">{</span> <span class="ss">resolution</span><span class="p">:</span> <span class="p">{</span> <span class="ss">visible</span><span class="p">:</span> <span class="kp">false</span> <span class="p">}</span> <span class="p">}</span> 
+    <span class="p">},</span>
+    <span class="p">{</span> 
+      <span class="ss">condition</span><span class="p">:</span> <span class="o">[</span><span class="s2">"Resolved"</span><span class="p">,</span> <span class="s2">"Verified"</span><span class="o">]</span><span class="p">,</span> 
+      <span class="n">field_actions</span><span class="p">:</span> <span class="p">{</span> <span class="ss">resolution</span><span class="p">:</span> <span class="p">{</span> <span class="ss">visible</span><span class="p">:</span> <span class="kp">true</span>  <span class="p">}}</span> 
+    <span class="p">}</span>
+  <span class="o">]</span>   
+</pre></div>
+
+<h2>
+<a name="dependant-select-boxes" class="anchor" href="#dependant-select-boxes"><span class="octicon octicon-link"></span></a>Dependant select boxes</h2>
+
+<p>For better demonstration of depandant select boxes let's introduce small change to application and include versions of projects.
+Project can have many versions and issue will be tied to specific version of project.</p>
+
+
+
+<p>So let's generate Version scaffold and add version_id to issues. Then migrate the database.</p>
+
+<div class="highlight highlight-console"><pre><span class="go">rails g scaffold Version name project:belongs_to</span>
+<span class="go">rails g migration addVersionIdToIssues version:belongs_to</span>
+<span class="go">rake db:migrate</span>
+</pre></div>
+
+<p>Then you need to add associations in appropriate models, do not forget inverse_of.</p>
+
+<pre><code>class Issue &lt; ActiveRecord::Base
+  belongs_to :project, inverse_of: :issues
+  belongs_to :version, inverse_of: :issues
+  ..
+end
+
+class Project &lt; ActiveRecord::Base
+  has_many :versions, inverse_of: :project
+  has_many :issues, inverse_of: :project
+end
+
+class Version &lt; ActiveRecord::Base
+  belongs_to :project, inverse_of: :versions
+  has_many :issues, inverse_of: :version
+end
+</code></pre>
+
+<p>This leads us to our problem when you are creating or updating issue you now need to enter not just project but specific version of that project which is not working properly. Suppose you've 2 projects project A and project B. Project A has versions
+1.0 2.0 and project B has versions 1.0, 1.1 and 1.2, it allows you to enter incorrect for example version 1.1 and project A (version 1.1 doesn't belongs to project A). 
+What you want to do is display only versions related to currently selected project. </p>
+
+<p>Actually you might be wondering how is it even possible that options for associations are displayed in selectboxes at all.
+Where are they from? These values are obtained by making ajax call to options method of particular controller of association.
+For example values for project association are retrieved by options method call to <code>ProjectsController</code>. Values for version's associations by <code>VersionsController#options</code> call. Basicaly controllers retrieve values of related model no matter whence they are called unless you specify otherwise. That can be done either by changing <code>options_source</code> in model to different url or by defining <code>options</code> method in controller. Here is the example of this method which demonstrates default behaviour (it's going to work the same way if you do not define this method). </p>
+
+<blockquote>
+<p>app/controllers/versions_controller.rb</p>
+
+<div class="highlight highlight-ruby"><pre>  <span class="k">def</span> <span class="nf">options</span>
+    <span class="n">authorize!</span><span class="p">(</span><span class="n">action_name</span><span class="o">.</span><span class="n">to_sym</span><span class="p">,</span> <span class="n">resource_class</span><span class="p">)</span> <span class="c1"># CanCan</span>
+    <span class="n">versions</span> <span class="o">=</span> <span class="no">Version</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:f</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">result</span>
+    <span class="n">options!</span><span class="p">(</span><span class="ss">collection</span><span class="p">:</span> <span class="n">versions</span><span class="p">)</span>
+  <span class="k">end</span>
+</pre></div>
+</blockquote>
+
+<p>First line needs to be there to ensure authorization. Then it retrieves all <code>Version</code> records that match current search params and forward these records to parent action <code>options!</code>. If you try manually append search params to options url <code>/versions/options</code> for example <code>/versions/options?f[name_cont]=1.</code> which will display versions with name containing substring '1.'.</p>
+
+
+
+<p>So you already know that every time you click on select2 field it makes call to <code>options</code> method to display drop-down menu with options and it display all records as options unless you specify search parameters.</p>
+
+<p>Yes, that's cool. But how to set these parameters in new or edit form with current values? The basepack once again make use of html attributes more precisely html data attributes. </p>
+
+<blockquote>
+<p>app/models/issues.rb</p>
+
+<div class="highlight highlight-ruby"><pre>      <span class="n">field</span> <span class="ss">:version</span> <span class="k">do</span>
+        <span class="n">html_attributes</span> <span class="k">do</span>
+          <span class="p">{</span> <span class="ss">data</span><span class="p">:</span> <span class="p">{</span> 
+              <span class="c1"># set project's field as dependent select box</span>
+              <span class="s2">"dependant-filteringselect"</span> <span class="o">=&gt;</span> <span class="s2">"field=project_id"</span><span class="p">,</span>
+</pre></div>
+</blockquote>
+
+<pre><code>          # post parameters
+          "dependant-param" =&gt; "f[project_id_eq]" 
+        } 
+      }
+    end
+  end
+</code></pre>
+
+<pre><code>
+To display only versions which belongs to currently selected project it marks projects field as "dependant-filteringselect". 
+Id of currently selected project (if there is any) is send as parameter("f[project_id_eq]") to ```VersionsController#options```.Without defining "dependant-param" id of currently selected would be send in params[:undefined] which would be ignored by ```options``` method.
+
+You do not have to use search params and write you options method the way you want but most of the time using search params and default ```options``` method will be sufficient.
+
+
+&lt;!-- continue --&gt;
+&lt;!-- TODO identifying field --&gt;
+
+It works quite well except it displays all versions as options at beginning. To deal with this unique case you can set default options query send when form (new or edit) is rendered for the first time. It can be defined in ```options_source_params``` block. 
+You have to remember that you are working with both new and edit form. In new form it would be enough to set default query "f[project_id_eq]" to id of non-existing project which will not display any versions at the beginning. 
+
+&gt; app/models/issues.rb
+```ruby
+      field :version do
+        options_source_params do
+          { "f[project_id_eq]" =&gt; -1 }
+        end
+        html_attributes do
+          { data: { 
+              # set project's field as dependent select box
+              "dependant-filteringselect" =&gt; "field=project_id",
+
+              # post parameters
+              "dependant-param" =&gt; "f[project_id_eq]" 
+            } 
+          }
+        end
+      end
+</code></pre>
+
+<p>But if you want to change version in edit form of existing issue that has project already set it would display no versions as well. Unless you select a project which override default id -1. So if the issue(<code>bindings[:object]</code>) has project set use that <code>project_id</code> as a default query otherwise use -1.</p>
+
+<blockquote>
+<p>app/models/issues.rb</p>
+
+<div class="highlight highlight-ruby"><pre>  <span class="n">options_source_params</span> <span class="k">do</span>
+    <span class="p">{</span> <span class="s2">"f[project_id_eq]"</span> <span class="o">=&gt;</span> <span class="n">bindings</span><span class="o">[</span><span class="ss">:object</span><span class="o">].</span><span class="n">try</span><span class="p">(</span><span class="ss">:project_id</span><span class="p">)</span> <span class="o">||</span> <span class="o">-</span><span class="mi">1</span> <span class="p">}</span>
+  <span class="k">end</span>
+</pre></div>
+</blockquote>
       </section>
 
     </div>
