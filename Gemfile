@@ -23,12 +23,14 @@ group :test, :development do
   gem 'settingslogic'
   gem 'ransack'
 
+  gem "simple_form"
   gem 'poltergeist'
   gem 'jquery-rails'
   gem "jquery-turbolinks"
   gem "turbolinks"
   gem "bootbox-rails"
-  gem 'bootstrap-sass'
+  gem 'sass-rails', '~> 4.0.0'
+  gem 'bootstrap-sass', '~> 2.2'
   gem 'launchy'
   gem "twitter-bootstrap-rails"
   gem "selenium-webdriver"
