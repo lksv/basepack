@@ -167,9 +167,7 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 
 <div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Project</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">has_many</span> <span class="ss">:issues</span><span class="p">,</span> <span class="n">inverse_of</span><span class="p">:</span> <span class="ss">:project</span>
-</pre></div>
-
-<pre><code>
+<code>
   rails_admin do
     list do
       # only these fields(name, finish) will be displayed in this order
@@ -194,13 +192,13 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
   end
 end
 </code></pre>
+</div>
 </blockquote>
 
 
 <blockquote>
+  <p>app/models/issue.rb:</p>
   <pre><code>
-  &gt; app/models/issue.rb:
-  ```ruby
   class Issue &lt; ActiveRecord::Base
     belongs_to :project, inverse_of: :issues
   end
@@ -217,7 +215,7 @@ end
 <div class="highlight highlight-ruby"><pre><span class="no">ProjectsController</span> <span class="o">&lt;</span> <span class="no">ResourcesController</span> <span class="o">&lt;</span> <span class="no">Basepack</span><span class="o">::</span><span class="no">BaseController</span> <span class="o">&lt;</span> <span class="no">InheritedResources</span><span class="o">::</span><span class="no">Base</span>
 </pre></div>
 
-<p>If you are not familiar with <a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>, now is a time to take a look at <a href="https://github.com/josevalim/inherited_resources">it</a>.  </p>
+<p>If you are not familiar with <a href="https://github.com/josevalim/inherited_resources">InheritedResources</a>, now is a time to take a look at it.  </p>
 
 <p><a href="https://github.com/lksv/basepack/blob/master/app/controllers/basepack/base_controller.rb">Basepack::BaseController</a> adds to inherited resources:</p>
 
@@ -359,28 +357,29 @@ Resource chain is a sequence (array) of resources in case of nested resources. Y
 <blockquote>
 <p>app/views/projects/show.html.erb:</p>
 
-<div class="highlight highlight-rhtml"><pre><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'header'</span> <span class="cp">%&gt;</span>
+<div class="highlight highlight-rhtml"><pre><code>
+  
+<span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'header'</span> <span class="cp">%&gt;</span>
 <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'show'</span> <span class="cp">%&gt;</span>
-</pre></div>
-</blockquote>
 
-<h3>
-<a name="issues" class="anchor" href="#issues"><span class="octicon octicon-link"></span></a>Issues</h3>
-
-<p>&lt;% resource.issues.each do |issue| %&gt;
+&lt;h3&gt;Issues&lt;/h3&gt;
+&lt;% resource.issues.each do |issue| %&gt;
   &lt;%= form_render show_form_for(issue) %&gt;
-&lt;% end %&gt;</p>
+&lt;% end %&gt;
 
+</code>
+</pre>
+</div>
+
+</blockquote>
+<p>Furthermore these helpers for retrieving content of forms have pair variant without <code>_for</code> at the end which already contains retrieved content in appropriate actions. For example in projects show page <code>show_form</code> is equivalent to show_form_for(resource).</p>
 <pre><code>
-Furthermore these helpers for retrieving content of forms have pair variant without ```_for``` at the end which already contains retrieved content in appropriate actions. For example in projects show page ```show_form``` is equivalent to show_form_for(resource).
-```ruby
 edit_form
 show_form
 list_form
 query_for
 ...
 </code></pre>
-
 
 
 
@@ -401,7 +400,6 @@ Basepack uses ransack under hood uses, but you have to use <code>f</code> as a d
     { # display projects which haven't ended yet (end today or later)
       "f[end_gteq_null]" =&gt; Date.today,
 </code></pre>
-</blockquote>
 
 <pre><code>  # sorted by start of project 
   "f[s]" =&gt; 'start asc'
@@ -411,16 +409,19 @@ Basepack uses ransack under hood uses, but you have to use <code>f</code> as a d
 <p>end
 end</p>
 
-<pre><code>
-In case you have not worked with ransack you can watch [railscast episode](http://railscasts.com/episodes/370-ransack) by Ryan Bates for great introduction.
+</blockquote>
 
-## Tagged issues
-In this chapter you will give user possibility to add tags to issues with [acts-as-taggable-on](https://github.com/mbleigh/acts-as-taggable-on) gem so first step is straightforward.
+<p>In case you have not worked with ransack you can watch <a href="http://railscasts.com/episodes/370-ransack">railscast episode</a> by Ryan Bates for great introduction.</p>
 
-&gt; Gemfile:
-```ruby
-gem "acts-as-taggable-on"
-</code></pre>
+<h2>Tagged issues</h2>
+<p>In this chapter you will give user possibility to add tags to issues with <a href="https://github.com/mbleigh/acts-as-taggable-on">acts-as-taggable-on</a> gem so first step is straightforward.</p>
+
+<blockquote>
+<p>Gemfile:</p>
+  <div class="highlight highlight-ruby"><pre><code>gem "acts-as-taggable-on"
+  </code></pre>
+  </div>
+</blockquote>
 
 
 
@@ -437,9 +438,9 @@ gem "acts-as-taggable-on"
 
 <div class="highlight highlight-ruby"><pre><span class="n">config</span><span class="o">.</span><span class="n">included_models</span> <span class="o">=</span> <span class="no">Basepack</span><span class="o">::</span><span class="no">Utils</span><span class="o">.</span><span class="n">detect_models</span> <span class="o">+</span> <span class="o">[</span><span class="s1">'ActsAsTaggableOn::Tag'</span><span class="o">]</span>
 </pre></div>
+</blockquote>
 
 <p>Mark issues model as taggabale with <code>acts_as_taggable</code> which will provide new methods for working with tags as specified in <a href="https://github.com/mbleigh/acts-as-taggable-on#usage">usage section</a>. </p>
-</blockquote>
 
 <p>Especially interesting is method <code>tag_list=</code> for setting tags and <code>tag_list</code> for retrieving tags. It is enough just to display tag_list field and you are done.
 Actually almost done because associations added by <code>acts_as_taggable</code> to make it work are also displayed as fields (Tags, Base list) so can exclude them at beginning.</p>
@@ -450,36 +451,37 @@ Actually almost done because associations added by <code>acts_as_taggable</code>
 <div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">Issue</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="o">.</span><span class="n">.</span><span class="o">.</span>
   <span class="n">acts_as_taggable</span>
-</pre></div>
-</blockquote>
 
-<p>rails_admin do
-    exclude_fields :base_tags, :tags</p>
+  rails_admin do
+    exclude_fields :base_tags, :tags
 
-<pre><code># display tags in show actions
-show do
-  include_fields :tag_list
-end
+    # display tags in show actions
+    show do
+      include_fields :tag_list
+    end
 
-edit do
-  # tags entered in comma separated syntax
-  field :tag_list
-end
-</code></pre>
+    edit do
+      # tags entered in comma separated syntax
+      field :tag_list
+    end
 
-<p>end
-end</p>
-
-<pre><code>
-To make it even better render the tag_list field with basepack's [partial](https://github.com/lksv/basepack/blob/master/app/views/forms/edit/_tag_list_with_suggestions.html.haml?source=c) which uses select2 and provides autocompletion by making ajax calls to taggings method of particular controller (IssuesController in this case)
-
-&gt; app/models/issues.rb
-```ruby 
-  edit do
-    # tags entered in comma separated syntax
-    field :tag_list
   end
-</code></pre>
+end
+</pre>
+</div>
+</blockquote>
+<p>To make it even better render the tag_list field with basepack's <a href="https://github.com/lksv/basepack/blob/master/app/views/forms/edit/_tag_list_with_suggestions.html.haml">partial</a> which uses select2 and provides autocompletion by making ajax calls to taggings method of particular controller (IssuesController in this case)</p>
+<blockquote>
+  <p>app/models/issues.rb</p>
+  <div class="highlight highlight-ruby">
+  <pre>
+    edit do
+      # tags entered in comma separated syntax
+      field :tag_list
+    end
+  </pre>
+  </div>
+</blockquote>
 
 <p>If you want you can enable actions (new, edit, show, ...) for ActsAsTaggableOn::Tag model just add routes for these actions.</p>
 
@@ -503,7 +505,7 @@ To make it even better render the tag_list field with basepack's [partial](https
 </blockquote>
 
 <h2>
-<a name="dynamicly-showed-and-hidden-attributes" class="anchor" href="#dynamicly-showed-and-hidden-attributes"><span class="octicon octicon-link"></span></a>Dynamicly showed and hidden attributes</h2>
+<a name="dynamically-showed-and-hidden-attributes" class="anchor" href="#dynamically-showed-and-hidden-attributes"><span class="octicon octicon-link"></span></a>Dynamically showed and hidden attributes</h2>
 
 <p>Sometimes you need to hide or display field depending on the entered value of other field in new/edit form. 
 When you take a look at this table you will see that it is exactly what you need right now. Because resolution can be added only to closed bugs (with resolved or verified status) as you can see in this table.</p>
@@ -572,38 +574,39 @@ When you take a look at this table you will see that it is exactly what you need
   <span class="n">rails_admin</span> <span class="k">do</span>
     <span class="c1"># show ...</span>
     <span class="c1"># list ...</span>
-</pre></div>
-</blockquote>
 
-<pre><code>edit do
-  field :name
-  field :description
-  field :project
-  # set type of status and resolution to enem
-  field :status, :enum
-  field :resolution, :enum
-end
-</code></pre>
+    edit do
+      field :name
+      field :description
+      field :project
+      # set type of status and resolution to enem
+      field :status, :enum
+      field :resolution, :enum
+    end
+  end
 
-<p>end</p>
-
-<p># method for retrieving potencial values for status field
+# method for retrieving potencial values for status field
   def status_enum
     ["Unconfirmed", "New", "Assigned", "Reopened", "Ready", "Resolved", "Verified"]
-  end</p>
+  end
 
-<p># method for retrieving potencial values for resolution field
+  # method for retrieving potencial values for resolution field
   def resolution_enum
     ["Fixed", "Invalid", "Wontfix", "Worksforme", "Incomplete"]
   end
-end</p>
+end
+</pre></div>
+</blockquote>
 
-<pre><code>
-As table shows resolution needs to be displayed only when status is either "Resolved" or "Verified". In all other cases resolution should be hidden. Thanks to basepack you can easily do this.
 
-&gt; app/models/issues.rb
-```ruby
-...
+
+<p>As table shows resolution needs to be displayed only when status is either "Resolved" or "Verified". In all other cases resolution should be hidden. Thanks to basepack you can easily do this.</p>
+
+
+<blockquote>
+  
+<p>app/models/issues.rb</p>
+<pre>
   field :status, :enum do
     html_attributes do
     { 
@@ -616,7 +619,8 @@ As table shows resolution needs to be displayed only when status is either "Reso
     }   
     end 
   end
-</code></pre>
+</pre>
+</blockquote>
 
 <p>Let's explain it step by step. You can add html attributes(like class, id, etc.) in configuration of any field through <code>html_attributes</code>. Data hash is used for custom data attributes for many purposes like marking ajax requests or date picker in Rails. Basepack uses it too. In addition to dynamicly showed / hidden attributes for <a href="https://github.com/lksv/basepack/wiki/Getting-started#dependant-select-boxes">dependant select boxes</a> and some field types like wysihtml5.</p>
 
@@ -664,9 +668,9 @@ Project can have many versions and issue will be tied to specific version of pro
 <span class="go">rake db:migrate</span>
 </pre></div>
 
-<p>Then you need to add associations in appropriate models, do not forget inverse_of.</p>
+<p>Then you need to add associations in appropriate models, do not forget inverse_of option.</p>
 
-<pre><code>class Issue &lt; ActiveRecord::Base
+<pre>class Issue &lt; ActiveRecord::Base
   belongs_to :project, inverse_of: :issues
   belongs_to :version, inverse_of: :issues
   ..
@@ -681,7 +685,8 @@ class Version &lt; ActiveRecord::Base
   belongs_to :project, inverse_of: :versions
   has_many :issues, inverse_of: :version
 end
-</code></pre>
+</pre>
+
 
 <p>This leads us to our problem when you are creating or updating issue you now need to enter not just project but specific version of that project which is not working properly. Suppose you've 2 projects project A and project B. Project A has versions
 1.0 2.0 and project B has versions 1.0, 1.1 and 1.2, it allows you to enter incorrect for example version 1.1 and project A (version 1.1 doesn't belongs to project A). 
@@ -713,37 +718,33 @@ For example values for project association are retrieved by options method call 
 <blockquote>
 <p>app/models/issues.rb</p>
 
-<div class="highlight highlight-ruby"><pre>      <span class="n">field</span> <span class="ss">:version</span> <span class="k">do</span>
-        <span class="n">html_attributes</span> <span class="k">do</span>
-          <span class="p">{</span> <span class="ss">data</span><span class="p">:</span> <span class="p">{</span> 
-              <span class="c1"># set project's field as dependent select box</span>
-              <span class="s2">"dependant-filteringselect"</span> <span class="o">=&gt;</span> <span class="s2">"field=project_id"</span><span class="p">,</span>
-</pre></div>
+<div class="highlight highlight-ruby"><pre><span class="n">field</span> <span class="ss">:version</span> <span class="k">do</span>
+      <span class="n">html_attributes</span> <span class="k">do</span>
+        <span class="p">{</span> <span class="ss">data</span><span class="p">:</span> <span class="p">{</span> 
+            <span class="c1"># set project's field as dependent select box</span>
+            <span class="s2">"dependant-filteringselect"</span> <span class="o">=&gt;</span> <span class="s2">"field=project_id"</span><span class="p">,</span>
+
+        # post parameters
+        "dependant-param" =&gt; "f[project_id_eq]" 
+      } 
+    }
+  end
+end
+</code></pre></div>
 </blockquote>
 
-<pre><code>          # post parameters
-          "dependant-param" =&gt; "f[project_id_eq]" 
-        } 
-      }
-    end
-  end
-</code></pre>
+<p>To display only versions which belongs to currently selected project it marks projects field as "dependant-filteringselect". 
+  Id of currently selected project (if there is any) is send as parameter("f[project_id_eq]") to <code>VersionsController#options</code>.Without defining "dependant-param" id of currently selected would be send in params[:undefined] which would be ignored by <code>options</code> method.</p>
 
-<pre><code>
-To display only versions which belongs to currently selected project it marks projects field as "dependant-filteringselect". 
-Id of currently selected project (if there is any) is send as parameter("f[project_id_eq]") to ```VersionsController#options```.Without defining "dependant-param" id of currently selected would be send in params[:undefined] which would be ignored by ```options``` method.
+<p>You do not have to use search params and write you options method the way you want but most of the time using search params and default <code>options</code> method will be sufficient.</p>
 
-You do not have to use search params and write you options method the way you want but most of the time using search params and default ```options``` method will be sufficient.
+<p>It works quite well except it displays all versions as options at beginning. To deal with this unique case you can set default options query send when form (new or edit) is rendered for the first time. It can be defined in <code>options_source_params</code> block. </p>
+<p>You have to remember that you are working with both new and edit form. In new form it would be enough to set default query "f[project_id_eq]" to id of non-existing project which will not display any versions at the beginning. </p>
 
-
-&lt;!-- continue --&gt;
-&lt;!-- TODO identifying field --&gt;
-
-It works quite well except it displays all versions as options at beginning. To deal with this unique case you can set default options query send when form (new or edit) is rendered for the first time. It can be defined in ```options_source_params``` block. 
-You have to remember that you are working with both new and edit form. In new form it would be enough to set default query "f[project_id_eq]" to id of non-existing project which will not display any versions at the beginning. 
-
-&gt; app/models/issues.rb
-```ruby
+<blockquote>
+  
+<p>app/models/issues.rb</p>
+<pre>
       field :version do
         options_source_params do
           { "f[project_id_eq]" =&gt; -1 }
@@ -759,7 +760,8 @@ You have to remember that you are working with both new and edit form. In new fo
           }
         end
       end
-</code></pre>
+</pre>
+</blockquote>
 
 <p>But if you want to change version in edit form of existing issue that has project already set it would display no versions as well. Unless you select a project which override default id -1. So if the issue(<code>bindings[:object]</code>) has project set use that <code>project_id</code> as a default query otherwise use -1.</p>
 
