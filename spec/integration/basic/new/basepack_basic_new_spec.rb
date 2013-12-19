@@ -35,20 +35,23 @@ describe "Basepack Basic Show" do
         field :account
         field :position
         field :projects
-        field :tasks
         field :skills
       end
 
-      visit new_employee_path(employee: employee.attributes)
+      visit new_employee_path(employee: employee.attributes.merge(
+        account_id: employee.account_id,
+        project_ids: employee.project_ids,
+        skill_ids: employee.skill_ids
+      ))
     end
 
     it "shows selects", js: true do
-      #expect(page).to have_select2("Acconut", selected: employee.account) #FIXME - has_one is not properly implemented yet
+      expect(page).to have_select2("Account", selected: employee.account.to_label)
       expect(page).to have_select2("Position", selected: employee.position.to_label)
-      pending "not implemented yet"
       expect(page).to have_select2("Projects", selected: employee.projects.first.to_label)
-      expect(page).to have_select2("Tasks", selected: employee.tasks.first.to_label)
+      expect(page).to have_select2("Projects", selected: employee.projects.last.to_label)
       expect(page).to have_select2("Skills", selected: employee.skills.first.to_label)
+      expect(page).to have_select2("Skills", selected: employee.skills.last.to_label)
     end
   end
 

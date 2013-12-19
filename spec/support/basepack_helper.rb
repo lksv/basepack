@@ -11,7 +11,11 @@ module BasepackHelper
       find(".select2-container")
 
     within(select2_container) do
-      have_selector(".select2-chosen", text: options[:selected])
+      if select2_container.has_selector?('.select2-choices')
+        have_selector(".select2-search-choice", text: options[:selected])
+      else
+        have_selector(".select2-chosen", text: options[:selected])
+      end
     end
   end
 

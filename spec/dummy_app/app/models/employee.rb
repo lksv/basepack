@@ -30,4 +30,12 @@ class Employee < ActiveRecord::Base
     is_allowed
   end
 
+  def account_id
+    self.account.try(:id)
+  end
+
+  def account_id=(id)
+    self.account = Account.find_by(id: id)
+  end
+
 end
