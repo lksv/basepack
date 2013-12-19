@@ -22,7 +22,6 @@ module BasepackHelper
 
     select2_container.find(".select2-choice").click
     find(:css, "div[style*=block].select2-drop-active input[type=text].select2-input").set(options[:selected])
-    sleep 5
 
     within(select2_container) do
       have_selector(".select2-drop li", text: options[:selected])
@@ -41,8 +40,13 @@ module BasepackHelper
       select2_container = first("label", text: select_name).find(:xpath, '..').find(".select2-container")
     end
 
-    select2_container.find(".select2-choice").click
-    find(:css, "div[style*=block].select2-drop-active input[type=text].select2-input").set(value)
+    if select2_container.has_selector?('.select2-choice')
+      select2_container.find(".select2-choice").click
+    else
+      select2_container.find(".select2-choices").click
+    end
+    #find(:css, "div[style*=block].select2-drop-active input[type=text].select2-input").set(value)
+    select2_container.find(:css, "input[type=text].select2-input").set(value)
     find(:xpath, "//body").find(".select2-drop li", text: value).click
   end
 
