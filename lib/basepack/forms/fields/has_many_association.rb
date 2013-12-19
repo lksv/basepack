@@ -30,6 +30,20 @@ module Basepack
             @delegate.parse_input(params) if @delegate
           end
         end
+
+        # returns true only for for N-N associations
+        def bulk_editable?
+          #N-N association are only with:
+          # has_many through: <join_table>, where join_table has foreign_keys for both associations
+
+          reflection = abstract_model.model.reflect_on_association(name)
+          (
+            (ActiveRecord::Reflection::ThroughReflection === reflection) and
+            (reflection.through_reflection.macro == :has_many) and
+            (reflection.source_reflection.macro == :belongs_to)
+          )
+
+        end
       end
     end
   end

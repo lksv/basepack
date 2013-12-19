@@ -7,6 +7,11 @@ defaults: &defaults
     default_col_sep: ";"
   filters:
     model_name: null  # for enabling saved filter set to 'Filter' model for instance
+  bulk_edit:
+    field_action_select:
+      - add
+      - delete
+      - assign
   import:
     mime_types: [text/csv, text/plain]
     model_name: Import

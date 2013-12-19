@@ -215,6 +215,7 @@ module Basepack
       model_name = resource_class.model_name.singular
       lookups = []
       lookups << :"basepack.forms.#{model_name}.#{action}.#{subaction}"
+      lookups << :"basepack.actions.#{action}.#{subaction}"
       lookups << :"admin.actions.#{action}.#{subaction}"
 
       I18n.t(lookups.shift, default: lookups).presence

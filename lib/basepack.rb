@@ -2,6 +2,7 @@ require "basepack/engine"
 require 'basepack/version'
 require 'basepack/sections/query'
 require 'basepack/sections/import'
+require 'basepack/sections/bulk_edit'
 
 module Basepack
   def self.setup
@@ -133,6 +134,10 @@ module Basepack
           else
             ""
           end
+        end
+
+        register_instance_option :bulk_edit_partial do
+          nil
         end
       end
 

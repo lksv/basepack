@@ -14,7 +14,8 @@ module Basepack
           :associated_primary_key, :optional?, :editable?, :foreign_key, :allowed_methods,
           :errors, :cache_method, :delete_method, :orderable, :inline_add, :inline_edit,
           :html_default_value, :js_plugin_options,
-          :css_location, :js_location, :config, :assets, :config_options, :config_js, :base_location, :location
+          :css_location, :js_location, :config, :assets, :config_options, :config_js, :base_location, :location,
+          :bulk_edit_partial
 
         ASSOC_TYPES = {
           :belongs_to_association              => true,
@@ -61,6 +62,10 @@ module Basepack
 
         attr_default :partial do
           File.join('forms', 'edit', 'form_field')
+        end
+
+        attr_default :bulk_edit_partial do
+          partial.to_s.sub(/\/edit\//, '/bulk_edit/')
         end
 
         attr_default :html_attributes do
@@ -142,6 +147,10 @@ module Basepack
 
         def unique?
           abstract_model.model.validators_on(self.name).map(&:class).include?(ActiveRecord::Validations::UniquenessValidator)
+        end
+
+        def bulk_editable?
+          true
         end
       end
     end

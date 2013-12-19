@@ -36,6 +36,10 @@ module Basepack
         end
       end
 
+      def collection_without_pagination
+        collection.offset(nil).limit(nil)
+      end
+
       def resource_filter
         @resource_filter || begin
           query_from_params

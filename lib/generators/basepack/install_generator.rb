@@ -108,7 +108,11 @@ module Basepack
       get    'taggings',     :on => :collection
       #patch  'list_columns', :on => :collection
       #put    'list_columns', :on => :collection
-  end
+
+      get    'bulk_edit',   on: :collection
+      patch  'bulk_update', on: :collection
+      post   'bulk_update', on: :collection
+end
 
   resources :filters, concerns: :resourcable
 

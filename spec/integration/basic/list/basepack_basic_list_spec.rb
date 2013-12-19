@@ -474,7 +474,6 @@ describe "Basepack basic list" do
     it "sorts by date asceding" do
       visit employees_path
       click_on 'Created at'
-save_and_open_page
       expect(page).to have_selector("tbody tr:first", text: (I18n.l employee1.created_at, format: :long))
       expect(page).to have_selector("tbody tr:nth(2)", text: (I18n.l employee2.created_at, format: :long))
       expect(page).to have_selector("tbody tr:nth(3)", text: (I18n.l employee3.created_at, format: :long))

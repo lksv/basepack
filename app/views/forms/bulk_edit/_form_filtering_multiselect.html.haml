@@ -1,0 +1,8 @@
+= form.input field.name, label: field.label, hint: field.help, required: field.required?, wrapper_html: {class: 'controls controls-row'} do
+  - bulk_edit = form.simple_form.object.respond_to?(:bulk_edit) ? form.simple_form.object.bulk_edit : OpenStruct.new
+  = form.simple_form.fields_for :bulk_edit, bulk_edit do |ff|
+    = ff.input_field field.method_name,
+        include_blank: false,
+        collection: Basepack::Settings.bulk_edit.field_action_select,
+        class: 'span2'
+    = form.render_filteringselect field

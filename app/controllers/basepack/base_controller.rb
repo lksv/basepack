@@ -4,13 +4,9 @@ module Basepack
     class_attribute :__actions
     self.__actions = InheritedResources::ACTIONS
 
-    class << self
-      def default_query(&block)
-        before_filter :only => [:index] do |controller|
-          redirect_to query_resources_path(controller.instance_eval(&block)) unless params[:f]
-        end
-      end
+    before_filter :default_query, :only => [:index]
 
+    class << self
       def create_custom_action(resource_or_collection, action)
         super
         self.__actions += [action.to_sym]
@@ -41,14 +37,42 @@ module Basepack
     check_authorization # CanCan
 
     helper_method :resource_config, :return_to_path, :collection_action?, :route_prefix,
-                  :chain, :title_params, :resource_filter,
+                  :chain, :title_params, :resource_filter, :default_query_params,
                   :build_resource,
                   :query_params,
-                  :list_form, :show_form, :query_form, :edit_form, :export_form, :diff_form,
-                  :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for,
+                  :list_form, :show_form, :query_form, :edit_form,
+                  :bulk_edit_form,
+                  :export_form, :diff_form, :list_form_for, :show_form_for,
+                  :query_form_for, :edit_form_for, :diff_form_for,
+                  :export_form_for, :bulk_edit_form_for,
                   :resource2
 
-    custom_actions collection: [:options, :query, :export, :taggings, :bulk_delete]
+    custom_actions collection: [
+      :options,
+      :query,
+      :export,
+      :taggings,
+      :bulk_edit,
+      :bulk_update,
+      :bulk_delete
+    ]
+
+
+    # Used to set default query (default fiter)
+    # It is called by before_filter. To define default custom filter
+    # redefine method default_query_params
+
+    def default_query
+      return if default_query_params.nil? or default_query_params.empty?
+      redirect_to query_resources_path(default_query_params) unless params[:f]
+    end
+
+    # returns the hash of default query params
+    # redefine in sub-classes to customize the default filter
+    def default_query_params
+      nil
+    end
+
 
     def index(options={}, &block)
       block ||= proc do |format|
@@ -226,6 +250,83 @@ module Basepack
       redirect_to collection_url
     end
 
+    # Bulk_edit shows form for bulk editing items (edit multiple items at one)
+    # Forms look like normal edit form, but for the fields where you can set
+    # several values (has_and_belongs_to_many, has_many with through, tags, etc.) 
+    # the form shows possibilites for add/delete items as well. The particular fields
+    # partials are defined in app/views/forms/bulk_edit basepack directiry.
+    #
+    # You can configure a field input by defining bulk_edit_partion in the field's
+    # configuration.
+    #
+    # If the form's field is blank, then the attribute in the model is not changed
+    # because of that the validation on presence is excluded.
+    #
+    # I dont know how to check if the form is valid, so I allways proseed updated
+    # and redirect to the index action (and show proper notice/error on the screen).
+    #
+    # The defaut action for extend fields should be configured by *bulk_edit* accessors
+    # in the model. For example:
+    #
+    #  def bulk_edit
+    #    @bulk_edit ||= OpenStruct.new
+    #    @ddbulk_edit.my_habtml_relation_ids = 'delete'
+    #    @bulk_edit
+    #  end
+    #
+    #  # following method should be useful only for rendering the form again
+    #  # currently there is no such workflow.
+    #  def bulk_edit=(fields)
+    #    @bulk_edit = OpenStruct.new(fields)
+    #  end
+    #
+    #  For customizing particular behaviour for field action on the model you 
+    #  can define methods with naming "bulk_edit_<field_name>=", as 
+    #  demonstrates following example:
+    #
+    #  def bulk_edit_tag_list=(action, new_value)
+    #    value_arr = new_value.to_s.split(/,/)
+    #    case action
+    #    when 'add'
+    #      self.tag_list += value_arr
+    #    when 'assign'
+    #      self.tag_list = new_value
+    #    when 'delete'
+    #      self.tag_list -= value_arr
+    #    else
+    #      raise ArgumentError, "Unknow bulk action: #{action.inspect}"
+    #    end
+    #  end
+    #
+    # TODO:
+    # * the URL contains filter params, which could overflow the GET length
+    #   limit
+    # * filter like f[id_in]=... don't work
+
+    def bulk_edit(option = {}, &block)
+      # empty, all is done by 'custom_actions'
+    end
+
+    def bulk_update(options = {}, &block)
+      bulk_params = resource_build_bulk_params
+      bulk_values = build_resource_params.first.slice(*bulk_params.keys)
+      update_params = build_resource_params.first.except(*bulk_params.keys).reject { |k,v| v.blank? }
+
+      res = collection_without_pagination.accessible_by(current_ability, :update).reject do |object|
+        update_bulk_params(object, update_params, bulk_params, bulk_values)
+      end
+
+      if res.empty?
+        flash[:notice] ||= message_bulk_edit_done
+        redirect_to polymorphic_path(chain_with_class, query_params)
+      else
+        flash[:error] ||= message_bulk_edit_fail
+        filter_params = { "f[#{resource_class.primary_key}_in]" => res.map(&:id) }.reverse_merge(query_params)
+        redirect_to polymorphic_path(chain_with_class, filter_params)
+      end
+    end
+    alias :bulk_update! :bulk_update
+
     def list_form_for(query_form)
       form_factory_rails_admin(:list, Basepack::Forms::List, query_form.chain_with_class, query_form: query_form)
     end
@@ -285,6 +386,10 @@ module Basepack
       form_factory_rails_admin(:export, Basepack::Forms::Export, query_form.chain_with_class, query_form: query_form)
     end
 
+    def bulk_edit_form_for(resource_or_chain, options = {})
+      form_factory_rails_admin(:bulk_edit, Basepack::Forms::BulkEdit, resource_or_chain, options)
+    end
+
     def filters
       collection #just for authorize resource
       redirect_to polymorphic_path(Basepack::Settings.filters.model_name.constantize, 'f[filter_type_eq]' => resource_class)
@@ -302,6 +407,14 @@ module Basepack
 
     def message_destroy_done(name = resource_config.label)
       t("admin.flash.successful", :name => name, :action => t("admin.actions.delete.done"))
+    end
+
+    def message_bulk_edit_done(name = resource_config.label)
+      t("admin.flash.successful", :name => name, :action => t("basepack.actions.bulk_edit.done"))
+    end
+
+    def message_bulk_edit_fail(model_label_plural = resource_config.label_plural)
+      t("basepack.flash.error_on_items", :model_label_plural => model_label_plural, :action => t("basepack.actions.bulk_edit.done"))
     end
 
     def route_prefix
@@ -433,6 +546,9 @@ module Basepack
         when :export
           [[resource_class,
             Utils.translate(resource_class, :export, 'breadcrumb')]]
+        when :bulk_edit
+          [[resource_class,
+            Utils.translate(resource_class, :bulk_edit, 'breadcrumb')]]
         else
           collection_action? ? resource_class : resource
         end
@@ -504,6 +620,45 @@ module Basepack
       # is called for handling the download is run, so let's workaround that
       response.cache_control[:public] ||= false
     end
+
+    def update_bulk_params(object, attributes, bulk_params, bulk_values)
+      object.assign_attributes(attributes)
+      bulk_params.each do |bulk_key, bulk_action|
+
+        custom_action = "bulk_edit_#{bulk_key}=".intern
+        if object.respond_to?(custom_action)
+          object.send(custom_action, bulk_action, bulk_values[bulk_key])
+        else
+          value = bulk_values[bulk_key]
+          if bulk_action == 'assign'
+            #empty, value is already set above
+          elsif bulk_action == 'add'
+            value = object.send(bulk_key.intern) + value.map { |t| t.to_i }
+          elsif bulk_action == 'delete'
+            value = object.send(bulk_key.intern) - value.map { |t| t.to_i }
+          else
+            raise ArgumentError, "Unknow bulk action: #{bulk_action.inspect}"
+          end
+          object.send("#{bulk_key}=".intern, value)
+        end
+      end
+
+      object.save
+    end
+
+
+    # Returns bulk_acions for fields for which is possible
+    # to choose action (e.g. add/delete/assing) in bulk_edit form
+    #
+    # Returns hash, keys are the field names and values are the actions
+    #
+    def resource_build_bulk_params
+      _params = params[resource_request_name] || params[resource_instance_name]
+      bulk_params = _params.blank? ? {} : _params[:bulk_edit]
+      bulk_params.slice(*permitted_params[resource_instance_name].keys)
+    end
+    protected :resource_build_bulk_params
+
 
     # Forms
 
@@ -582,6 +737,22 @@ module Basepack
       @diff_form ||= begin
         authorize!(:diff, resource_class)
         form = diff_form_for(chain, resource2, path: polymorphic_path([:merge, route_prefix, association_chain, resource].flatten, id2: resource2))
+        form.configure(&block) if block
+        form
+      end
+    end
+
+    def bulk_edit_form
+      bulk_edit_form!
+    end
+
+    def bulk_edit_form!(&block)
+      @bulk_edit_form ||= begin
+        form = bulk_edit_form_for(
+          chain,
+          query_form: query_form,
+          path: polymorphic_path([:bulk_update, route_prefix, association_chain, resource].flatten, query_form.params)
+        )
         form.configure(&block) if block
         form
       end

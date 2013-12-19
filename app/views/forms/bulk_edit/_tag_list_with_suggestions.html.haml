@@ -1,0 +1,21 @@
+:ruby
+  js_data = {
+    filteringselect: true,
+    options: {
+      create_search_choice: true,
+      minimum_input_length: 1,
+      multiple:true,
+      strip_spaces: true,
+      placeholder: I18n.t('admin.misc.search'),
+      remote_source: polymorphic_path([:taggings, field.form.resource_class])
+    }.to_json
+  }
+
+= form.input field.method_name, label: "<i class='icon-tags'></i> #{field.label}", hint: field.help, required: field.required? do
+  - bulk_edit = form.simple_form.object.respond_to?(:bulk_edit) ? form.simple_form.object.bulk_edit : OpenStruct.new
+  = form.simple_form.fields_for :bulk_edit, bulk_edit do |ff|
+    = ff.input_field field.method_name,
+        include_blank: false,
+        collection: Basepack::Settings.bulk_edit.field_action_select,
+        class: 'span2'
+  = form.input_field field.method_name, { type: 'text', data: js_data}

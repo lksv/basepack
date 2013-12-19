@@ -11,3 +11,14 @@ en:
     actions:
       delete_all:
         menu: "Delete selected"
+
+  basepack:
+    flash:
+      error_on_items: "Following %{model_label_plural} failed to be %{action}"
+    actions:
+      bulk_edit:
+        title: "Change %{model_label_plural}"
+        menu: "Bulk change"
+        breadcrumb: 'Bulk edit'
+        bulk_link: "Change selected %{model_label_plural}"
+        done: "changed"

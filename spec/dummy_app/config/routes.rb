@@ -18,6 +18,11 @@ Dummy::Application.routes.draw do
 
     get    'diff',        :on => :member
     post   'merge',       :on => :member
+
+    get    'bulk_edit',   on: :collection
+    patch  'bulk_update', on: :collection
+    post   'bulk_update', on: :collection
+
   end
 
   resources :employees, :projects, :tasks, :positions, :skills, :accounts,
