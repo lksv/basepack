@@ -102,6 +102,7 @@ module Basepack
       post   'import',      :on => :collection
       patch  'import',      :on => :collection
       delete 'import',      :on => :collection
+      delete 'bulk_delete', :on => :collection
 
       get    'filters',     :on => :collection
       get    'taggings',     :on => :collection

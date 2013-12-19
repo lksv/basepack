@@ -1,0 +1,5 @@
+= link_to url, class: 'btn btn-danger', 
+  :data => { :confirm => I18n.t('admin.form.confirmation'), 
+  params: params, 'bulk-action-method' => 'delete'} do
+  %i.icon-trash
+  = I18n.t('admin.actions.delete_all.menu')

@@ -48,7 +48,7 @@ module Basepack
                   :list_form_for, :show_form_for, :query_form_for, :edit_form_for, :diff_form_for, :export_form_for,
                   :resource2
 
-    custom_actions collection: [:options, :query, :export, :taggings]
+    custom_actions collection: [:options, :query, :export, :taggings, :bulk_delete]
 
     def index(options={}, &block)
       block ||= proc do |format|
@@ -189,6 +189,42 @@ module Basepack
     end
     alias :merge! :merge
     protected :merge!
+
+    # [DELETE] /resources/bulk_delete
+    def bulk_delete(options = {}, &block)
+      unless params[:ids]
+        redirect_to collection_url
+        return
+      end
+
+      ids = params[:ids].split(',')
+      col = collection_without_pagination.accessible_by(current_ability,
+        :destroy).where(id: ids)
+
+      ret = col.destroy_all
+
+      destroyed_count = ret.count
+      not_destroyed_count = ids.count - destroyed_count
+      destroyed_message = "#{destroyed_count} 
+        #{resource_class.model_name.human(count: destroyed_count)}"
+
+      if not_destroyed_count == 0
+        flash[:success] = t("admin.flash.successful",
+          name: destroyed_message, 
+          action: t("admin.actions.delete.done"))
+      else
+        message = ", #{not_destroyed_count} 
+          #{resource_class.model_name.human(count: not_destroyed_count)}"
+
+        flash[:error] = t("admin.flash.successful",
+          name: destroyed_message, 
+          action: t("admin.actions.delete.done"))
+        flash[:error] << t("admin.flash.error", name: message,
+          action: t("admin.actions.delete.done"))
+      end
+
+      redirect_to collection_url
+    end
 
     def list_form_for(query_form)
       form_factory_rails_admin(:list, Basepack::Forms::List, query_form.chain_with_class, query_form: query_form)

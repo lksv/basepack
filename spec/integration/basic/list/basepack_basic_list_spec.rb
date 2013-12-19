@@ -48,7 +48,7 @@ describe "Basepack basic list" do
 
     end
 
-    context "not authorized" do
+    context "unauthorized" do
       it "rejects list" do
         ability.can :manage, :all
         ability.cannot :index, Employee
@@ -107,7 +107,7 @@ describe "Basepack basic list" do
       end
     end
 
-    context "no authorized" do
+    context "unauthorized" do
       before(:each) do
         ability.can :manage, :all
         ApplicationController.any_instance.stub(:current_ability).and_return(ability)
@@ -150,7 +150,7 @@ describe "Basepack basic list" do
 
         employee1
         visit employees_path
-        expect(page).to have_no_selector(:link_or_button, "Delete")
+        expect(page).to have_no_selector(:link_or_button, /\ADelete\Z/)
 
         page.driver.submit :delete, "/employees/#{employee1.id}", {}
         expect(page.driver.status_code).to_not eq 200

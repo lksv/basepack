@@ -39,7 +39,7 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = (example.metadata[:js]) ? :truncation : :transaction
 
     DatabaseCleaner.start
-    #RailsAdmin::Config.reset  #TODO!!!
+    # RailsAdmin::Config.reset  #TODO!!!
     RailsAdmin::AbstractModel.reset
     RailsAdmin::Config.yell_for_non_accessible_fields = false
   end

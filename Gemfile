@@ -34,6 +34,7 @@ group :test, :development do
   gem 'launchy'
   gem "twitter-bootstrap-rails"
   gem "selenium-webdriver"
+  gem "simple_form"
 end
 
 # Declare any dependencies that are still in development here instead of in

@@ -43,4 +43,10 @@ class Employee < ActiveRecord::Base
     self.account = Account.find_by(id: id)
   end
 
+  rails_admin do
+    list do
+      bulk_actions true
+    end
+  end
+
 end

@@ -22,6 +22,26 @@ ActiveRecord::Schema.define(version: 20131220193113) do
 
   add_index "accounts", ["employee_id"], name: "index_accounts_on_employee_id"
 
+  create_table "comments", force: true do |t|
+    t.text     "body"
+    t.integer  "customer_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "comments", ["customer_id"], name: "index_comments_on_customer_id"
+
+  create_table "customers", force: true do |t|
+    t.string   "email"
+    t.string   "name"
+    t.boolean  "active"
+    t.integer  "group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "customers", ["group_id"], name: "index_customers_on_group_id"
+
   create_table "employees", force: true do |t|
     t.string   "name"
     t.string   "email"
@@ -38,6 +58,12 @@ ActiveRecord::Schema.define(version: 20131220193113) do
   create_table "employees_skills", id: false, force: true do |t|
     t.integer  "employee_id"
     t.integer  "skill_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "groups", force: true do |t|
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
