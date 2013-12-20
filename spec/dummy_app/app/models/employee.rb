@@ -10,6 +10,7 @@
 #  position_id :integer
 #  created_at  :datetime
 #  updated_at  :datetime
+#  title       :string(255)
 #
 
 class Employee < ActiveRecord::Base
@@ -22,6 +23,10 @@ class Employee < ActiveRecord::Base
   validates_presence_of :name, :email
   validates_uniqueness_of :email, on: :create, message: "must be unique"
   validate :is_allowed?, :on => :create
+
+  def name_with_title
+    "#{title} #{name}"  
+  end
 
   def is_allowed?
     # black list

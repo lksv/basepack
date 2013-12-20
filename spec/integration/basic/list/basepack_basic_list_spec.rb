@@ -459,37 +459,74 @@ describe "Basepack basic list" do
 
     it "sorts by name asceding" do
       visit employees_path('f[s]' => 'name asc')
-      expect(page).to have_selector("tbody tr:first", "yyy")
-      expect(page).to have_selector("tbody tr:nth(2)", "xxxx")
-      expect(page).to have_selector("tbody tr:nth(3)", "xxx")
+      expect(page).to have_selector("tbody tr:first", text: "xxx")
+      expect(page).to have_selector("tbody tr:nth(2)", text: "xxxx")
+      expect(page).to have_selector("tbody tr:nth(3)", text: "yyy")
     end
 
     it "sorts by name descending" do
       visit employees_path('f[s]' => 'name desc')
-      expect(page).to have_selector("tbody tr:first", "xxx")
-      expect(page).to have_selector("tbody tr:nth(2)", "xxxx")
-      expect(page).to have_selector("tbody tr:nth(3)", "yyy")
+      expect(page).to have_selector("tbody tr:first", text: "yyy")
+      expect(page).to have_selector("tbody tr:nth(2)", text: "xxxx")
+      expect(page).to have_selector("tbody tr:nth(3)", text: "xxx")
     end
 
     it "sorts by date asceding" do
       visit employees_path
       click_on 'Created at'
 
-      expect(page).to have_selector("tbody tr:first", employee1.created_at)
-      expect(page).to have_selector("tbody tr:nth(2)", employee2.created_at)
-      expect(page).to have_selector("tbody tr:nth(3)", employee3.created_at)
-
-      visit employees_path('f[s]' => 'created_at asc')
-      expect(page).to have_selector("tbody tr:first", employee1.created_at)
-      expect(page).to have_selector("tbody tr:nth(2)", employee2.created_at)
-      expect(page).to have_selector("tbody tr:nth(3)", employee3.created_at)
+      expect(page).to have_selector("tbody tr:first", text: (I18n.l employee1.created_at, format: :long))
+      expect(page).to have_selector("tbody tr:nth(2)", text: (I18n.l employee2.created_at, format: :long))
+      expect(page).to have_selector("tbody tr:nth(3)", text: (I18n.l employee3.created_at, format: :long))
     end
 
-    it "sorts by date asceding" do
-      visit employees_path('f[s]' => 'created_at desc')
-      expect(page).to have_selector("tbody tr:first", employee3.created_at)
-      expect(page).to have_selector("tbody tr:nth(2)", employee2.created_at)
-      expect(page).to have_selector("tbody tr:nth(3)", employee1.created_at)
+    it "sorts by date descending" do
+      visit employees_path
+      click_on 'Created at'
+      click_on 'Created at'
+      expect(page).to have_selector("tbody tr:first", text: (I18n.l employee3.created_at, format: :long))
+      expect(page).to have_selector("tbody tr:nth(2)", text: (I18n.l employee2.created_at, format: :long))
+      expect(page).to have_selector("tbody tr:nth(3)", text: (I18n.l employee1.created_at, format: :long))
+    end
+  end
+
+  describe "sorting combined fields" do
+    let!(:employee1) { FactoryGirl.create(:employee, name: 'xxx', title: "Mrs") }
+    let!(:employee2) { FactoryGirl.create(:employee, name: 'yyy', title: "Mr") }
+    let!(:employee3) { FactoryGirl.create(:employee, name: 'xxx', title: "Miss.") }
+
+    before(:all) do
+      RailsAdmin.config Employee do
+        list do
+          field :name_with_title do
+            label 'Title and name'
+            sortable [:name, :title]
+          end
+        end
+      end
+    end
+
+    before(:each) do
+      # touch all employees
+      employee1
+      employee2
+      employee3
+      visit employees_path
+
+      click_on "Title and name"
+    end
+
+    it "sorts title and name asceding" do
+      expect(page).to have_selector("tbody tr:first", text: employee3.name_with_title)
+      expect(page).to have_selector("tbody tr:nth(2)", text: employee1.name_with_title)
+      expect(page).to have_selector("tbody tr:nth(3)", text: employee2.name_with_title)
+    end
+
+    it "sorts title and name descending" do
+      click_on "Title and name"
+      expect(page).to have_selector("tbody tr:first", text: employee2.name_with_title)
+      expect(page).to have_selector("tbody tr:nth(2)", text: employee1.name_with_title)
+      expect(page).to have_selector("tbody tr:nth(3)", text: employee3.name_with_title)
     end
   end
 
@@ -531,5 +568,4 @@ describe "Basepack basic list" do
       expect(page).to have_content(employee3.name)
     end
   end
-
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131213195422) do
+ActiveRecord::Schema.define(version: 20131220193113) do
 
   create_table "accounts", force: true do |t|
     t.integer  "account_number"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 20131213195422) do
     t.integer  "position_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "title"
   end
 
   add_index "employees", ["position_id"], name: "index_employees_on_position_id"
