@@ -170,12 +170,9 @@ module Basepack
         sanitize_params(params).permit!
       end
 
-      def sanitize_params(params)
+      def sanitize_params(params, add_to_allwed = [])
         new_params = params.dup
-        allowed = [ 
-          # :id,   #FIXME: checkme: has to be not allowed by default, but what about nested forms?
-          :_destroy 
-        ]
+        allowed = add_to_allwed.dup
 
         visible_fields.each do |f|
           next if f.read_only? or f.inverse_of_nested_in?
@@ -191,7 +188,17 @@ module Basepack
           if nform = f.nform and nparams = new_params[f.method_name]
             new_params[f.method_name] = case nparams
             when Array
-              nparams.map {|p| p.is_a?(Hash) ? nform.sanitize_params(p) : p.to_s}
+
+              # nested_form with accepts_nested_attributes_for needs :id and 
+              # :_destroy params in some cases
+
+              nested_allowed = []
+              if f.nested_form
+                nested_allowed << :id unless field.nested_form[:update_only]
+                nested_allowed << :_destroy if field.nested_form[:allow_destroy] or nform.new_record?
+              end
+
+              nparams.map {|p| p.is_a?(Hash) ? nform.sanitize_params(p, nested_allowed) : p.to_s}
             when Hash
               if f.multiple?
                 Hash[nparams.map {|k, p| [k, p.is_a?(Hash) ? nform.sanitize_params(p) : p.to_s] }]

@@ -4,11 +4,7 @@ describe "Basepack basic list" do
   # subject { page }
 
   let!(:employee1) { FactoryGirl.create :employee }
-  #let(:employee2) { FactoryGirl.create :employee }
-
-  #let(:employees) { [employee1, employee2] }
-
-  let(:ability) { Object.new.extend(CanCan::Ability) }
+  #let(:ability) { Object.new.extend(CanCan::Ability) }
 
   describe "update" do
 
@@ -23,4 +19,14 @@ describe "Basepack basic list" do
     end
 
   end
+
+  #TODO (except others things not forgot to test):
+  # form with accepts_nested_attributes_for
+  #   * without :allow_destroy -- test that ignore :_destroy param
+  #   * with :update_only  -- test that ignore :id param
+  #  ...test for:
+  #   * creates new nested items
+  #   * modify existing nested items
+  #   * delete nested items
+
 end
