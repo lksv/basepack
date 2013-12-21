@@ -24,6 +24,10 @@ class Employee < ActiveRecord::Base
   validates_uniqueness_of :email, on: :create, message: "must be unique"
   validate :is_allowed?, :on => :create
 
+  before_destroy :destroy_hook
+
+  def destroy_hook; end
+
   def name_with_title
     "#{title} #{name}"  
   end
