@@ -143,7 +143,7 @@ module Basepack
       end
 
       render do
-        view.render @partial || default_partial, form: self
+          view.render partial || default_partial, form: self
       end
 
       def default_partial

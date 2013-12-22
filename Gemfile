@@ -35,6 +35,9 @@ group :test, :development do
   gem "twitter-bootstrap-rails", "~> 2.2.8"
   gem "selenium-webdriver"
   gem "simple_form"
+  gem 'ancestry'
+  gem 'jquery-cookie-rails'
+  gem 'fancytree-rails'
 end
 
 # Declare any dependencies that are still in development here instead of in

@@ -36,16 +36,14 @@ module Basepack
     defaults route_prefix: nil
     check_authorization # CanCan
 
-    helper_method :resource_config, :return_to_path, :collection_action?, :route_prefix,
-                  :chain, :title_params, :resource_filter, :default_query_params,
-                  :build_resource,
-                  :query_params,
+    helper_method :resource_config, :return_to_path, :collection_action?,
+                  :route_prefix, :chain, :title_params, :resource_filter,
+                  :default_query_params, :build_resource, :query_params,
                   :list_form, :show_form, :query_form, :edit_form,
-                  :bulk_edit_form,
-                  :export_form, :diff_form, :list_form_for, :show_form_for,
-                  :query_form_for, :edit_form_for, :diff_form_for,
-                  :export_form_for, :bulk_edit_form_for,
-                  :resource2
+                  :bulk_edit_form, :export_form, :diff_form, :list_form_for,
+                  :show_form_for, :query_form_for, :edit_form_for,
+                  :diff_form_for, :export_form_for, :bulk_edit_form_for,
+                  :resource2, :list_section
 
     custom_actions collection: [
       :options,
@@ -54,7 +52,9 @@ module Basepack
       :taggings,
       :bulk_edit,
       :bulk_update,
-      :bulk_delete
+      :bulk_delete,
+      :load_tree_nodes,
+      :update_tree
     ]
 
 
@@ -327,8 +327,110 @@ module Basepack
     end
     alias :bulk_update! :bulk_update
 
-    def list_form_for(query_form)
-      form_factory_rails_admin(:list, Basepack::Forms::List, query_form.chain_with_class, query_form: query_form)
+    # [POST] /resource/:id/:parent_id[/:id2/:method]
+    # Updates nodes parent and position
+    # * +parent_id+ - New parent of actual node
+    # === Sorting
+    # Sorting is used if Node respons to position method
+    # Updates nested tree after drag & drop action. 
+    # * +method+ - FancyTree drag & drop method ['over', 'before', 'after']
+    # * +id2+ - Node id provided by fancytree depending on method
+   def update_tree(options = {}, &block)
+      authorize!(action_name.to_sym, resource_class)
+
+      parent_id = params[:parent_id]
+      # check that parent shoud by node which is visible for the user.
+      authorize!(:list, params[:parent_id])
+      err_exit = proc { |r|
+        render json: {
+          success: false,
+          msg: t('basepack.tree_list.update_tree.error', name: r.to_label,
+            msg: r.errors.full_messages.join(',')).to_json
+        }
+        return #it is Proc, note we are exiting form the whole method.
+      }
+
+      resource_class.transaction do
+
+        # parent id can be changed using every d & d method
+        resource.parent_id = parent_id
+        err_exit.call(resource) unless resource.save
+
+        # if +position+ attribute exists, it is orderable tree
+        # and position of the tree has to be set
+        if resource.respond_to?(:position)
+
+          method = params[:method]
+
+          if method == "over" # new node in subtree, set position to last
+            pos = resource.siblings.order('position').last.position + 1
+            resource.position = pos
+            err_exit.call(resource) unless resource.save
+          end
+
+          # move before/after resource2
+          # if moving before, position of resource2 has to be updated too
+          position_cond = resource2.position
+          position_cond += 1 if method == "after"
+
+          nodes = resource2.siblings.where('position >= ?', position_cond)
+
+
+          nodes.each do |n|
+            authorize!(:update, n)
+
+            n.position += 1
+
+            err_exit.call(n) unless n.save
+          end
+
+          resource.position = position_cond
+
+          err_exit.call(resource) unless resource.save
+
+        end # end sorting
+      end # end transaction
+
+      render json: { success: true }
+    end
+    alias :update_tree! :update_tree
+
+    # [POST, GET] /collection/load_tree_nodes/:parent_id[/:expanded]
+    # Loads part of nested tree based on parent node and expanded nodes
+    # POST method is used for big data (expanded param)
+    # used by List form with TreeList section
+    # * +parent_id+ - root of the subtree
+    # by default, only this level of tree is returned
+    #
+    # * +expanded+ - string of ids separated with '~'. Example - "3~6~42"
+    #
+    # If expanded is provided, returns more levels of tree depending
+    # on expanded nodes
+    def load_tree_nodes(options = {}, &block)
+      if params[:parent_id]
+        children_ids = resource_class.find(params[:parent_id]).child_ids
+        collection = collection_without_pagination.where(id: children_ids)
+      else
+        collection = collection_without_pagination.where(ancestry: nil)
+      end
+
+      expanded = params[:expanded].to_s.split('~').map{|s| s.to_i}
+
+      form = list_form_for(query_form)
+      form.view = view_context
+      nodes = view_context.nested_tree_nodes(form, expanded, collection)
+
+      block ||= proc do |format|
+        format.json do
+          render json: nodes
+        end
+      end
+
+      respond_with(*with_chain(collection), options, &block)
+    end
+
+    def list_form_for(query_form, section = default_list_section)
+      form_factory_rails_admin(section, Basepack::Forms::List, query_form.chain_with_class, query_form: query_form)
     end
 
     def show_form_for(resource_or_chain)
@@ -549,6 +651,16 @@ module Basepack
 
     def chain_with_class
       association_chain + [resource_class]
+    end
+
+    # Returns default section for List form
+    # Can we overrided in subclasses
+    def default_list_section
+      :list
+    end
+
+    def list_section
+      Basepack::Utils::model_config(resource_class).send(default_list_section)
     end
 
     def title_params

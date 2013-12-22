@@ -23,6 +23,10 @@ Dummy::Application.routes.draw do
     patch  'bulk_update', on: :collection
     post   'bulk_update', on: :collection
 
+    post 'update_tree', on: :member
+    get  'update_tree', on: :member
+    post 'load_tree_nodes', on: :collection
+    get  'load_tree_nodes', on: :collection
   end
 
   resources :employees,

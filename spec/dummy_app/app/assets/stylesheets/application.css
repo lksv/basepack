@@ -11,5 +11,6 @@
  *= require_self
  *= require basepack
  *= require basepack_and_overrides
+ *= require fancytree/skin-lion/ui.fancytree
  *= require_tree .
  */

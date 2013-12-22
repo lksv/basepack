@@ -55,9 +55,13 @@ ActiveRecord::Schema.define(version: 20140117153133) do
     t.integer  "employee_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "ancestry"
+    t.integer  "position"
   end
 
+  add_index "projects", ["ancestry"], name: "index_projects_on_ancestry"
   add_index "projects", ["employee_id"], name: "index_projects_on_employee_id"
+  add_index "projects", ["position"], name: "index_projects_on_position"
 
   create_table "skills", force: true do |t|
     t.string   "name"

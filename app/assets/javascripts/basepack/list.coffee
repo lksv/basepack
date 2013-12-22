@@ -26,11 +26,17 @@ handleMethodParams = (link) ->
 
 $(document).on 'click', '[data-bulk-action-method]', (event) ->
   event.preventDefault()
-  ids = $("input[name^='bulk_ids[]']:checked").map(->
-    return $(@).val()
-  ).get()
 
-  $(@).data('params', ids: ids)
+  # if element with 'data-bulk-actions-params' is set, get params from it
+  # instead search for checkboxes named 'bulk_ids[]' 
+  if $("[data-bulk-actions-params]").length == 0
+    ids = $("input[name^='bulk_ids[]']:checked").map(->
+      return $(@).val()
+    ).get()
+    $(@).data('params', ids: ids)
+  else
+    params = $("[data-bulk-actions-params]").data('bulk-actions-params')
+    $(@).data('params', params)
 
   handleMethodParams($(@))
 

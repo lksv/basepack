@@ -116,9 +116,12 @@ module Basepack
       #patch  'list_columns', :on => :collection
       #put    'list_columns', :on => :collection
 
-      get    'bulk_edit',   on: :collection
-      patch  'bulk_update', on: :collection
-      post   'bulk_update', on: :collection
+      get    'bulk_edit',     on: :collection
+      patch  'bulk_update',   on: :collection
+      post   'bulk_update',   on: :collection
+      post 'update_parent',   on: :member
+      post 'load_tree_nodes', on: :member
+      get  'load_tree_nodes', on: :member
 end
 
   resources :filters, concerns: :resourcable

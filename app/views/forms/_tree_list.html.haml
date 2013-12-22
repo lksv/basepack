@@ -1,0 +1,83 @@
+- fields = form.visible_fields
+
+#tree-error-modal.modal.hide.fade
+  .modal-body
+    %p
+  .modal-footer
+    %a.btn.btn-primary.modal-close{href: collection_path} Close
+#tree{data: { 'bulk-actions-params' => '' }}
+  -# %ul#treeData
+  -#   = nested_tree_nodes form, collection
+
+= render "forms/pagination", collection: form.collection
+
+- expanded = cookies["#{resource_class.to_s.underscore}_fancytree_expanded"].to_s.split("~").map{|s| s.to_i}
+:coffee
+  $('#tree').fancytree
+    extensions: #{list_section.extensions.to_json}
+
+    # use checkboxes only if bulk actsions are enabled
+    #{'checkbox: true' if list_section.bulk_actions}
+    selectMode: #{list_section.select_mode.to_json}
+
+    source: #{nested_tree_nodes(form, expanded, collection.where(ancestry: nil)).to_json}
+    lazyload: (e, data) ->
+      data.result = $.ajax({
+        data:
+          expanded: $.cookie("#{resource_class.to_s.underscore}_fancytree_expanded")
+        url: "#{polymorphic_path([:load_tree_nodes, resource_class].flatten)}.json?parent_id=\#{data.node.key}",
+        dataType: "json"
+        method: "post"
+      })
+
+    persist:
+      cookiePrefix: "#{resource_class.to_s.underscore}_fancytree_"
+      types: "active expanded focus selected"
+      overrideSource: true
+
+    select: (e, data) ->
+      nodes = data.tree.getSelectedNodes()
+      ids = $.map(nodes, (node) ->
+        node.key
+      )
+
+      $("#tree").data('bulk-actions-params', ids: ids)
+
+    # merge default optiond with options defined in tree_list block
+    dnd: _.extend({
+      preventVoidMoves: true
+      preventRecursiveMoves: true
+      autoExpandMS: 400
+      dragStart: (node, data) ->
+        return true
+      dragEnter: (node, data) ->
+        return true
+      dragDrop: (node, data) ->
+        id = data.otherNode.key
+
+        # nesting
+        if data.hitMode == "over" # inserted into node
+          parent_id = node.key
+        else # inserted inside node
+          parent_id = node.parent.key
+
+        # assigned to root = no parent
+        if parent_id.toString().indexOf "root", 0 == -1
+          parent_id = "&parent_id=\#{parent_id}"
+        else
+          parent_id = ""
+
+        id2 = node.key
+        method = data.hitMode
+
+        # TODO: use rails route helper for full route
+        update_url = "#{collection_path}/\#{id}/update_tree?method=\#{method}&id2=\#{id2}\#{parent_id}"
+
+        $.post update_url, (data) ->
+          console.log(data)
+          if data.success == false
+            $("#tree-error-modal").modal('toggle')
+            $("#tree-error-modal .modal-body p").text(data.msg)
+
+        data.otherNode.moveTo(node, data.hitMode)
+    }, #{list_section.dnd.to_json})
