@@ -9,6 +9,8 @@
       = render "forms/buttons/query",  url: polymorphic_path([:query, route_prefix, association_chain, resource_class].flatten), url_params: query_params if can? :query, resource_class
       = render "forms/buttons/export", url: polymorphic_path([:export, route_prefix, association_chain, resource_class].flatten, query_params) if can? :export, resource_class
       = render "forms/buttons/import", url: polymorphic_path([:import, route_prefix, association_chain, resource_class].flatten) if can? :import, resource_class
+      - if resource_config.list.bulk_actions
+        = render "forms/buttons/bulk_delete", url: polymorphic_path([:bulk_delete, route_prefix, association_chain, resource_class].flatten) if can? :bulk_delete, resource_class
     - when :show
       = render "forms/buttons/edit",   url: edit_resource_path if can? :edit, resource
       -#= render "forms/buttons/create", url: new_resource_path if can? :create, resource_class

@@ -6,3 +6,8 @@ cs:
     save_filter: "Uložit filtr"
     error_filter: "Filter nelze uložiť"
     enter_filter_name: "Prosím vyplňte název filtru"
+
+  admin:
+    actions:
+      delete_all:
+        menu: "Smazat označené"

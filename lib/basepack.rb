@@ -110,6 +110,12 @@ module Basepack
         end
       end
 
+      RailsAdmin::Config::Sections::List.class_eval do
+        register_instance_option :bulk_actions do
+          false
+        end
+      end
+
       RailsAdmin::Config::Fields::Base.class_eval do
         alias export_value! export_value
 

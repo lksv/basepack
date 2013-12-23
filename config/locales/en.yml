@@ -6,3 +6,8 @@ en:
     save_filter: "Save filter"
     error_filter: "Filter can't be saved"
     enter_filter_name: "Please enter filter name"
+
+  admin:
+    actions:
+      delete_all:
+        menu: "Delete selected"

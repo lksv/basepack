@@ -14,7 +14,7 @@ $(document).on 'click.data-api', '[data-toggle="checkboxes"]', ->
   $($(@).data('target')).prop "checked", $(@).is(":checked")
 
 $(document).on 'click.data-api', '[data-toggleclass]', (e) ->
-  $(@).toggleClass($(@).data("toggleclass"));
+  $(@).toggleClass($(@).data("toggleclass"))
 
 $(document).on 'click.data-api', '[data-toggle="ajax-modal"]', (e) ->
   # ajax modals
@@ -201,6 +201,7 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
          dataType: "json"
        ).done (d) ->
          callback(data.concat(d))
+
 
 class Basepack.Form.Plugins.FilteringMultiSelect extends Basepack.Form.Plugin
   bind: ->

@@ -3,6 +3,8 @@
 %table.table.table-striped
   %thead
     %tr
+      - if resource_config.list.bulk_actions
+        %th= check_box_tag :check_all, "all", false, data: {toggle: 'checkboxes', target: "input[name^='bulk_ids[]']"}
       - fields.each do |field|
         %th{class: "#{field.css_class} #{field.type_css_class}"}
           = form.render_sort_link(field)
@@ -10,6 +12,8 @@
   %tbody
     - form.collection_each do
       = form.render_row do
+        - if resource_config.list.bulk_actions
+          %td= check_box_tag "bulk_ids[]", form.resource.id
         - fields.each do |field|
           - value = field.pretty_value
           %td{class: "#{field.css_class} #{field.type_css_class}", title: strip_tags(value.to_s)}= value
