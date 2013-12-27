@@ -474,7 +474,7 @@ describe "Basepack basic list" do
     it "sorts by date asceding" do
       visit employees_path
       click_on 'Created at'
-
+save_and_open_page
       expect(page).to have_selector("tbody tr:first", text: (I18n.l employee1.created_at, format: :long))
       expect(page).to have_selector("tbody tr:nth(2)", text: (I18n.l employee2.created_at, format: :long))
       expect(page).to have_selector("tbody tr:nth(3)", text: (I18n.l employee3.created_at, format: :long))
@@ -495,7 +495,7 @@ describe "Basepack basic list" do
     let!(:employee2) { FactoryGirl.create(:employee, name: 'yyy', title: "Mr") }
     let!(:employee3) { FactoryGirl.create(:employee, name: 'xxx', title: "Miss.") }
 
-    before(:all) do
+    before(:each) do
       RailsAdmin.config Employee do
         list do
           field :name_with_title do
@@ -504,25 +504,22 @@ describe "Basepack basic list" do
           end
         end
       end
-    end
-
-    before(:each) do
       # touch all employees
       employee1
       employee2
       employee3
       visit employees_path
-
-      click_on "Title and name"
     end
 
     it "sorts title and name asceding" do
+      click_on "Title and name"
       expect(page).to have_selector("tbody tr:first", text: employee3.name_with_title)
       expect(page).to have_selector("tbody tr:nth(2)", text: employee1.name_with_title)
       expect(page).to have_selector("tbody tr:nth(3)", text: employee2.name_with_title)
     end
 
     it "sorts title and name descending" do
+      click_on "Title and name"
       click_on "Title and name"
       expect(page).to have_selector("tbody tr:first", text: employee2.name_with_title)
       expect(page).to have_selector("tbody tr:nth(2)", text: employee1.name_with_title)
@@ -536,15 +533,14 @@ describe "Basepack basic list" do
     let!(:employee3) { FactoryGirl.create(:employee, name: 'xxxx') }
 
     describe "default filter" do
-      before(:all) do
-        EmployeesController.default_query do
+      before(:each) do
+        EmployeesController.any_instance.stub(:default_query_params).and_return(
           { "f[name_eq]" => "xxx" }
-        end
+        )
       end
 
       it "uses default filter when no search params provided" do
         visit employees_path
-
         expect(page).to have_content(employee1.name)
         expect(page).to have_no_content(employee2.name)
         expect(page).to have_css("tbody tr", :count => 1)

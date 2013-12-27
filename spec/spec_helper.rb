@@ -33,13 +33,16 @@ RSpec.configure do |config|
   config.mock_with :rspec
   config.infer_base_class_for_anonymous_controllers = false
   config.include Devise::TestHelpers, :type => :controller
-  # config.order = "random"    #FIXME: uncomment this and fix the tests
+  config.order = "random"
 
   config.before(:each) do
     DatabaseCleaner.strategy = (example.metadata[:js]) ? :truncation : :transaction
 
     DatabaseCleaner.start
-    # RailsAdmin::Config.reset  #TODO!!!
+    RailsAdmin::Config.reset
+    RailsAdmin.config do |c|
+      c.included_models = Basepack::Utils.detect_models
+    end
     RailsAdmin::AbstractModel.reset
     RailsAdmin::Config.yell_for_non_accessible_fields = false
   end
