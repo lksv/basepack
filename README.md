@@ -1,5 +1,6 @@
 Basepack
 =======
+[![Gem Version](https://badge.fury.io/rb/basepack.png)](http://badge.fury.io/rb/basepack)
 [![Build Status](https://api.travis-ci.org/lksv/basepack.png?branch=master)](http://travis-ci.org/lksv/base_pack)
 [![Dependency Status](https://gemnasium.com/lksv/basepack.png)](https://gemnasium.com/lksv/basepack)
 
