@@ -19,7 +19,7 @@ describe "RailsAdmin Basic Create" do
       expect(created_employee.email).to eq("john.smith@gmail.com")
       expect(created_employee.income).to eq(1500)
     end
-  end  
+  end
 
   # describe "create with belongs_to association", js: true do
   #   before(:each) do

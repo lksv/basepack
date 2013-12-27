@@ -1,0 +1,3 @@
+class EmployeeWithNestedsController < ResourcesController
+
+end

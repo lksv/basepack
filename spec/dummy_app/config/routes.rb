@@ -21,7 +21,7 @@ Dummy::Application.routes.draw do
   end
 
   resources :employees, :projects, :tasks, :positions, :skills, :accounts,
-    :users, concerns: [:resourcable]
+    :employee_with_nesteds, :users, concerns: [:resourcable]
 
   root 'employees#index'
 end

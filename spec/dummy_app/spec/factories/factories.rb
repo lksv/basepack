@@ -5,7 +5,7 @@ FactoryGirl.define do
     name { Faker::Name.name }
     email { Faker::Internet.email }
 
-    factory :empoyee_with_all_associations do
+    factory :employee_with_all_associations do
       account   { FactoryGirl.build(:account) }
       position  { FactoryGirl.build(:position) }
       projects  { FactoryGirl.build_list(:project_with_tasks, 2) }

@@ -28,7 +28,7 @@ describe "Basepack Basic Show" do
   end
 
   describe "GET /employees/new with has-one/belongs_to/has_many/has_many through/habtm association" do
-    let!(:employee)  { FactoryGirl.create :empoyee_with_all_associations }
+    let!(:employee)  { FactoryGirl.create :employee_with_all_associations }
 
     before(:each) do
       RailsAdmin.config Employee do

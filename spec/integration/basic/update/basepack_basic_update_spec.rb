@@ -1,6 +1,6 @@
  require 'spec_helper'
 
-describe "Basepack basic list" do
+describe "Basepack basic update" do
   # subject { page }
 
   let!(:employee1) { FactoryGirl.create :employee }
@@ -19,6 +19,28 @@ describe "Basepack basic list" do
     end
 
   end
+
+  #context "without accepts_nested_attributes_for" do
+  #  it "do not allow to accepts id and _delete params" do
+  #    pending '...'
+  #  end
+  #end
+
+  #context "with accepts_nested_attributes_for" do
+  #  let(:employee_wih_nested) { FactoryGirl.create(:employee_with_all_associations) }
+  #  it "updates nested form fields" do
+  #    visit edit_employee_with_nested(employee_wih_nested)
+  #  end
+
+  #  it "adds nested form items" do
+  #  end
+
+  #  it "deletes nested form items" do
+  #  end
+
+  #  #it "crea
+
+  #end
 
   #TODO (except others things not forgot to test):
   # form with accepts_nested_attributes_for

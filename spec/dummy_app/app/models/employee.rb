@@ -29,7 +29,7 @@ class Employee < ActiveRecord::Base
   def destroy_hook; end
 
   def name_with_title
-    "#{title} #{name}"  
+    "#{title} #{name}"
   end
 
   def is_allowed?
