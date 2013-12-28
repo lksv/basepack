@@ -69,15 +69,18 @@ module Basepack
         gem "twitter-bootstrap-rails"
         gem 'bootbox-rails'
 
-
         #needed for imports
-        gem 'rack-cache', :require => 'rack/cache'
-        gem 'dragonfly' # images
         gem 'delayed_job_active_record', ">= 4.0.0.beta2"
-
 
         #used in filters
         gem "strip_attributes", "~> 1.2"
+      end
+
+      #for Image/assets management (used also in imports)
+      def add_dragonfly
+        gem 'rack-cache', :require => 'rack/cache'
+        gem 'dragonfly'
+        generate 'dragonfly'
       end
 
       def copy_files
@@ -145,8 +148,6 @@ RUBY
          copy_migrate 'create_imports'
          copy_migrate 'create_imports_importables_join_table'
          copy_file 'import.rb', 'app/models/import.rb'
-
-         copy_file 'dragonfly.rb', 'config/initializers/dragonfly.rb'
       end
 
       def create_saved_filters

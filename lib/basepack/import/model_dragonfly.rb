@@ -8,8 +8,8 @@ module Basepack
 
         has_many :importables, inverse_of: :import, dependent: :destroy, class_name: 'Basepack::ImportImportable'
 
-        image_accessor :file
-        image_accessor :report
+        dragonfly_accessor :file
+        dragonfly_accessor :report
 
         serialize :configuration, Hash
 

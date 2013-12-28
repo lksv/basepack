@@ -16,7 +16,7 @@ group :test, :development do
   gem 'capybara'
   gem 'warden'
   gem 'database_cleaner'
-  gem 'dragonfly', '>= 0.9'
+  gem 'dragonfly', '~> 1.0.2'
   gem 'rack-cache', :require => 'rack/cache'
   gem 'paperclip', '>= 3.4'
   gem 'timecop'
