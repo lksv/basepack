@@ -11,8 +11,8 @@
         .pull-right
           = render "forms/buttons/refresh"
 
-  %legend Nový import
+  %legend= t('basepack.import.new_import')
   = form.edit_form.render
 
-  %legend Seznam importů
+  %legend= t('basepack.import.import_list')
   = form.list_form.render

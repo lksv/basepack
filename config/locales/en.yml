@@ -2,21 +2,65 @@ en:
   web_name: "Project Name"
   misc:
     loading: "Loading, please wait"
-    modify_query: "Modify query"
-    save_filter: "Save filter"
-    error_filter: "Filter can't be saved"
-    enter_filter_name: "Please enter filter name"
 
-  admin:
+  basepack:
+    misc:
+      submit_create: 'Add'
+    flash:
+      error_on_items: "Following %{model_label_plural} failed to be %{action}"
+    export:
+      no_exported_items: "Exported items count"
+      select_all_fields: "Select All Fields"
+      select: "Select fields to export"
+      click_to_reverse_selection: 'Click to reverse selection'
+      fields_from: "Fields from %{name}"
+      fields_from_associated: "Fields from associated %{name}"
+      options_for: "Options for %{name}"
+      csv:
+        skip_header: "No header"
+        skip_header_help: "Do not output a header (no fields description)"
+        col_sep_help: "Leave blank for default ('%{value}')"
+        col_sep:
+          label: "Column separator"
+          comma: "<comma> ','"
+          semicolon: "<semicolon> ';'"
+          tab: "<tabs>"
+      confirmation: "Export to %{name}"
+
+    import:
+      new_import: "New Import"
+      import_list: "List of Imports"
+      csv:
+        configuration: "Configuration of CSV import"
+        blank_vals:
+          label: "Blank values"
+          skip: "Skip"
+          use: "Set"
+        column: "Column %{idx}"
+        start: "Start Import"
+
+    bulk_edit:
+      title: "Bulk edit for %{count} items"
+
+    query:
+      filter: 'Filter'
+      add_filter: 'Add Filter'
+      query: 'Query'
+      filter_list: "List of Saved Filters"
+      modify_query: "Modify query"
+      save_filter: "Save filter"
+      error_filter: "Filter can't be saved"
+      enter_filter_name: "Please enter filter name"
+
     actions:
       delete_all:
         menu: "Delete selected"
-
-  basepack:
-    flash:
-      error_on_items: "Following %{model_label_plural} failed to be %{action}"
-    actions:
+      import:
+        title: "Import"
+        menu: "Import"
+        breadcrumb: "Import"
       bulk_edit:
+        done: "imported"
         title: "Change %{model_label_plural}"
         menu: "Bulk change"
         breadcrumb: 'Bulk edit'

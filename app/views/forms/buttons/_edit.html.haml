@@ -1,3 +1,3 @@
 = link_to url, class: 'btn btn-info' do
   %i.icon-pencil
-  = I18n.t('admin.actions.edit.menu')
+  = Basepack::Utils.translate(resource_class, :edit, :menu)

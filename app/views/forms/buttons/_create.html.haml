@@ -1,5 +1,4 @@
 -# TODO rename to "new"
 = link_to url, class: 'btn btn-info' do
   %i.icon-plus
-  = I18n.t('admin.actions.new.menu')
-
+  = Basepack::Utils.translate(resource_class, :new, :menu)

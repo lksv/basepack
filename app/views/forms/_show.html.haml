@@ -1,7 +1,7 @@
 .form-show
   - form.visible_groups.each do |group|
     - if (fields = group.visible_fields).present?
-      - unless group.name == :default 
+      - unless group.name == :default
         %h4= group.label
       - if group.help
         %p= group.help

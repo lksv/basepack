@@ -136,7 +136,7 @@ module Basepack
 
         if @ql or @edit_ql
           init << {
-            label:     'Dotaz',
+            label:     I18n.t('basepack.query.query'),
             name:      'ql',
             type:      'ql',
             value:     @ql || conditions_to_ql,

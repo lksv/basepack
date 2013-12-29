@@ -1,7 +1,7 @@
 .form-bulk-edit
   = form.render_form do
 
-    %h3 Bulk edit for #{form.collection.count} items
+    %h3= I18n.t('basepack.bulk_edit.title', count: form.collection.count)
 
     = form_display_base_errors(form.resource)
     .form-inputs

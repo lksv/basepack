@@ -2,12 +2,67 @@ cs:
   web_name: "Název projektu"
   misc:
     loading: "Chvíli strpení"
-    modify_query: "Upravit dotaz"
-    save_filter: "Uložit filtr"
-    error_filter: "Filter nelze uložiť"
-    enter_filter_name: "Prosím vyplňte název filtru"
 
-  admin:
+  basepack:
+    misc:
+      submit_create: 'Přidat'
+    flash:
+      error_on_items: "Objekt %{model_label_plural} nelze %{action}"
+    export:
+      no_exported_items: "Počet záznamů pro export"
+      select_all_fields: "Vybrat všechny pole"
+      select: "Vyberte políčka pro export"
+      click_to_reverse_selection: 'Klikněte pro reverzní výběr'
+      fields_from: "Poloíčka z %{name}"
+      fields_from_associated: "Políčka z přiřazeného %{name}"
+      options_for: "Možnosti pro %{name}"
+      csv:
+        skip_header: "Žádná hlavička"
+        skip_header_help: "Neexportovat hlavičku"
+        col_sep_help: "Nechte prázdné pro výchozí ('%{value}')"
+        col_sep:
+          label: "Oddělovač sloupců"
+          comma: "<čárka> ','"
+          semicolon: "<středník> ';'"
+          tab: "<tabulátor>"
+      confirmation: "Export to %{name}"
+
+    import:
+      new_import: "Nový import"
+      import_list: "Sezam importů"
+      csv:
+        configuration: "Konfigurace CSV importu"
+        blank_vals:
+          label: "Prázdné hodnoty"
+          skip: "Přeskočit"
+          use: "Nastavit"
+        column: "Sloupec %{idx}"
+        start: "Spustit"
+
+    bulk_edit:
+      title: "Hromadná změna %{count} položek"
+
+    query:
+      filter: 'Filtr'
+      add_filter: 'Přidat filtr'
+      query: 'Dotaz'
+      filter_list: "Seznam uložených filtrů"
+      modify_query: "Upravit dotaz"
+      save_filter: "Uložit filtr"
+      error_filter: "Filter nelze uložit"
+      enter_filter_name: "Prosím vyplňte název filtru"
+
     actions:
       delete_all:
         menu: "Smazat označené"
+      import:
+        title: "Import"
+        menu: "Import"
+        breadcrumb: "Import"
+      bulk_edit:
+        done: "importováno"
+        title: "Změna %{model_label_plural}"
+        menu: "Hromadná změna"
+        breadcrumb: 'Hromadná úprava'
+        bulk_link: "Změnit vybraný %{model_label_plural}"
+        done: "upraveno"

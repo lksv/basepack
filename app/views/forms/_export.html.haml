@@ -1,6 +1,7 @@
 .form-export
   .well.well-small
-    Počet záznamů pro export:
+    = I18n.t('basepack.export.no_exported_items', default: [:'admin.export.no_exported_items'])
+    \:
     %b= export_form.collection.total_count
 
   = form_tag form.path, method: 'post', class: 'form-horizontal denser' do
@@ -14,9 +15,9 @@
           %label.checkbox{:for => 'check_all'}
             = 'Vybrat všechny pole'
             = check_box_tag 'check_all', 'all', true, data: {toggle: "checkboxes", target: "input[name^='schema[]']"}
-      %legend= t('admin.export.select')
+      %legend= t('basepack.export.select', default: [:'admin.export.select'])
       .control-group
-        %label.control-label{"data-toggle" => 'tooltip', title: t('admin.export.click_to_reverse_selection'), :onclick => 'jQuery(this).siblings(".controls").find("input").click()'}= t('admin.export.fields_from', :name => resource_config.label_plural.downcase)
+        %label.control-label{"data-toggle" => 'tooltip', title: t('basepack.export.click_to_reverse_selection', default: [:'admin.export.click_to_reverse_selection']), :onclick => 'jQuery(this).siblings(".controls").find("input").click()'}= t('basepack.export.fields_from', default: [:'admin.export.fields_from'], :name => resource_config.label_plural.downcase)
         .controls
           - form.visible_fields.select {|f| !f.association? || f.polymorphic? }.each do |field|
             %label.checkbox{for: "schema_#{field.name}"}
@@ -25,7 +26,7 @@
 
       - form.visible_fields.select {|f| f.association? && !f.polymorphic? }.each do |field|
         .control-group
-          %label.control-label{"data-toggle" => 'tooltip', title: t('admin.export.click_to_reverse_selection'), :onclick => 'jQuery(this).siblings(".controls").find("input").click()'}= t('admin.export.fields_from_associated', :name => field.label.downcase)
+          %label.control-label{"data-toggle" => 'tooltip', title: t('basepack.export.click_to_reverse_selection', default: [:'admin.export.click_to_reverse_selection']), :onclick => 'jQuery(this).siblings(".controls").find("input").click()'}= t('basepack.export.fields_from_associated', default: [:'admin.export.fields_from_associated'], :name => field.label.downcase)
           .controls
             - field.nform.visible_fields.reject {|f| f.association? }.each do |afield|
               %label.checkbox{:for => "schema_#{field.name}_#{afield.name}"}
@@ -33,38 +34,38 @@
                 = afield.label
 
     %fieldset
-      %legend= t('admin.export.options_for', :name => 'csv')
+      %legend= t('basepack.export.options_for', default: [:'admin.export.options_for'], :name => 'csv')
       -#.control-group
       -#  - guessed_encoding = (Rails.configuration.database_configuration[Rails.env]['encoding'].presence rescue 'UTF-8') || 'UTF-8'
-      -#  %label.control-label{:for => "csv_options_encoding_to"}= t('admin.export.csv.encoding_to')
+      -#  %label.control-label{:for => "csv_options_encoding_to"}= t('basepack.export.csv.encoding_to', default: [:'admin.export.csv.encoding_to'])
       -#  .controls
       -#    -# from http://books.google.com/support/partner/bin/answer.py?answer=30990 :
       -#    = select_tag 'csv_options[encoding_to]', options_for_select(["", "UTF-8", "UTF-16LE", "UTF-16BE", "UTF-32LE", "UTF-32BE", "UTF-7", "ISO-8859-1", "ISO-8859-15", "IBM-850", "MacRoman", "Windows-1252", "ISO-8859-3", "IBM-852", "ISO-8859-2", "MacCE", "Windows-1250", "IBM-855", "ISO-8859-5", "ISO-IR-111", "KOI8-R", "MacCyrillic", "Windows-1251", "CP-866", "KOI-U", "MacUkranian", "GB2312", "GBK", "GB18030", "HZ", "ISO-2022-CN", "Big5", "Big5-HKSCS", "EUC-TW", "EUC-JP", "ISO-2022-JP", "Shift_JIS", "EUC-KR", "UHC", "JOHAB", "ISO-2022-KR"])
-      -#    %p.help-block= t('admin.export.csv.encoding_to_help', :name => guessed_encoding)
+      -#    %p.help-block= t('basepack.export.csv.encoding_to_help', default: [:'admin.export.csv.encoding_to_help'], :name => guessed_encoding)
 
       .control-group
-        %label.control-label{:for => "csv_options_skip_header"}= t('admin.export.csv.skip_header')
+        %label.control-label{:for => "csv_options_skip_header"}= t('basepack.export.csv.skip_header', default: [:'admin.export.csv.skip_header'])
         .controls
           = check_box_tag 'csv_options[skip_header]', 'true'
-          %p.help-block= t('admin.export.csv.skip_header_help')
+          %p.help-block= t('basepack.export.csv.skip_header_help', default: [:'admin.export.csv.skip_header_help'])
 
       .control-group
-        %label.control-label{:for => "csv_options_col_sep"}= t('admin.export.csv.col_sep')
+        %label.control-label{:for => "csv_options_col_sep"}= t('basepack.export.csv.col_sep.label', default: [:'admin.export.csv.col_sep'])
         .controls
           = select_tag 'csv_options[col_sep]',
               options_for_select({'' => Basepack::Settings.export.default_col_sep,
-                "<comma> ','"     => ',',
-                "<semicolon> ';'" => ';',
-                '<tabs>'          => "'\t'" })
-          %p.help-block= t('admin.export.csv.col_sep_help', :value => Basepack::Settings.export.default_col_sep)
+                t('basepack.export.csv.col_sep.comma')      => ',',
+                t('basepack.export.csv.col_sep.semicolon')  => ';',
+                t('basepack.export.csv.col_sep.tab')        => "'\t'" })
+          %p.help-block= t('basepack.export.csv.col_sep_help', default: [:'admin.export.csv.col_sep_help'], :value => Basepack::Settings.export.default_col_sep)
 
     .form-actions
       .pull-right
         %button.btn.btn-primary{:type => "submit", :name => 'csv'}
           %i.icon-white.icon-ok
-          = t("admin.export.confirmation", :name => 'csv')
+          = t("basepack.export.confirmation", default: :"admin.export.confirmation", :name => 'csv')
         %button.btn.btn-info{:type => "submit", :name => 'json'}
-          = t("admin.export.confirmation", :name => 'json')
+          = t("basepack.export.confirmation", default: :"admin.export.confirmation", :name => 'json')
         %button.btn.btn-info{:type => "submit", :name => 'xml'}
-          = t("admin.export.confirmation", :name => 'xml')
+          = t("basepack.export.confirmation", default: :"admin.export.confirmation", :name => 'xml')
 

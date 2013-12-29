@@ -4,7 +4,7 @@ defaults: &defaults
   help:
     title: false
   export:
-    default_col_sep: ";"
+    default_col_sep: ';'
   filters:
     model_name: null  # for enabling saved filter set to 'Filter' model for instance
   bulk_edit:
@@ -13,6 +13,7 @@ defaults: &defaults
       - delete
       - assign
   import:
+    default_col_sep: ','
     mime_types: [text/csv, text/plain]
     model_name: Import
     default_action: :import

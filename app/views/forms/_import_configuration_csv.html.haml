@@ -1,17 +1,20 @@
-%legend Konfigurace CSV importu
+%legend= I18n.t('basepack.import.csv.configuration')
 
 = form.render_form do
   .form-inputs
-    = form.builder.input :col_sep, label: t('admin.export.csv.col_sep') do
+    = form.builder.input :col_sep, label: t('basepack.export.csv.col_sep.label') do
       %select{name: "import[configuration][col_sep]"}
-        = options_for_select({"<comma> ','" => ',', "<semicolon> ';'" => ';', '<tabs>' => "'\t'"}, configuration[:col_sep] || ',')
-    = form.builder.input :blank_vals, label: 'Prázdné hodnoty' do
+        = options_for_select({I18n.t('basepack.export.csv.col_sep.comma') => Basepack::Settings.import.default_col_sep,
+          I18n.t('basepack.export.csv.col_sep.semicolon') => ';',
+          I18n.t('basepack.export.csv.col_sep.tab') => "'\t'"},
+          configuration[:col_sep] || ',')
+    = form.builder.input :blank_vals, label: I18n.t('basepack.import.csv.blank_vals.label') do
       %select{name: "import[configuration][blank_vals]"}
-        = options_for_select({"Přeskočit" => 'skip', "Nastavit" => 'use'}, configuration[:blank_vals] || 'skip')
+        = options_for_select({I18n.t('basepack.import.csv.blank_vals.skip') => 'skip', I18n.t('basepack.import.csv.blank_vals.use') => 'use'}, configuration[:blank_vals] || 'skip')
     %hr
     - mapping = configuration[:mapping] || []
     - csv_cols.each_with_index do |col, i|
-      = form.builder.input :"col_#{i}", label: html_escape(col.presence || "Sloupec #{i + 1}") do
+      = form.builder.input :"col_#{i}", label: html_escape(col.presence || I18n.t('basepack.import.csv.column', idx: i+1)) do
         %select{name: "import[configuration][mapping][]"}
           = options_for_select(select_options, select_options.find {|o| o[0] == col} || mapping[i])
   .form-actions
@@ -20,4 +23,4 @@
       %button.btn.btn-primary{type: "submit", name: "import[state]", value: "not_started",
           'data-disable-with' => "<i class='icon-white icon-ok'></i> #{t("admin.form.save")}"}
         %i.icon-white.icon-ok
-        Spustit
+        = I18n.t('basepack.import.csv.start')

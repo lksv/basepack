@@ -159,7 +159,7 @@ module Basepack
         if filter.save
           flash.now[:notice] = message_new_done(Basepack::Utils.model_config(filter_class).label)
         else
-          flash.now[:error] = I18n.t :error_filter, scope: [:misc]
+          flash.now[:error] = I18n.t('basepack.query.error_filter')
         end
       end
 

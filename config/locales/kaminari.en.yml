@@ -12,7 +12,7 @@ en:
       one_page:
         display_entries:
           zero: "No items found"
-          one: "Displaying <b>1</b> %"
+          one: "Displaying <b>1</b> item"
           few: "Displaying <b>all %{count}</b> items"
           other: "Displaying <b>all %{count}</b>"
       more_pages:

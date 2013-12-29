@@ -3,7 +3,7 @@
          html: {method: :post, id: 'filter-form', class: 'form-horizontal form-search'} do |f|
     .modal-header
       = render 'forms/buttons/modal_close'
-      %h3= I18n.t('admin.misc.filter')
+      %h3= I18n.t('basepack.query.filter')
 
     .modal-body
       = form_display_base_errors form.resource_filter
@@ -11,12 +11,12 @@
         = yield(:query)
       - else
         .input-append
-          = text_field_tag 'query', form.query, autofocus: true, placeholder: I18n.t('admin.misc.filter'), class: "search-query"
-          %button{type: "submit", class: "btn", title: I18n.t('admin.misc.filter'), 'data-disable-with' => "<i class='icon-search'></i>"}
+          = text_field_tag 'query', form.query, autofocus: true, placeholder: I18n.t('basepack.query.filter'), class: "search-query"
+          %button{type: "submit", class: "btn", title: I18n.t('basepack.query.filter'), 'data-disable-with' => "<i class='icon-search'></i>"}
             %i.icon-search
       #complex-filters-menu.dropdown.pull-right
         %a.btn.dropdown-toggle{href: "#", "data-toggle" => "dropdown"}
-          = I18n.t('admin.misc.add_filter')
+          = I18n.t('basepack.query.add_filter')
           %span.caret
         = render "forms/query_menu", form: form
       .clearfix
@@ -35,18 +35,18 @@
       - unless form.edit_ql
         = button_tag class: 'btn', name: 'edit_ql', data: {"remote-form" => "parent=form", "remote-target" => "parent=.form-query"} do
           %i.icon-pencil
-          =I18n.t('misc.modify_query')
+          =I18n.t('basepack.query.modify_query')
       - if Basepack::Settings.filters.model_name and can?(:create, Basepack::Settings.filters.model_name.constantize)
         = hidden_field_tag 'filter_name'
-        = button_tag class: 'btn', id: 'filter-add', title: I18n.t('misc.save_filter') do
+        = button_tag class: 'btn', id: 'filter-add', title: I18n.t('basepack.query.save_filter') do
           %i.icon-plus
-          =I18n.t('misc.save_filter')
+          =I18n.t('basepack.query.save_filter')
         :javascript
           jQuery(function($) {
             $("#filter-add").click(function(e) {
               e.preventDefault();
 
-              bootbox.prompt(#{I18n.t('misc.enter_filter_name').to_json}, function(result) {
+              bootbox.prompt(#{I18n.t('basepack.query.enter_filter_name').to_json}, function(result) {
                 if (result) {
                   $('#filter-form input[name=filter_name]').val(result);
                   $('#filter-form').submit();

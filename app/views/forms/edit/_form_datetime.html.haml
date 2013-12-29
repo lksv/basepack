@@ -1,6 +1,6 @@
-= form.input field.method_name, 
+= form.input field.method_name,
     as:     :string,
-    label:  field.label, 
-    hint:   field.help, 
-    required: field.required?, 
+    label:  field.label,
+    hint:   field.help,
+    required: field.required?,
     input_html: field.html_attributes.merge({:value => (field.value.present? ? field.value : field.html_default_value)}).reverse_merge({data: { datetimepicker: true, options: field.js_plugin_options.to_json }})
