@@ -6,6 +6,7 @@ require 'bootstrap-modal-rails'
 require 'underscore-rails'
 require 'underscore-string-rails'
 require 'rails-i18n'
+require 'bootstrap-sass'
 
 module Basepack
   class Engine < ::Rails::Engine

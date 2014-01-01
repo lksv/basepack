@@ -26,7 +26,10 @@ class Import < ActiveRecord::Base
 
   belongs_to :user, inverse_of: :imports
 
-  handle_asynchronously :import_data
+  # Set `handle_asynchronously` to handle import on the background (it is 
+  # suitable if the import files might be big).
+  #
+  # handle_asynchronously :import_data
 
   RailsAdmin.config do
     Basepack::Utils.model_config(Import).show.field :user

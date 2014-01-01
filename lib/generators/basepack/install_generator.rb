@@ -144,17 +144,21 @@ RUBY
       end
 
       def create_imports
-         #TODO - should I ask whether generate?
-         copy_migrate 'create_imports'
-         copy_migrate 'create_imports_importables_join_table'
-         copy_file 'import.rb', 'app/models/import.rb'
+        #TODO - should I ask whether generate?
+        copy_migrate 'create_imports'
+        copy_migrate 'create_imports_importables_join_table'
+        copy_file 'import.rb', 'app/models/import.rb'
+        user_model_file =  'app/models/user.rb'
+        if File.exists?(user_model_file)
+          insert_into_file user_model_file, "  has_many :imports, inverse_of: :user\n", :after => "class User < ActiveRecord::Base\n"
+        end
       end
 
       def create_saved_filters
-         #TODO - should I ask whether generate?
-         copy_migrate 'create_filters'
-         copy_file 'filter.rb', 'app/models/filter.rb'
-         copy_file 'filters_controller.rb', 'app/controllers/filters_controller.rb'
+        #TODO - should I ask whether generate?
+        copy_migrate 'create_filters'
+        copy_file 'filter.rb', 'app/models/filter.rb'
+        copy_file 'filters_controller.rb', 'app/controllers/filters_controller.rb'
 
         ability_model_file = 'app/models/ability.rb'
         if File.exists?(ability_model_file)
@@ -162,7 +166,7 @@ RUBY
         end
         user_model_file =  'app/models/user.rb'
         if File.exists?(user_model_file)
-          insert_into_file user_model_file, "  has_many :filters, inverse_of: :user", :after => "class User < ActiveRecord::Base\n"
+          insert_into_file user_model_file, "  has_many :filters, inverse_of: :user\n", :after => "class User < ActiveRecord::Base\n"
         end
       end
 
