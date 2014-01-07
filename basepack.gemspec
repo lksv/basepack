@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   # assets
   spec.add_dependency 'sass-rails', '~> 4.0'
   spec.add_dependency 'bootstrap-sass', '~> 2.2'
-  spec.add_dependency 'bootbox-rails'
+  spec.add_dependency 'bootbox-rails', '~>0.1' #v0.2 is for Bootstrap 3
   spec.add_dependency 'font-awesome-rails', ['~> 3.0']
   spec.add_dependency 'coffee-rails', '~> 4.0'
 

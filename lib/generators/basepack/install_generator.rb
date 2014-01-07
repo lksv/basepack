@@ -66,7 +66,11 @@ module Basepack
         gem 'kaminari'
         gem "simple_form",          '~> 3.0.0.rc'
         gem 'settingslogic'
-        gem "twitter-bootstrap-rails"
+
+        #needs to be set exactly because of incompatibility bootstrap-modal-rails
+        #TODO fix when new version of bootstrap-modal-rails will be released
+        gem "twitter-bootstrap-rails", "= 2.2.7" 
+
         gem 'bootbox-rails'
 
         #needed for imports

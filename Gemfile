@@ -32,7 +32,7 @@ group :test, :development do
   gem 'sass-rails', '~> 4.0.0'
   gem 'bootstrap-sass', '~> 2.2'
   gem 'launchy'
-  gem "twitter-bootstrap-rails"
+  gem "twitter-bootstrap-rails", "= 2.2.7"
   gem "selenium-webdriver"
   gem "simple_form"
 end
