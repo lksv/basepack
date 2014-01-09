@@ -5,7 +5,16 @@ Basepack
 [![Dependency Status](https://gemnasium.com/lksv/basepack.png)](https://gemnasium.com/lksv/basepack)
 
 **Basepack** is a Ruby on Rails framework for quick creation of information
-systems.
+systems. 
+
+**Basepack** dramatically helps you to start your new project.
+There are out of the box form fields like: date (datepicker), datetime, html5
+wysiwig, tags, file upload and others. Further more there is support for 
+dynamic field hiding depending on state of other fields as well as
+options of selectbox content modifications dependant on other fields.
+
+**Basepack** contains a lot of predefined forms, views and actions which you might need
+(filter form, bulk changes, delete\_all, import, export, ...).
 
 ## Features
 
@@ -16,18 +25,24 @@ systems.
 * Automatic form validation
 * Import and Export functionality for resource
 * Easy way to create custom actions
+* Security: permited parameters are automatically defined against fields in edit forms which are (read-write).
 * Authentication (via [Devise](ttps://github.com/plataformatec/devise))
 * Authorization (via [Cancan](https://github.com/ryanb/cancan.git))
 
+All the field form definitions are done by [RailsAdmin](https://github.com/sferik/rails_admin) and are configured
+accordingly.  It simplifies configuration process and if you wish to use
+RailsAdmin as an admin interface.
+
+
 ## Documentation
 
-[Turorial](https://github.com/lksv/basepack/wiki/Tutorial)
+[Tutorial](https://github.com/lksv/basepack/wiki/Tutorial)
 
 See project [wiki](https://github.com/lksv/basepack/wiki).
 
 ## Demo
 
-*currently we are preparing 
+*Currently [zorec](https://github.com/zorec) is preparing 
 [basepace_example application](https://github.com/zorec/basepack_example)*
 
 The running application will be available at [http://basepack-example.herokuapp.com/](http://basepack-example.herokuapp.com/)
@@ -36,7 +51,7 @@ The running application will be available at [http://basepack-example.herokuapp.
 
 In your `Gemfile`, add the following dependencies:
 
-    gem "basepack",      git: "https://github.com/lksv/basepack.git"
+    gem "basepack"
 
 Run:
 
@@ -46,23 +61,12 @@ And then run:
 
     rails g basepack:install
 
-This generator will install **Basepack**, 
-[Devise](https://github.com/plataformatec/devise) and
-[CanCan](https://github.com/ryanb/cancan.git) and following gems
-* inherited\_resources
-* ransack
-* kaminari
-* simple\_form
-* settingslogic
-* twitter-bootstrap-rails
-* bootbox-rails
+The generator asks you to install several gems. If you don't know what
+to answer then answer 'yes' to all generator's questions
 
-if you don't already have them installed.
-
-Define inital ability in `app/models/ability.rb`. You can put ```can
-:manage, :all``` to enable anybody to perform any
-action on any object. See more on [CanCan
-wiki](https://github.com/ryanb/cancan/wiki/Defining-Abilities).
+Do not forget to define ability in `app/models/ability.rb`. You can put ```can
+:manage, :all``` to enable anybody to perform any action on any object. 
+See more on [CanCan wiki](https://github.com/ryanb/cancan/wiki/Defining-Abilities).
 
 Migrate your database and start the server:
 
@@ -83,14 +87,20 @@ Then
 ```rake db:migrate```
 ```rails s```
 
-Notice that files for views are not generated (directories appp/views/projects and appp/views/tasks are empty), but all RESTful actions are working correctly. It is because views iherit default structure and you can easily override these defaults by creating appropriate files.
+Notice that:
+1. Generated controllers inherits form ResourcesController.
+2. Files for views are not generated (directories appp/views/projects 
+and appp/views/tasks are empty), but all RESTful actions are working correctly. 
+It is because views inherit default structure from controller inheritance) 
+and you can easily override these defaults by creating appropriate files.
 
 ## Basic usage
 
 After scaffolding your resources, you can customize fields used in individual actions by [Railsdmin DSL](https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL)
 
 File ```app/models/project.rb```:
-```
+
+```ruby
 class Project < ActiveRecord::Base
   has_many :tasks, inverse_of: :project
   validates :name, :short_description, presence: true
@@ -121,16 +131,27 @@ end
 ```
 
 File ```app/models/task.rb```
-```
+```ruby
 class Task < ActiveRecord::Base
   belongs_to :project, inverse_of: :tasks
-  belongs_to :user
+  belongs_to :user, inverse_of: :tasks
 end
 ```
-IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of **Basepack**, see [Rails documentation](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations) for explaination.
+
+Add folowing line to ```app/models/user``` file:
+```ruby
+   has_many tasks, inverse_of: user
+```
+
+Pleas note that ```inverse_of``` option is included on association. It is 
+necessary for correct functioning of **Basepack**, see 
+[Rails documentation](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations) 
+and [RailsAdmin
+wiki](https://github.com/sferik/rails_admin/wiki/Associations-basics#inverse_of-avoiding-edit-association-spaghetti-issues) 
+for explaination.
 
 
-Another difference is controllers which inherit from ResourcesController. Full inheritance hierarchy looks this way:
+Almoust all the staff what Baseback do is through  Basepack::BaseController which inherit from ResourcesController. Full inheritance hierarchy looks this way:
 ```
 ProjectsController < ResourcesController < Basepack::BaseController < InheritedResources::Base
 ```
@@ -138,18 +159,14 @@ ProjectsController < ResourcesController < Basepack::BaseController < InheritedR
 
 If you are not familiar with [InheritedResources](https://github.com/josevalim/inherited_resources), take a look at it.  
 
-Basepack::BaseController adds to it:
-* strong parameters handling
-* ```options``` method
-* ```taggings``` method
-* ```build_resource``` method
-
 You do NOT need to define permitted parameters anymore. It is defined by RailsAdmin DSL, more precisely by what you set as visible in edit action. 
 So file ```app/models/project.rb```:
 
-```
+```ruby
 class Project < ActiveRecord::Base
-  ...
+  #...
+  rails_admin do
+    #...
     edit do
       field :name
       field :short_description
@@ -157,7 +174,7 @@ class Project < ActiveRecord::Base
       field :start
       field :finish
      end 
-  ...
+   end
 end
 ```
 
@@ -192,14 +209,7 @@ background architecture it is recommended to get to know at least with:
 **Basepack** was also
 inspired by [RailsAdmin](https://github.com/sferik/rails_admin) and
 still using [RailsAdmin
-DSL](https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL) for defining the forms.
-
-TODO - explain the concept. Class ```Basepack::Form::Base``` and ```Basepack::Form::Fields::Base```.
-Controller action as ```<form_name>_form_for``` and ```form_factory_rails_admin```.
-
-## Customining Views
-
-## Customizing Form View
+DSL](https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL) for defining the forms, sessins and fields group.
 
 License
 =======
@@ -209,8 +219,16 @@ This project rocks and uses LGPL-LICENSE.
 Credits
 =======
 
-[RailsAdmin](https://github.com/sferik/rails_admin) field forms was
+[RailsAdmin](https://github.com/sferik/rails_admin) field views and some forms (export form) was
 originaly taken from rails-admin.
 
 [nested_form_ui](https://github.com/tb/nested_form_ui) - stylesheed and
 code for orderable was inspired by this project.
+
+
+
+
+
+
+
+[![Analytics](https://ga-beacon.appspot.com/UA-46491076-2/basepack/README.md?pixel)](https://github.com/igrigorik/ga-beacon)
