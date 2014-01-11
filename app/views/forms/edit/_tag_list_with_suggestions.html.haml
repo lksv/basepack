@@ -11,5 +11,5 @@
     }.to_json
   }
 
-= form.input field.method_name, label: "<i class='icon-tags'></i> #{field.label}", hint: field.help, required: field.required? do
+= form.input field.method_name, label: "<i class='icon-tags'></i> #{h field.label}".html_safe, hint: field.help, required: field.required? do
   = form.input_field field.method_name, { type: 'text', data: js_data}
