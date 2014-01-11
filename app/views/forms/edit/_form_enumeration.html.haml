@@ -1,20 +1,19 @@
-= form.input field.method_name, collection: field.enum, label: field.label, hint: field.help, required: field.required?, 
-    input_html: { data: { select: {} } }.deep_merge(field.html_attributes)
--#- unless field.multiple?
--#- else
--#  / TODO
--#  :ruby
--#    js_data = {
--#      :xhr => false,
--#      :sortable => false,
--#      :cacheAll => true,
--#      :regional => {
--#        :chooseAll => t("admin.misc.chose_all"),
--#        :chosen    => t("admin.misc.chosen", :name => config.label_plural),
--#        :clearAll  => t("admin.misc.clear_all"),
--#        :search    => t("admin.misc.search"),
--#        :up        => t("admin.misc.up"),
--#        :down      => t("admin.misc.down")
--#      }
--#    }
--#  = form.input field.method_name, :collection => field.enum , label: field.label, hint: field.help, required: field.required?, input_html: field.html_attributes, { :selected => field.value, :object => form.object }, field.html_attributes.reverse_merge({:data => { :filteringmultiselect => true, :options => js_data.to_json }, :multiple => true})
+- unless field.multiple?
+  = form.input field.method_name, collection: field.enum, label: field.label, hint: field.help, required: field.required?, 
+      input_html: { data: { select: {} } }.deep_merge(field.html_attributes)
+- else
+  :ruby
+    js_data = {
+        :xhr => false,
+        :sortable => false,
+        :cacheAll => true,
+        :regional => {
+          :chooseAll => t("admin.misc.chose_all"),
+          :chosen    => t("admin.misc.chosen", :name => config.label_plural),
+          :clearAll  => t("admin.misc.clear_all"),
+          :search    => t("admin.misc.search"),
+          :up        => t("admin.misc.up"),
+          :down      => t("admin.misc.down")
+        }
+      }
+  = form.input field.method_name, :collection => field.enum , label: field.label, hint: field.help, required: field.required?, input_html: field.html_attributes.reverse_merge({:data => { :filteringmultiselect => true, :options => js_data.to_json }, :multiple => true})
