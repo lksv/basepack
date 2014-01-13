@@ -1,0 +1,3 @@
+class EmployeeWithDestroyableNestedsController < ResourcesController
+
+end

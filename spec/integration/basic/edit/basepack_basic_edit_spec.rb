@@ -45,6 +45,64 @@ describe "Basepack Basic Edit" do
 
     end
 
+    context "delete button" do
+      it "do not show delete button for nested form without allow_destroy", js: true do
+        visit edit_employee_with_nested_path(employee_wih_nested)
+
+        within("div.nested_fields.nested_form_for_position_attributes") do
+          expect(page).to have_no_selector('span.btn i.icon-trash')
+        end
+
+        project_forms = all(:css, 'div.nested_fields.nested_form_for_projects_attributes')
+        within(project_forms.first) do
+          expect(page).to have_no_selector('span.btn i.icon-trash')
+        end
+        within(project_forms[1]) do
+          expect(page).to have_no_selector('span.btn i.icon-trash')
+        end
+
+        within("div.nested_fields.nested_form_for_account_attributes") do
+          expect(page).to have_no_selector('span.btn i.icon-trash')
+        end
+
+        skills_form = all(:css, 'div.nested_fields.nested_form_for_skills_attributes')
+        within(skills_form.first) do
+          expect(page).to have_no_selector('span.btn i.icon-trash')
+        end
+        within(skills_form[1]) do
+          expect(page).to have_no_selector('span.btn i.icon-trash')
+        end
+      end
+
+      it "do show delete button for nested form without allow_destroy", js: true do
+        visit edit_employee_with_destroyable_nested_path(employee_wih_nested)
+
+        within("div.nested_fields.nested_form_for_position_attributes") do
+          expect(page).to have_selector('span.btn i.icon-trash')
+        end
+
+        project_forms = all(:css, 'div.nested_fields.nested_form_for_projects_attributes')
+        within(project_forms.first) do
+          expect(page).to have_selector('span.btn i.icon-trash')
+        end
+        within(project_forms[1]) do
+          expect(page).to have_selector('span.btn i.icon-trash')
+        end
+
+        within("div.nested_fields.nested_form_for_account_attributes") do
+          expect(page).to have_selector('span.btn i.icon-trash')
+        end
+
+        skills_form = all(:css, 'div.nested_fields.nested_form_for_skills_attributes')
+        within(skills_form.first) do
+          expect(page).to have_selector('span.btn i.icon-trash')
+        end
+        within(skills_form[1]) do
+          expect(page).to have_selector('span.btn i.icon-trash')
+        end
+      end
+    end
+
     it "shows button for adding new nested forms for has_many and has_and_belongs_to_many associations" do
       visit edit_employee_with_nested_path(employee_wih_nested)
       expect(page).to have_selector('a.add_nested_fields', text: 'Project')
