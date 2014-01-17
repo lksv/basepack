@@ -70,14 +70,17 @@ module Basepack
         #needs to be set exactly because of incompatibility bootstrap-modal-rails
         #TODO fix when new version of bootstrap-modal-rails will be released
         gem "twitter-bootstrap-rails", "= 2.2.7" 
-
         gem 'bootbox-rails'
+
+        #filter form do not work without this (probably bug in bootbox gem)
+        gem "bootstrap-sass", "~> 2.3.2"
 
         #needed for imports
         gem 'delayed_job_active_record', ">= 4.0.0.beta2"
 
         #used in filters
         gem "strip_attributes", "~> 1.2"
+
       end
 
       #for Image/assets management (used also in imports)
