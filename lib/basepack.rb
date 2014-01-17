@@ -3,6 +3,7 @@ require 'basepack/version'
 require 'basepack/sections/query'
 require 'basepack/sections/import'
 require 'basepack/sections/bulk_edit'
+require 'basepack/rails_admin/fields_types/phone'
 
 module Basepack
   def self.setup
