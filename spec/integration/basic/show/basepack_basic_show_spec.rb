@@ -301,6 +301,55 @@ describe "Basepack Basic Show" do
     end
   end
 
+  describe "phone" do
+    context "without cc (country code)" do
+      it "shows formatted number" do
+        RailsAdmin.config Employee do
+          show do
+            # set phone type for phone field
+            field :phone, :phone
+          end
+        end
+        employee.update(phone: "41443643532")
+        visit employee_path(:id => employee.id)
+
+        expect(page).to have_content("+41 44 364 35 32")
+
+        employee.update(phone: "00420721312712")
+        visit employee_path(:id => employee.id)
+        expect(page).to have_content("+420 721 312 712")
+      end
+    end
+
+    context "with cc (country code)" do
+      before(:each) do
+        RailsAdmin.config Employee do
+          show do
+            # set phone type for phone field
+            field :phone, :phone do 
+              # set czech country code
+              cc "420"
+            end
+          end
+        end
+      end
+
+      it "shows formatted phone with czech prefix" do
+        employee.update(phone: "721312712")        
+        visit employee_path(:id => employee.id)
+
+        expect(page).to have_content("+420 721 312 712")
+      end
+
+      it "shows formatted phone with czech prefix entered as a full" do
+        employee.update(phone: "420721312712")        
+        visit employee_path(:id => employee.id)
+
+        expect(page).to have_content("+420 721 312 712")
+      end
+    end
+  end
+
 =begin
   describe "show for polymorphic objects" do
     beforere(:each) do
