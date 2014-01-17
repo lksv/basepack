@@ -491,6 +491,27 @@ module Basepack
       end
     end
 
+    # Returns array of associations which are automatically included within
+    # list form. Is is particulary handfull when you are showing some value
+    # form associated model in the list column.
+    # For example, image you need to show list of task with their assigne:
+    # class Task < ActiveRecord::Base
+    #   belongs_to :assigne, class_name: 'User'
+    #   delegate :name, to: assignee, prefix: true
+    #   rails_admin do
+    #     list do
+    #       field :name
+    #       field :assignee_name
+    #     end
+    #   end
+    # end
+    #
+    # This method returns all association of defined fields which are
+    # belongs_to_association or has_one_association type
+    # Association from the example above is included by default.
+    #
+    # You can extend/redefine this method in subclass for futher include.
+    #
     def collection_includes
       resource_config.fields.select do |f|
         f.type.in?([:belongs_to_association, :has_one_association]) && !f.polymorphic?
