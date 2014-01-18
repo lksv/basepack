@@ -2,11 +2,11 @@ require 'csv'
 require 'rails_admin'
 require 'inherited_resources'
 require 'select2-rails'
+require 'bootstrap-sass' #needs to be required before bootstrap-modal-rails
 require 'bootstrap-modal-rails'
 require 'underscore-rails'
 require 'underscore-string-rails'
 require 'rails-i18n'
-#require 'bootstrap-sass'
 
 module Basepack
   class Engine < ::Rails::Engine

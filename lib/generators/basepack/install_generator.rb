@@ -42,7 +42,7 @@ module Basepack
       end
 
       def check_cancan
-        if !defined?(Devise) and yes?("Would you like to install CanCan?")
+        if !defined?(Devise) #and yes?("Would you like to install CanCan?")
           gem 'cancan'
           generate "cancan:ability"
         end
@@ -50,7 +50,7 @@ module Basepack
 
       def check_devise
         #othervise error: undefined local variable or method `current_user'
-        if !defined?(CanCan) and yes?("Would you like to install Devise?")
+        if !defined?(CanCan) #and yes?("Would you like to install Devise?")
           gem "devise"
           generate "devise:install"
           model_name = ask("What would you like the user model to be called? [user]")
@@ -63,30 +63,27 @@ module Basepack
         gem 'jquery-turbolinks'
         gem 'inherited_resources',  '~> 1.4.1'
         gem 'ransack',              '~> 1.0'
-        gem 'kaminari'
-        gem "simple_form",          '~> 3.0.0.rc'
-        gem 'settingslogic'
+        gem 'kaminari',             '~> 0.15.1'
+        gem 'simple_form',          '~> 3.0.1'
+        gem 'settingslogic',        '~> 2.0.9'
 
         #needs to be set exactly because of incompatibility bootstrap-modal-rails
         #TODO fix when new version of bootstrap-modal-rails will be released
-        gem "twitter-bootstrap-rails", "= 2.2.7" 
+        gem 'twitter-bootstrap-rails', '~> 2.2.7'
         gem 'bootbox-rails'
 
-        #filter form do not work without this (probably bug in bootbox gem)
-        gem "bootstrap-sass", "~> 2.3.2"
-
         #needed for imports
-        gem 'delayed_job_active_record', ">= 4.0.0.beta2"
+        gem 'delayed_job_active_record', '~> 4.0.0'
 
         #used in filters
-        gem "strip_attributes", "~> 1.2"
+        gem 'strip_attributes', '~> 1.2'
 
       end
 
       #for Image/assets management (used also in imports)
       def add_dragonfly
         gem 'rack-cache', :require => 'rack/cache'
-        gem 'dragonfly'
+        gem 'dragonfly', '~> 1.0.2'
         generate 'dragonfly'
       end
 
@@ -169,7 +166,15 @@ RUBY
 
         ability_model_file = 'app/models/ability.rb'
         if File.exists?(ability_model_file)
-          insert_into_file ability_model_file, "    can :read, Filter\n    can :manage, Filter, :user_id => user.id if user\n", :after => "def initialize(user)\n"
+          insert_into_file(ability_model_file, <<-EOF,
+    # FIXME: change abilities according your needs
+    can :manage, :all
+
+    # Everybody can see others saved filter, but only author can mangage them.
+    can :read, Filter
+    can :manage, Filter, :user_id => user.id if user
+EOF
+          :after => "def initialize(user)\n")
         end
         user_model_file =  'app/models/user.rb'
         if File.exists?(user_model_file)

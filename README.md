@@ -61,11 +61,12 @@ And then run:
 
     rails g basepack:install
 
-The generator asks you to install several gems. If you don't know what
-to answer then answer 'yes' to all generator's questions
+The generator will install several gems. Also, generator asks to delete 
+`app/views/layouts/application.html.erb` because differend .haml version will be created.
+If you don't know what to answer then answer 'yes' to generator's question.
 
-Do not forget to define ability in `app/models/ability.rb`. You can put ```can
-:manage, :all``` to enable anybody to perform any action on any object. 
+In a bigger project do not forget to change ability in `app/models/ability.rb`. By
+default, the generator adds ```can :manage, :all``` to enable anybody to perform any action on any object. 
 See more on [CanCan wiki](https://github.com/ryanb/cancan/wiki/Defining-Abilities).
 
 Migrate your database and start the server:
