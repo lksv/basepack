@@ -7,9 +7,9 @@ Basepack
 
 By defining short configuration of how the standard pages (index, show,
 edit, update) should look like (and behave) the library
-can handls the controller actions and views for this pages. It
+can handle the controller actions and views for this pages. It
 automatically handles all you need: sanitization, authentication (strong
-parametes, cancan), view rendering and event REST API (for some of them).
+parametes, cancan), view rendering and event REST API (for some of the actions).
 
 Besides the standard pages (index, show, edit, ...) the library privides several other 
 offten requested pages (forms) like: filer form, import and  export forms, bulk edit, 
@@ -28,7 +28,7 @@ merge, delete\_all.
 * Authentication (via [Devise](ttps://github.com/plataformatec/devise))
 * Authorization (via [Cancan](https://github.com/ryanb/cancan.git))
 * Support of a lot of bussiness type form fields like: date (datepicker), 
-datetime, html5 wysiwig, tags, file upload and others. 
+datetime, html5 wysiwig, tags, file upload, phone number and others. 
 * support for dynamic form fields hiding depending on state of other fields as well 
 as options of selectbox content modifications dependant on other fields.  
 
