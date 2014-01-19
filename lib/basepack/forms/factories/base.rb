@@ -7,6 +7,8 @@ module Basepack
           has_many_association: Fields::HasManyAssociation,
           belongs_to_association: Fields::BelongsToAssociation,
           has_and_belongs_to_many_association: Fields::HasAndBelongsToManyAssociation,
+
+          color: Fields::ColorPicker,
         }
 
         def initialize(form_class = Forms::Base, group_class = Groups::Base)

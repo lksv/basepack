@@ -1,7 +1,0 @@
-
- * generovani importu a pridavat do vsech generovanych modelu ```include Basepack::Import::Importable``` podle vzoru: https://github.com/plataformatec/devise/blob/master/lib/generators/devise/orm_helpers.rb
- * Generator na univerzalni modely: 
-   * ```Customer```
-   * ```VAT```
-   * acts_as_commentable
-   * acts_as_taggable
