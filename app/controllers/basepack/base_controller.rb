@@ -64,7 +64,7 @@ module Basepack
 
     def default_query
       return if default_query_params.nil? or default_query_params.empty?
-      redirect_to query_resources_path(default_query_params) unless params[:f]
+      redirect_to query_resources_path(default_query_params) unless params[:f] or params[:ql]
     end
 
     # returns the hash of default query params
