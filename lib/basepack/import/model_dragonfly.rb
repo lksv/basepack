@@ -112,8 +112,11 @@ module Basepack
         end
       end
 
-      def open_file(&block)
-        File.open(file.path, "r:utf-8", &block)
+      def open_file(encoding_from = nil, &block)
+        encoding =
+          (encoding_from and encoding_from.upcase != 'UTF-8') ?
+          "r:#{encoding_from}:utf-8" : "rb:ASCII-8BIT"
+        File.open(file.path, encoding, &block)
       end
 
       def open_report(&block)
@@ -171,7 +174,7 @@ module Basepack
           if skip_rows == 1
             report << CSV.generate_line(mapping + ["Chyby"], encoding: 'UTF-8')
           end
-          import.open_file do |f|
+          import.open_file(import.configuration[:encoding_from] || 'UTF-8') do |f|
             CSV.new(f, col_sep: import.configuration[:col_sep] || ',').each do |row|
               next if row.blank?
               idx += 1

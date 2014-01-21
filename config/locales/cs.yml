@@ -38,6 +38,7 @@ cs:
           use: "Nastavit"
         column: "Sloupec %{idx}"
         start: "Spustit"
+        encoding_from: "Encódovat z"
 
     bulk_edit:
       title: "Hromadná změna %{count} položek"

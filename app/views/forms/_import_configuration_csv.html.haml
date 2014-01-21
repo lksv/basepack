@@ -11,6 +11,15 @@
     = form.builder.input :blank_vals, label: I18n.t('basepack.import.csv.blank_vals.label') do
       %select{name: "import[configuration][blank_vals]"}
         = options_for_select({I18n.t('basepack.import.csv.blank_vals.skip') => 'skip', I18n.t('basepack.import.csv.blank_vals.use') => 'use'}, configuration[:blank_vals] || 'skip')
+
+    - default_encoding_from = Basepack::Settings.import.default_encoding_from
+    = form.builder.input :encoding_from, label: t('basepack.import.csv.encoding_from') do
+      %select{name: "import[configuration][encoding_from]"}
+        - encoding_list = Encoding.name_list.sort!
+        - encoding_list = ['UTF-8'] + (encoding_list - ['UTF-8']) if encoding_list.include?('UTF-8')
+        = options_for_select(encoding_list, default_encoding_from)
+      %p.help-block= t('basepack.export.csv.encoding_from_help', default: [:'admin.export.csv.encoding_to_help'], :name => default_encoding_from)
+
     %hr
     - mapping = configuration[:mapping] || []
     - csv_cols.each_with_index do |col, i|

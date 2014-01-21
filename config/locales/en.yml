@@ -38,6 +38,7 @@ en:
           use: "Set"
         column: "Column %{idx}"
         start: "Start Import"
+        encoding_from: "Encoding From"
 
     bulk_edit:
       title: "Bulk edit for %{count} items"
