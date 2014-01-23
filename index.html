@@ -157,10 +157,10 @@ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux]</p>
 </pre></div>
 
 
-<p>In comparision with basic scaffolding it includes importing and exporting of resources. Records in index action are paginated by default. You can perform complex searching and save frequent searches as filters or sort by individual columns. It displays breadcrumb (links with path e.g ) and many more. </p>
+<p>In comparision with basic scaffolding it includes importing and exporting of resources. Records in index action are paginated by default. You can perform complex searching and save frequent searches as filters or sort by individual columns. It displays breadcrumb (links with path e.g. Users / Projects / firs_project) and many more. </p>
 
 
-<p>After scaffolding your resources, you can customize fields used in individual actions by <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">Railsdmin DSL</a>. This domain specific language allows you to quickly customize how your views look like. Take a time and really browse through its configuring possibilities(visibility, ordering, labels, formatting, ...) </p>
+<p>After scaffolding your resources, you can customize fields used in individual actions by <a href="https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL">Railsdmin DSL</a>. This domain specific language allows you to quickly customize how your views look like. Take a time and really browse through its configuring possibilities (visibility, ordering, labels, formatting, ...). </p>
 
 <blockquote>
 <p>app/models/project.rb:</p>
@@ -206,9 +206,9 @@ end
 </blockquote>
 
 
-<p>IMPORTANT! Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of <strong>basepack</strong>, see <a href="http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations">Rails documentation</a> for explaination.</p>
+<p>Make sure that you define inverse_of option on has_one, has_many and belongs_to associations. It is necessary for correct functioning of <strong>basepack</strong>, see <a href="http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations">Rails documentation</a> for explaination.</p>
 
-<p>Notice that files for views are not generated (directories appp/views/projects and appp/views/issues are empty), but all RESTful(index, show, new, create, edit, update, destroy) actions are working correctly. It is because views iherit default look and you can easily override these defaults by creating appropriate files.</p>
+<p>Notice that files for views are not generated (directories appp/views/projects and appp/views/issues are empty), but all RESTful actions(index, show, new, create, edit, update, destroy) are working correctly. It is because views iherit default look and you can easily override these defaults by creating appropriate files.</p>
 
 <p>Another difference is controllers which inherit from ResourcesController. Full inheritance hierarchy looks this way:</p>
 
@@ -316,7 +316,7 @@ And it checks user permissions for project with id 1 because it could be a secur
 
 <p>Suppose I want to see on project show page all issues associated with that project. To do that you can customize default show page by creating appropriate view file. </p>
 
-<p>You can use <a href="https://github.com/project" class="user-mention">@project</a> instance variable to output project's information or better render partials which will display project as it was defined in rails_admin's show block.</p>
+<p>You can use <a href="https://github.com/project" class="user-mention">@project</a> instance variable to output project's information or better render partials which will display project as it was configured in rails_admin's show block.</p>
 
 <blockquote>
 <p>app/views/projects/show.html.erb:</p>
@@ -328,7 +328,7 @@ And it checks user permissions for project with id 1 because it could be a secur
 
 
 
-<p>Usually you want to display content the way it is defined in rails_admin <a href="https://github.com/sferik/rails_admin/wiki#sections">sections</a> (e.g. show, list, edit, ...). There are defined helper methods for some of these sections
+<p>Usually you want to display content the way it is configerd in rails_admin <a href="https://github.com/sferik/rails_admin/wiki#sections">sections</a> (e.g. show, list, edit, ...). There are defined helper methods for some of these sections
 which will use configuration from rails_admin block.</p>
 
 <div class="highlight highlight-ruby"><pre><span class="n">edit_form_for</span><span class="p">(</span><span class="n">resource_or_chain</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{})</span>
@@ -338,8 +338,8 @@ which will use configuration from rails_admin block.</p>
 <span class="o">.</span><span class="n">.</span><span class="o">.</span>
 </pre></div>
 
-<p>These methods returns content of section for specific resource let's call it instnce of form. Actually it is a instance of <code>Basepack::Forms</code> class. 
-Resource chain is a sequence (array) of resources in case of nested resources. You can see this sequence in a breadcrumb and you have also access to <code>association_chain</code> which is an empty array in project's show page. But if projects were nested resource for users e.g. url organization/3/users/2/projects/1 than <code>association_chain</code> would contain third organization object and second user.</p>
+<p>These methods return content of section for specific resource let's call it instnce of form. Actually it is a instance of <code>Basepack::Forms</code> class. </p>
+<p>Resource chain is a sequence (array) of resources in case of nested resources. You can see this sequence in a breadcrumb and you have also access to <code>association_chain</code> which is an empty array in project's show page. But if projects were nested resource for users e.g. url organization/3/users/2/projects/1 than <code>association_chain</code> would contain third organization object and second user.</p>
 
 <p>In your views, you will get the following helpers:</p>
 
@@ -350,7 +350,7 @@ Resource chain is a sequence (array) of resources in case of nested resources. Y
 <span class="n">association_chain</span>              <span class="c1">#=&gt; array of resources</span>
 </pre></div>
 
-<p>As you might expect, collection, collection_without_pagination (@projects instance variable) is only available on index actions.</p>
+<p>As you might expect collection and collection_without_pagination (or @projects instance variable) is available only on the index action.</p>
 
 <p>That means you can use <code>show_form_for</code> to get the same content as in show page of every issue in current project. For displaying you have to use <code>form_render</code> because <code>render</code> does not know how to render instances of basepack forms (in this case  <code>Basepack::Forms::Show</code> object). </p>
 
@@ -358,7 +358,6 @@ Resource chain is a sequence (array) of resources in case of nested resources. Y
 <p>app/views/projects/show.html.erb:</p>
 
 <div class="highlight highlight-rhtml"><pre><code>
-  
 <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'header'</span> <span class="cp">%&gt;</span>
 <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'show'</span> <span class="cp">%&gt;</span>
 
@@ -366,13 +365,12 @@ Resource chain is a sequence (array) of resources in case of nested resources. Y
 &lt;% resource.issues.each do |issue| %&gt;
   &lt;%= form_render show_form_for(issue) %&gt;
 &lt;% end %&gt;
-
 </code>
 </pre>
 </div>
 
 </blockquote>
-<p>Furthermore these helpers for retrieving content of forms have pair variant without <code>_for</code> at the end which already contains retrieved content in appropriate actions. For example in projects show page <code>show_form</code> is equivalent to show_form_for(resource).</p>
+<p>Furthermore these helpers for retrieving content of forms have pair variant without <code>_for</code> suffix which already contains retrieved content in appropriate actions. For example in projects show page <code>show_form</code> is equivalent to <code>show_form_for(resource).</code></p>
 <pre><code>
 edit_form
 show_form
@@ -387,23 +385,22 @@ query_for
 <h2>
 <a name="default-query" class="anchor" href="#default-query"><span class="octicon octicon-link"></span></a>Default query</h2>
 
-<p>Imagine that there were many (hundred) projects especially these which already ended and every time you enter project index you see these passed projects and you have to search within them. It would be better to change default query which is currently just display all projects in order as they are in database (most of the time it is order in which they were created).</p>
+<p>Imagine that there were many (hundred) projects especially these which already ended and every time you enter project index page you see these passed projects and you have to search within them. It would be better to change default query which is currently just display all projects in order as they are in database (most of the time it is order in which they were created).</p>
 
 <p>And if you are familiar with <a href="https://github.com/activerecord-hackery/ransack">ransack</a> it is really simple to change this default query. You just need to call method <code>default_query</code> in appropriate controller, which returns a hash of parameters for search. 
-Basepack uses ransack under hood uses, but you have to use <code>f</code> as a default param key for search (instead of <code>q</code>) and for searching use <code>f[s]</code>.</p>
+Basepack uses ransack under hood, but you have to use <code>f</code> as a default param key for search (instead of <code>q</code>) and for searching use <code>f[s]</code>.</p>
 
 <blockquote>
 <p>app/controllers/projects_controller.rb:</p>
 
 <pre><code>class ProjectsController &lt; ResourcesController
-  default_query do
-    { # display projects which haven't ended yet (end today or later)
+  def default_query do
+    { 
+      # display projects which haven't ended yet (end today or later)
       "f[end_gteq_null]" =&gt; Date.today,
-</code></pre>
-
-<pre><code>  # sorted by start of project 
-  "f[s]" =&gt; 'start asc'
-}
+      # sorted by start of project 
+      "f[s]" =&gt; 'start asc'
+    }
 </code></pre>
 
 <p>end
@@ -423,8 +420,6 @@ end</p>
   </div>
 </blockquote>
 
-
-
 <p>Then follow post installation <a href="https://github.com/mbleigh/acts-as-taggable-on#post-installation">instructions</a> and create migration by generator and migrate the database: </p>
 
 <div class="highlight highlight-console"><pre><span class="go">rails g acts_as_taggable_on:migration</span>
@@ -443,7 +438,7 @@ end</p>
 <p>Mark issues model as taggabale with <code>acts_as_taggable</code> which will provide new methods for working with tags as specified in <a href="https://github.com/mbleigh/acts-as-taggable-on#usage">usage section</a>. </p>
 
 <p>Especially interesting is method <code>tag_list=</code> for setting tags and <code>tag_list</code> for retrieving tags. It is enough just to display tag_list field and you are done.
-Actually almost done because associations added by <code>acts_as_taggable</code> to make it work are also displayed as fields (Tags, Base list) so can exclude them at beginning.</p>
+Actually almost done because associations added by <code>acts_as_taggable</code> to make it work are also displayed as fields (Tags, Base list) so you can exclude them at beginning.</p>
 
 <blockquote>
 <p>app/models/issues.rb</p>
@@ -483,7 +478,7 @@ end
   </div>
 </blockquote>
 
-<p>If you want you can enable actions (new, edit, show, ...) for ActsAsTaggableOn::Tag model just add routes for these actions.</p>
+<p>If you want you can enable actions (new, edit, show, ...) for <code>ActsAsTaggableOn::Tag</code> model just add routes for these actions.</p>
 
 <blockquote>
 <p>routes.rb</p>
@@ -507,8 +502,8 @@ end
 <h2>
 <a name="dynamically-showed-and-hidden-attributes" class="anchor" href="#dynamically-showed-and-hidden-attributes"><span class="octicon octicon-link"></span></a>Dynamically showed and hidden attributes</h2>
 
-<p>Sometimes you need to hide or display field depending on the entered value of other field in new/edit form. 
-When you take a look at this table you will see that it is exactly what you need right now. Because resolution can be added only to closed bugs (with resolved or verified status) as you can see in this table.</p>
+<p>Sometimes you need to hide or display field depending on the entered value of other field in new / edit form. 
+When you take a look at this table of issue types you will see that it is exactly what you need right now. Because resolution can be added only to closed bugs (with resolved or verified status) as you can see in this table.</p>
 
 <table>
 <thead><tr>
@@ -622,7 +617,7 @@ end
 </pre>
 </blockquote>
 
-<p>Let's explain it step by step. You can add html attributes(like class, id, etc.) in configuration of any field through <code>html_attributes</code>. Data hash is used for custom data attributes for many purposes like marking ajax requests or date picker in Rails. Basepack uses it too. In addition to dynamicly showed / hidden attributes for <a href="https://github.com/lksv/basepack/wiki/Getting-started#dependant-select-boxes">dependant select boxes</a> and some field types like wysihtml5.</p>
+<p>Let's explain it step by step. You can add html attributes (like class, id, etc.) in configuration of any field through <code>html_attributes</code>. Data hash is used for custom data attributes for many purposes like marking ajax requests or date picker in Rails. Basepack uses it too. For example for dynamicly showed / hidden attributes of <a href="https://github.com/lksv/basepack/wiki/Getting-started#dependant-select-boxes">dependant select boxes</a> and some field types e.g. wysihtml5.</p>
 
 <div class="highlight highlight-ruby"><pre>  <span class="n">html_attributes</span> <span class="k">do</span>
     <span class="p">{</span> 
@@ -661,14 +656,14 @@ Project can have many versions and issue will be tied to specific version of pro
 
 
 
-<p>So let's generate Version scaffold and add version_id to issues. Then migrate the database.</p>
+<p>So let's generate Version scaffold and add <code>version_id</code> to issues. Then migrate the database.</p>
 
 <div class="highlight highlight-console"><pre><span class="go">rails g scaffold Version name project:belongs_to</span>
 <span class="go">rails g migration addVersionIdToIssues version:belongs_to</span>
 <span class="go">rake db:migrate</span>
 </pre></div>
 
-<p>Then you need to add associations in appropriate models, do not forget inverse_of option.</p>
+<p>Then you need to add associations in appropriate models, do not forget <code>inverse_of</code> option.</p>
 
 <pre>class Issue &lt; ActiveRecord::Base
   belongs_to :project, inverse_of: :issues
@@ -688,13 +683,13 @@ end
 </pre>
 
 
-<p>This leads us to our problem when you are creating or updating issue you now need to enter not just project but specific version of that project which is not working properly. Suppose you've 2 projects project A and project B. Project A has versions
-1.0 2.0 and project B has versions 1.0, 1.1 and 1.2, it allows you to enter incorrect for example version 1.1 and project A (version 1.1 doesn't belongs to project A). 
+<p>This leads us to our problem when you are creating or updating issue you now need to enter not just project but specific version of that project which is not working properly. Suppose you have 2 projects A and B. Project A has versions
+1.0 and 2.0. Project B has versions 1.0, 1.1 and 1.2, it allows you to enter incorrect data. For example version 1.1 and project A (version 1.1 doesn't belongs to project A). 
 What you want to do is display only versions related to currently selected project. </p>
 
 <p>Actually you might be wondering how is it even possible that options for associations are displayed in selectboxes at all.
-Where are they from? These values are obtained by making ajax call to options method of particular controller of association.
-For example values for project association are retrieved by options method call to <code>ProjectsController</code>. Values for version's associations by <code>VersionsController#options</code> call. Basicaly controllers retrieve values of related model no matter whence they are called unless you specify otherwise. That can be done either by changing <code>options_source</code> in model to different url or by defining <code>options</code> method in controller. Here is the example of this method which demonstrates default behaviour (it's going to work the same way if you do not define this method). </p>
+Where are they from? These values are obtained by making ajax call to options method of particular controller depending on association.
+For instance values for project association are retrieved by options method call to <code>ProjectsController</code>. Values for version's associations by <code>VersionsController#options</code> call. Basicaly controllers retrieve values of related model no matter whence they are called unless you specify otherwise. That can be done either by changing <code>options_source</code> in model to different url or by defining <code>options</code> method in controller. Here is the example of this method which demonstrates default behaviour (it's going to work the same way if you do not define this method). </p>
 
 <blockquote>
 <p>app/controllers/versions_controller.rb</p>
@@ -707,7 +702,7 @@ For example values for project association are retrieved by options method call 
 </pre></div>
 </blockquote>
 
-<p>First line needs to be there to ensure authorization. Then it retrieves all <code>Version</code> records that match current search params and forward these records to parent action <code>options!</code>. If you try manually append search params to options url <code>/versions/options</code> for example <code>/versions/options?f[name_cont]=1.</code> which will display versions with name containing substring '1.'.</p>
+<p>First line needs to be there to ensure authorization. Then it retrieves all <code>Version</code> records that match current search params and forward these records to parent action <code>options!</code>. If you try manually append search params to options url <code>/versions/options</code> for example <code>/versions/options?f[name_cont]=app.</code> which will display versions with name containing substring 'app'.</p>
 
 
 
@@ -734,12 +729,12 @@ end
 </blockquote>
 
 <p>To display only versions which belongs to currently selected project it marks projects field as "dependant-filteringselect". 
-  Id of currently selected project (if there is any) is send as parameter("f[project_id_eq]") to <code>VersionsController#options</code>.Without defining "dependant-param" id of currently selected would be send in params[:undefined] which would be ignored by <code>options</code> method.</p>
+  Id of currently selected project (if there is any) is send as parameter <code>f[project_id_eq]</code> to <code>VersionsController#options</code>.Without defining <code>dependant-param</code> id of currently selected would be send in params[:undefined] which would be ignored by <code>options</code> method.</p>
 
-<p>You do not have to use search params and write you options method the way you want but most of the time using search params and default <code>options</code> method will be sufficient.</p>
+<p>You do not have to use search params and you can write your <code>options</code> method the way you want. But most of the time using search params and default <code>options</code> method will be sufficient.</p>
 
 <p>It works quite well except it displays all versions as options at beginning. To deal with this unique case you can set default options query send when form (new or edit) is rendered for the first time. It can be defined in <code>options_source_params</code> block. </p>
-<p>You have to remember that you are working with both new and edit form. In new form it would be enough to set default query "f[project_id_eq]" to id of non-existing project which will not display any versions at the beginning. </p>
+<p>You have to remember that you are working with both new and edit form. In new form it would be enough to set default query <code>f[project_id_eq]</code> to id of non-existing project which will not display any versions at the beginning. </p>
 
 <blockquote>
   
@@ -763,7 +758,7 @@ end
 </pre>
 </blockquote>
 
-<p>But if you want to change version in edit form of existing issue that has project already set it would display no versions as well. Unless you select a project which override default id -1. So if the issue(<code>bindings[:object]</code>) has project set use that <code>project_id</code> as a default query otherwise use -1.</p>
+<p>But if you want to change version in edit form of existing issue that already has project set it would display no versions as well. Unless you select a project which override default id -1. So if the issue (<code>bindings[:object]</code>) has project set use that <code>project_id</code> as a default query otherwise use -1.</p>
 
 <blockquote>
 <p>app/models/issues.rb</p>
