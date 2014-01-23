@@ -23,7 +23,7 @@
     %hr
     - mapping = configuration[:mapping] || []
     - csv_cols.each_with_index do |col, i|
-      = form.builder.input :"col_#{i}", label: html_escape(col.presence || I18n.t('basepack.import.csv.column', idx: i+1)) do
+      = form.builder.input :"col_#{i}", label: html_escape((col.presence || I18n.t('basepack.import.csv.column', idx: i+1)).encode("UTF-8", invalid: :replace, undef: :replace)) do
         %select{name: "import[configuration][mapping][]"}
           = options_for_select(select_options, select_options.find {|o| o[0] == col} || mapping[i])
   .form-actions

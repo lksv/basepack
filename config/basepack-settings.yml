@@ -15,6 +15,7 @@ defaults: &defaults
   import:
     default_col_sep: ','
     default_encoding_from: 'UTF-8'
+    guess_encoding_from: ['utf-8', 'windows-1250']
     mime_types: [text/csv, text/plain]
     model_name: Import
     default_action: :import

@@ -113,10 +113,24 @@ module Basepack
       end
 
       def open_file(encoding_from = nil, &block)
-        encoding =
-          (encoding_from and encoding_from.upcase != 'UTF-8') ?
-          "r:#{encoding_from}:utf-8" : "rb:ASCII-8BIT"
-        File.open(file.path, encoding, &block)
+        if encoding_from
+          mode = "r:#{encoding_from}:utf-8"
+        else
+          #guess encoding form first 4M of updated file
+          string = File.open(file.path, 'rb:ASCII-8BIT').gets(nil, 40000)
+          Basepack::Settings.import.guess_encoding_from.each do |enc|
+            string.force_encoding(enc)
+            if string.valid_encoding?
+              mode = "r:#{enc}:utf-8"
+              break
+            end
+          end
+
+          #defautl encoding if none will be recognized
+          mode ||= 'rb:ASCII-8BIT'
+        end
+
+        File.open(file.path, mode, &block)
       end
 
       def open_report(&block)
