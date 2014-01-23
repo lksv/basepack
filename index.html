@@ -387,14 +387,14 @@ query_for
 
 <p>Imagine that there were many (hundred) projects especially these which already ended and every time you enter project index page you see these passed projects and you have to search within them. It would be better to change default query which is currently just display all projects in order as they are in database (most of the time it is order in which they were created).</p>
 
-<p>And if you are familiar with <a href="https://github.com/activerecord-hackery/ransack">ransack</a> it is really simple to change this default query. You just need to call method <code>default_query</code> in appropriate controller, which returns a hash of parameters for search. 
+<p>And if you are familiar with <a href="https://github.com/activerecord-hackery/ransack">ransack</a> it is really simple to change this default query. You just need to call method <code>default_query_params</code> in appropriate controller, which returns a hash of parameters for search. 
 Basepack uses ransack under hood, but you have to use <code>f</code> as a default param key for search (instead of <code>q</code>) and for searching use <code>f[s]</code>.</p>
 
 <blockquote>
 <p>app/controllers/projects_controller.rb:</p>
 
 <pre><code>class ProjectsController &lt; ResourcesController
-  def default_query do
+  def default_query_params do
     { 
       # display projects which haven't ended yet (end today or later)
       "f[end_gteq_null]" =&gt; Date.today,
