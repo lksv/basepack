@@ -4,17 +4,16 @@ Basepack
 [![Build Status](https://api.travis-ci.org/lksv/basepack.png?branch=master)](http://travis-ci.org/lksv/base_pack)
 [![Dependency Status](https://gemnasium.com/lksv/basepack.png)](https://gemnasium.com/lksv/basepack)
 
-**Basepack** is a Ruby on Rails framework for quick creation of information
-systems. 
 
-**Basepack** dramatically helps you to start your new project.
-There are out of the box form fields like: date (datepicker), datetime, html5
-wysiwig, tags, file upload and others. Further more there is support for 
-dynamic field hiding depending on state of other fields as well as
-options of selectbox content modifications dependant on other fields.
+By defining short configuration of how the standard pages (index, show,
+edit, update) should look like (and behave) the library
+can handls the controller actions and views for this pages. It
+automatically handles all you need: sanitization, authentication (strong
+parametes, cancan), view rendering and event REST API (for some of them).
 
-**Basepack** contains a lot of predefined forms, views and actions which you might need
-(filter form, bulk changes, delete\_all, import, export, ...).
+Besides the standard pages (index, show, edit, ...) the library privides several other 
+offten requested pages (forms) like: filer form, import and  export forms, bulk edit, 
+merge, delete\_all.
 
 ## Features
 
@@ -28,6 +27,11 @@ options of selectbox content modifications dependant on other fields.
 * Security: permited parameters are automatically defined against fields in edit forms which are (read-write).
 * Authentication (via [Devise](ttps://github.com/plataformatec/devise))
 * Authorization (via [Cancan](https://github.com/ryanb/cancan.git))
+* Support of a lot of bussiness type form fields like: date (datepicker), 
+datetime, html5 wysiwig, tags, file upload and others. 
+* support for dynamic form fields hiding depending on state of other fields as well 
+as options of selectbox content modifications dependant on other fields.  
+
 
 All the field form definitions are done by [RailsAdmin](https://github.com/sferik/rails_admin) and are configured
 accordingly.  It simplifies configuration process and if you wish to use
@@ -199,18 +203,96 @@ in your projects controller. You can override these implicit settings by creatin
 * [nested-form](https://github.com/ryanb/nested_form) for handling
   multiple models in a single form
 * [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass)
+* [RailsAdmin](https://github.com/sferik/rails_admin)
 * ...[and others](basepack.gemspec)
 
 Althoug you can use **Basepack** without knowing anything of the
 background architecture it is recommended to get to know at least with:
 [InheritedResources](https://github.com/josevalim/inherited_resources),
-[CanCan](https://github.com/ryanb/cancan.git) and
-[Device](https://github.com/plataformatec/devise). 
+[CanCan](https://github.com/ryanb/cancan.git),
+[Device](https://github.com/plataformatec/devise) and  
+[RailsAdmin](https://github.com/sferik/rails_admin).
+
+
+**Basepack** uses severral entities:
+* Form - it is a class which is responsible to render page (partial) for
+  the particular action.
+  That means that the result of the Form should not be HTML \<form\> but any snippet of HTML.
+  Basepack define
+    * Edit Form - used for #new and #edit controller action
+    * Show Form - used for #show controller action
+    * List Form - used for #index controller action
+    * Query Form - used when showing (modal) page with filter form.
+    * Import Form - used on import page to select mapping of input files
+      colloms to proper columns of model or associations.
+    * Export Form - used on export page to select which model attributes
+      (and association's models attributes) want to export.
+    * Bulk Edit - form for change several fields at once (usually
+      simillar to Edit Form, but fiels under N:M association should be
+      added, deleted or exactly assigned).
+    * Form Merge Form - used in action for merging two resource to one. 
+      Allows you to choose which value of each attrite  should be used
+      in the result object.
+
+    Each form shoud take different input, for instance List form needs 
+    know collection and what collumns to render (and other information). 
+    Show form needs know resource and which fields it shoud show (and 
+    how to show them).
+
+    Notice that most of the Forms need to now which fields to show.
+
+    Form should be instancinated by ```<form_name>_form_for``` controller's
+    helper method. For example:
+    ```
+      show_form_for(Customer.first)
+      edit_form_for(Customer.first)
+      list_form_for(query_form)
+    ```
+
+* Session - (RailsAdmin Session is currently used for it.) 
+  You can image Session as an particular configuration how the Form
+  should behave. E.g. which Fields the Form should confist of.
+  For instance, common requiremnt is to have different input form for
+  new record and for editing record. Both of input forms shoud be
+  rendered by Edit Form instance, once inicialized with Create Session
+  and one with Edit Session. ([see definition of
+  ```edit_form_for```](://github.com/lksv/basepack/blob/master/app/controllers/basepack/base_controller.rb#L374-L378))
+
+  Session can handle other configuration for instance List form has
+  property ```default_items_per_page``` to define how many items per
+  page is shown (pagination is used).
+
+  Session should also contains group of fields. E.g. seesion should be
+  collection of group within a name and set of fields. 
+
+  Basepack use following sessions:
+    * Show (Show Form)
+    * Edit (Edit Form)
+    * Create (Edit Form)
+    * BulkEdit (BulkEdit Form)
+    * List (List Form)
+    * TreeList (List Form)
+
+
+* Field - (RailsAdmin Field is currenty used for it.) Represents any entity of 
+  the model (it shoud be attribute, virtual attribute or association) and 
+  futher information how to handle this entity:
+    * how to render it
+    * how to sanitize 
+    * how to assing it (for instance, has many associations are set
+      by "<association_name>_ids=" method.
 
 **Basepack** was also
 inspired by [RailsAdmin](https://github.com/sferik/rails_admin) and
 still using [RailsAdmin
 DSL](https://github.com/sferik/rails_admin/wiki/Railsadmin-DSL) for defining the forms, sessins and fields group.
+
+## Future work ##
+The main goal in the next major version is to separate form's DSL from
+the model and put it more closely to the controller (probably to the
+special directory app/forms/). This will leat to easy way how to define several 
+forms of the same model as well as using different
+forms depending on any particular data (like user's role).
 
 License
 =======
