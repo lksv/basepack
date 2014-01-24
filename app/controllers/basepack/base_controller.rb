@@ -363,7 +363,7 @@ module Basepack
           method = params[:method]
 
           if method == "over" # new node in subtree, set position to last
-            pos = resource.siblings.order('position').last.position + 1
+            pos = resource.siblings.order('position').last.position.to_i + 1
             resource.position = pos
             err_exit.call(resource) unless resource.save
           end

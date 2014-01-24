@@ -73,11 +73,14 @@
         # TODO: use rails route helper for full route
         update_url = "#{collection_path}/\#{id}/update_tree?method=\#{method}&id2=\#{id2}\#{parent_id}"
 
-        $.post update_url, (data) ->
-          console.log(data)
-          if data.success == false
+        promise = $.post update_url, (data) ->
+          if data and data.success == false
             $("#tree-error-modal").modal('toggle')
             $("#tree-error-modal .modal-body p").text(data.msg)
+
+        promise.fail (response) ->
+          $("#tree-error-modal").modal('toggle')
+          $("#tree-error-modal .modal-body p").text(response.statusText + "\n Reload the page for sync current data.")
 
         data.otherNode.moveTo(node, data.hitMode)
     }, #{list_section.dnd.to_json})

@@ -12,19 +12,22 @@ require 'warden'
 require 'capybara/poltergeist'
 
 Rails.backtrace_cleaner.remove_silencers!
-Capybara.javascript_driver = :poltergeist
 
-#For debugging purposes:
-#http://www.jonathanleighton.com/articles/2012/poltergeist-0-6-0/
-# Capybara.register_driver :poltergeist do |app|
-#   Capybara::Poltergeist::Driver.new(app, inspector: true)
-#    #page.driver.debug
-# end
+# For debugging purposes
+# use it by 'page.driver.debug', for more see:
+# http://www.jonathanleighton.com/articles/2012/poltergeist-0-6-0/
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, inspector: true)
+end
+Capybara.javascript_driver = :poltergeist
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
+  config.filter_run :focus => true
+  config.run_all_when_everything_filtered = true
+
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
@@ -48,6 +51,11 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  config.before(:all) do
+    DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
   end
 
