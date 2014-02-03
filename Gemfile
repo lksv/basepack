@@ -6,7 +6,20 @@ ruby '2.0.0'
 # development dependencies will be added by default to the :development group.
 gemspec
 
+group :development do
+  gem 'annotate'
+  gem 'better_errors'
+  # chrome extension rails_panel
+  gem 'rails_panel'
+  gem 'binding_of_caller'
+  gem 'meta_request'
+end
+
 group :test, :development do
+  # types
+  gem 'bootstrap-wysihtml5-rails'
+  gem "acts-as-taggable-on"
+  
   gem 'sqlite3'
   gem 'cancan'
   gem 'devise'

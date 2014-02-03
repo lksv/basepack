@@ -29,7 +29,7 @@ Dummy::Application.routes.draw do
     :employee_with_nesteds,
     :employee_with_destroyable_nesteds, concerns: [:resourcable]
 
-  resources :projects, :tasks, :positions, :skills, :accounts,
+  resources :projects, :tasks, :positions, :position_categories, :skills, :accounts,
     :users, concerns: [:resourcable]
 
   root 'employees#index'

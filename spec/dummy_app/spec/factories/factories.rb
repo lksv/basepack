@@ -12,10 +12,30 @@ FactoryGirl.define do
       skills    { FactoryGirl.build_list(:skill, 2) }
     end
 
+    factory :employee_with_projects do
+      projects  { FactoryGirl.build_list(:project_with_tasks, 2) }
+    end
+    
+    factory :employee_with_skills do
+      skills    { FactoryGirl.build_list(:skill, 2) }
+    end
+    
+    # factory :employee_with_account do
+    #   account { FactoryGirl.build(:account) }
+    # end
+
   end
 
   factory :position do
     name              { Faker::Name.title }
+  end
+
+  factory :position_category do
+    name              { Faker::Commerce.department }
+
+    factory :category_with_positions do
+      positions  { FactoryGirl.build_list(:position, 2) }
+    end
   end
 
   factory :project do

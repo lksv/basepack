@@ -1,6 +1,48 @@
 require 'spec_helper'
 
 describe "Basepack Basic Edit" do
+let!(:employee) { FactoryGirl.create(:employee) }
+
+  describe "without association" do
+    before(:each) do
+      RailsAdmin.config Employee do
+        field :name
+        field :email
+        field :bonus
+        field :income
+      end
+
+      visit edit_employee_path(id: employee.id)
+    end
+
+    it "shows \"Edit Model\"" do
+      expect(page).to have_content("Employee / Edit")
+    end
+
+    it "shows required fields as \"Required\"" do
+      expect(page).to have_selector("div", :text => /Name\s*Required/)
+      expect(page).to have_selector("div", :text => /Email\s*Required/)
+    end
+
+    it "shows non-required fields as \"Optional\"" do
+      expect(page).to have_selector(".employee_income .help-block", text: "Optional")
+    end
+
+    it "displays Delete and Cancel links" do
+      expect(page).to have_selector(:link_or_button, 'Cancel')
+      expect(page).to have_selector(:link_or_button, 'Delete')
+    end
+  end
+
+  describe "edit with missing object" do
+    before(:each) do
+      visit edit_employee_path(id: 600)
+    end
+
+    it "raises NotFound" do
+      expect(page.driver.status_code).to eq(404)
+    end
+  end
 
   context "with accepts_nested_attributes_for" do
     let(:employee_wih_nested) { FactoryGirl.create(:employee_with_all_associations) }
@@ -114,9 +156,71 @@ describe "Basepack Basic Edit" do
       expect(page).to have_no_selector('a.add_nested_fields', text: 'Account')
       expect(page).to have_no_selector('a.add_nested_fields', text: 'Position')
     end
-
   end
 
+  describe "authentication" do
+    let(:ability) { Object.new.extend(CanCan::Ability) }
 
+    it "does not show edit page without access" do
+      ability.cannot :edit, Employee
+      ApplicationController.any_instance.stub(:current_ability).and_return(ability)
+      visit edit_employee_path(id: employee)
+
+      expect(page.driver.status_code).to_not eq 200
+    end
+  end
+
+  describe "task dynamic attributes", js: true do
+    before(:each) do
+      RailsAdmin.config Task do
+          edit do
+            # field :status, :enum do
+            field :name
+            field :description
+
+            field :status do
+              visible true
+              html_attributes do
+              { 
+                data: { 
+                  "dynamic-fields" => [
+                    { condition: ["Postponed", "Done"], field_actions: { completed_percents: { visible: false }} },
+                    { condition: ["In progress"], field_actions: { completed_percents: { visible: true  }} },
+                  ]   
+                }   
+              }   
+              end
+            end
+
+            field :completed_percents
+        end
+      end
+    end
+
+    it "hides displayed field", js:true do
+      pending "basepack helper"
+      task = FactoryGirl.create(:task, status: 'In progress')
+      visit edit_task_path(id: task)
+      expect(page).to have_content('Completed percents')
+
+      fill_in "Status", with: "Done"
+      fill_in "Description", with: "Test hidding percents"
+      expect(page).to have_no_content('Completed percents')
+    end
+
+    it "displays hidden field", js: true do
+      pending "basepack helper"
+      task = FactoryGirl.create(:task, status: 'Done')
+      visit edit_task_path(id: task)
+
+      expect(page).to have_no_content('Completed percents')
+
+      fill_in "Status", with: "In progress"
+      fill_in "Description", with: "Test hidding percents"
+
+      # sleep 0.2
+      expect(page).to have_content('Completed percents')
+    end
+  end
 end
 

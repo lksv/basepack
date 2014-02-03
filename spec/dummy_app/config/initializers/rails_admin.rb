@@ -29,5 +29,5 @@ RailsAdmin.config do |config|
   # config.excluded_models = ['Customer', 'User']
 
   # Include specific models (exclude the others):
-  config.included_models = Basepack::Utils.detect_models #+ ['ActsAsTaggableOn::Tag', 'ActsAsTaggableOn::Taggings', 'Delayed::Job']
+  config.included_models = Basepack::Utils.detect_models + ['ActsAsTaggableOn::Tag', 'ActsAsTaggableOn::Taggings'] #, 'Delayed::Job']
 end
