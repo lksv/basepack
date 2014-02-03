@@ -50,8 +50,12 @@ en:
       filter_list: "List of Saved Filters"
       modify_query: "Modify query"
       save_filter: "Save filter"
+      error_query_input: "Unexpected input"
+      error_unknown_func: "Unknown function" 
       error_filter: "Filter can't be saved"
       enter_filter_name: "Please enter filter name"
+      filter_ql_syntax_error: "%{message} on the line %{row} and column %{col}: '%{query_error}'"
+      error: "(<=ERROR)" 
 
     actions:
       delete_all:
@@ -67,3 +71,6 @@ en:
         breadcrumb: 'Bulk edit'
         bulk_link: "Change selected %{model_label_plural}"
         done: "changed"
+  datetime:
+    formats:
+      basepack: "%d.%m.%Y %T"

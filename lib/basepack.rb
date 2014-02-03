@@ -131,7 +131,7 @@ module Basepack
 
         register_instance_option :export_value do
           unless (time = value).nil?
-            I18n.l(time, format: "%d.%m.%Y %T")
+            I18n.l(time, format: I18n.t("datetime.formats.basepack", default: [:'time.long']))
           else
             ""
           end

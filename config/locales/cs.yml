@@ -50,8 +50,12 @@ cs:
       filter_list: "Seznam uložených filtrů"
       modify_query: "Upravit dotaz"
       save_filter: "Uložit filtr"
+      error_query_input: "Neočekáváný vstup"
+      error_unknown_func: "Neznámá funkce" 
       error_filter: "Filter nelze uložit"
       enter_filter_name: "Prosím vyplňte název filtru"
+      filter_ql_syntax_error: "%{message} na řádku %{row} sloupec %{col}: '%{query_error}'"
+      error: "(<=CHYBA)"
 
     actions:
       delete_all:
@@ -67,3 +71,6 @@ cs:
         breadcrumb: 'Hromadná úprava'
         bulk_link: "Změnit vybraný %{model_label_plural}"
         done: "upraveno"
+  datetime:
+    formats:
+      basepack: "%d.%m.%Y %T"

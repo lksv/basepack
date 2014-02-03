@@ -118,7 +118,7 @@ module Basepack
         if f = builder.functions[fce_name.to_sym]
           f.call(b, param)
         else
-          b.raise_error("Neznámá funkce `#{fce_name}'")
+          b.raise_error(I18n.t("basepack.query.error_unknown_func") + " `#{fce_name}'")
         end
       end
 
@@ -161,8 +161,9 @@ module Basepack
       end
 
       def raise_error_for_pos(message, pos, line = '?', column = '?')
-        query_error = pos >= query.length ? "#{query}(<=CHYBA)" : query.dup.insert(pos, "(<=CHYBA)")
-        raise ParseError, "#{message} na řádku #{line} sloupec #{column}: \"#{query_error}\""
+        normalized_pos = pos >= query.length ? query.length : pos
+        query_error = query.dup.insert(normalized_pos, I18n.t("basepack.query.error"))
+        raise ParseError, I18n.t('basepack.query.filter_ql_syntax_error', row: line, col: column, message: message, query_error: query_error)
       end
 
       def raise_error(message)
@@ -194,7 +195,7 @@ module Basepack
         #puts e.cause.ascii_tree
         deepest = deepest_cause(e.cause)
         line, column = deepest.source.line_and_column(deepest.pos)
-        builder.raise_error_for_pos("Neočekáváný vstup", deepest.pos, line, column)
+        builder.raise_error_for_pos(I18n.t("basepack.query.error_query_input"), deepest.pos, line, column)
       end
     end
 
