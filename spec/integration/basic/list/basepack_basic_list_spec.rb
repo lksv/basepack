@@ -526,7 +526,7 @@ describe "Basepack basic list" do
     end
   end
 
-  describe "filters" do
+  describe "filter params" do
     let!(:employee1) { FactoryGirl.create(:employee, name: 'xxx') }
     let!(:employee2) { FactoryGirl.create(:employee, name: 'yyy') }
     let!(:employee3) { FactoryGirl.create(:employee, name: 'xxxx') }

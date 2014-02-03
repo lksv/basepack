@@ -18,7 +18,8 @@ Capybara.javascript_driver = :poltergeist
 #http://www.jonathanleighton.com/articles/2012/poltergeist-0-6-0/
 # Capybara.register_driver :poltergeist do |app|
 #   Capybara::Poltergeist::Driver.new(app, inspector: true)
-#    #page.driver.debug
+#    # page.driver.debug
+#    # page.save_screenshot 'page.jpg', full: true
 # end
 
 # Load support files
