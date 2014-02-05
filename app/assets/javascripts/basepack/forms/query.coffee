@@ -41,10 +41,16 @@ class Basepack.QueryForm
     selected_option = $predicate_select.find("option:selected")
     if $(selected_option).data("type") is "boolean"
       $predicate_select.siblings(".additional-fieldset").prop("disabled", true).hide()
+      $predicate_select.siblings(".textarea-value").prop("disabled", true).hide()
       $predicate_select.siblings(".boolean-value").prop "disabled", false
     else
-      $predicate_select.siblings(".additional-fieldset").prop("disabled", false).show()
       $predicate_select.siblings(".boolean-value").prop "disabled", true
+      if $predicate_select.val() == "one_of"
+        $predicate_select.siblings(".textarea-value").prop("disabled", false).show()
+        $predicate_select.siblings(".additional-fieldset").prop("disabled", true).hide()
+      else
+        $predicate_select.siblings(".textarea-value").prop("disabled", true).hide()
+        $predicate_select.siblings(".additional-fieldset").prop("disabled", false).show()
 
   select_option: (name, selected, options, klass) ->
     html = "<select class=\"input-medium #{klass || "additional-fieldset"}\" name=\"" + name + "\">"
@@ -95,10 +101,10 @@ class Basepack.QueryForm
           control = @select_predicate(operator_name, field_predicate or "eq", ["eq", "not_eq", "null", "not_null"])
           additional_control = @select_option(value_name, field_value, @options.enum_options[field_name] or [])
         when "string", "text", "belongs_to_association"
-          control = @select_predicate(operator_name, field_predicate or "cont", ["eq", "not_eq", "matches", "does_not_match", "cont", "not_cont", "start", "not_start", "end", "not_end", "present", "blank", "null", "not_null"])
+          control = @select_predicate(operator_name, field_predicate or "cont", ["eq", "not_eq", "matches", "does_not_match", "cont", "not_cont", "start", "not_start", "end", "not_end", "present", "blank", "one_of", "null", "not_null"])
           additional_control = "<input class=\"additional-fieldset input-medium\" type=\"text\" name=\"" + value_name + "\" value=\"" + field_value + "\" /> "
         when "integer", "decimal", "float"
-          control = @select_predicate(operator_name, field_predicate or "eq", ["eq", "not_eq", "lt", "lteq", "gt", "gteq", "null", "not_null"])
+          control = @select_predicate(operator_name, field_predicate or "eq", ["eq", "not_eq", "lt", "lteq", "gt", "gteq", "one_of", "null", "not_null"])
           additional_control = "<input class=\"additional-fieldset default input-medium\" type=\"text\" name=\"" + value_name + "\" value=\"" + field_value + "\" /> "
         when "ql"
           name_control = " "
@@ -116,6 +122,7 @@ class Basepack.QueryForm
       control: control,
       additional_control: additional_control,
       value_name: value_name
+      field_value: field_value
 
     @$filters.append content
     @$container.show "fast"

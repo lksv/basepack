@@ -10,6 +10,7 @@
     <div class="controls">
       <%= control %>  <%= additional_control %>
       <input type="hidden" name="<%- value_name %>" value="1" disabled="disabled" class="boolean-value"/>
+      <textarea type="hidden" name="<%- value_name %>" disabled="disabled" class="input-xlarge textarea-value" rows="4" cols="50" style="display: none;"><%- field_value %></textarea>
     </div>
   </div>
 </div>

@@ -66,5 +66,6 @@ cs:
       'false': "není pravdivé"
       present: "je vyplněné"
       blank: "je prázdné"
+      one_of: "jeden ze"
       'null': "je null"
       not_null: "není null"

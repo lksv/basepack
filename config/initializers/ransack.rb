@@ -4,6 +4,12 @@ if defined? Ransack
     # default is :q, this can be however overridden on
     # ransack search creation.
     config.search_key = :f
+
+    config.add_predicate 'one_of',
+      :arel_predicate => 'eq_any',
+      :compounds => false,
+      :type => :string,
+      :formatter => proc {|v| v.split(/\s*[,;]\s*/) }
   end
 
   #temporary solution for https://github.com/ernie/ransack/issues/61
