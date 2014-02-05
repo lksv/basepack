@@ -18,7 +18,6 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'dragonfly', '~> 1.0.2'
   gem 'rack-cache', :require => 'rack/cache'
-  gem 'paperclip', '>= 3.4'
   gem 'timecop'
   gem 'settingslogic'
   gem 'ransack'
