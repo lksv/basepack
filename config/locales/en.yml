@@ -39,6 +39,9 @@ en:
         column: "Column %{idx}"
         start: "Start Import"
         encoding_from: "Encoding From"
+      xml:
+        configuration: "Configuration of XML import"
+        items_xpath: "XPath Iterate over Items"
 
     bulk_edit:
       title: "Bulk edit for %{count} items"

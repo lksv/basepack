@@ -1,0 +1,25 @@
+%legend= t('basepack.import.xml.configuration')
+
+= form.render_form do
+  .form-inputs
+    = form.builder.input :"import[configuration][root]", label: t('basepack.import.xml.items_xpath') do
+      = text_field_tag :"import[configuration][root]", configuration[:root]
+
+    %h5{"data-toggle" => 'tooltip', title: t('basepack.export.click_to_reverse_selection', default: [:'admin.export.click_to_reverse_selection']), :onclick => 'jQuery(this).siblings(".current_form").find("input").click()'}= t('basepack.export.fields_from', default: [:'admin.export.fields_from'], :name => resource_config.label_plural.downcase)
+    - form.visible_fields.select {|f| !f.association? || f.polymorphic? }.each do |field|
+      = form.builder.input :"import[configuration][mapping][#{field.name}]", label: field.label do
+        = text_field_tag :"import[configuration][mapping][#{field.name}]", configuration[:mapping][field.name]
+
+    - form.visible_fields.select {|f| f.association? && !f.polymorphic? }.each do |field|
+      %h5{"data-toggle" => 'tooltip', title: t('basepack.export.click_to_reverse_selection', default: [:'admin.export.click_to_reverse_selection']), :onclick => 'jQuery(this).siblings(".current_form").find("input").click()'}= t('basepack.export.fields_from_associated', default: [:'admin.export.fields_from_associated'], :name => field.label.downcase)
+      - field.nform.visible_fields.reject {|f| f.association? }.each do |afield|
+        = form.builder.input :"import[configuration][mapping][#{afield.name}]", label: afield.label do
+          = text_field_tag :"import[configuration][mapping][#{afield.name}]", configuration[:mapping][afield.name]
+
+  .form-actions
+    .pull-right
+      = render "forms/buttons/refresh"
+      %button.btn.btn-primary{type: "submit", name: "import[state]", value: "not_started",
+          'data-disable-with' => "<i class='icon-white icon-ok'></i> #{t("admin.form.save")}"}
+        %i.icon-white.icon-ok
+        = I18n.t('basepack.import.csv.start')

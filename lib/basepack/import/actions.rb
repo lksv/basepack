@@ -100,6 +100,22 @@ module Basepack
         ]
       end
 
+      def import_sanitize_params_xml!(import_params, import)
+      end
+
+      def import_configuration_xml(import)
+        import.configuration[:root] = ''
+        import.configuration[:mapping] = {}
+        res = [ 'forms/import_configuration_xml',
+          {
+            form: form,
+            configuration: import.configuration
+          }
+        ]
+        import.klass.constantize.send(:import_configuration_xml!, res) if import.klass.constantize.respond_to?(:import_configuration_xml!)
+        res
+      end
+
     end
   end
 end

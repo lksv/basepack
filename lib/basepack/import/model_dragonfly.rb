@@ -107,6 +107,8 @@ module Basepack
         case file.try(:mime_type)
         when "text/csv", "text/plain"
           :csv
+        when 'text/xml', 'application/xml'
+          :xml
         else
           :unknown
         end
@@ -210,6 +212,40 @@ module Basepack
         end
       end
 
+      def import_data_xml(*a)
+        import = self
+        ability_attributes = current_ability.attributes_for(:import, importable_class)
+        mapping = import.configuration[:mapping]
+        skip_rows = import.num_imported + import.num_errors
+        idx = 0
+
+        import.open_report do |report|
+          if skip_rows == 0
+            report << CSV.generate_line(mapping_hash2row(mapping, mapping) + ["Chyby"], encoding: 'UTF-8')
+          end
+          import.open_file do |f|
+            Nokogiri::XML(f).xpath(configuration[:root]).each do |node|
+              next if node.blank?
+              idx += 1
+              next if idx <= skip_rows
+
+              attrs = ability_attributes.dup
+              mapping.each do |attr, xpath|
+                next if xpath.blank?
+                attr_node = node.search(xpath)
+                attrs[attr] = attr_node.first.try(:content) if attr_node.present?
+              end
+
+              import_attributes(Rack::Utils.parse_nested_query(attrs.to_query)) do |object|
+                unless save_object(object)
+                  report << CSV.generate_line(mapping_hash2row(attrs, mapping) + [object.errors.full_messages.join('; ')], encoding: 'UTF-8')
+                end
+              end
+            end
+          end
+        end
+      end
+
       def import_attributes(attrs, &block)
         if attrs.present?
           transaction do
@@ -219,6 +255,7 @@ module Basepack
               object = model.try(:find_or_initialize_for_import, attrs) ||
                        Basepack::Import::Importable.find_or_initialize_for_import(model, attrs)
             rescue ActiveRecord::RecordNotFound => e # error in finding nested attributes
+              #TODO: it is not show particular error in nesed models, shloud be used https://gist.github.com/pehrlich/4710856 
               object = model.new
               object.errors[:base] << e.message
             end
@@ -243,6 +280,15 @@ module Basepack
         end
         status
       end
+
+      private
+
+      def mapping_hash2row(attrs, mapping)
+        res = mapping.keys.inject({}) { |s, k| s[k] = attrs[k] || ''; s}
+        res.to_a.sort { |a,b| a.first <=> b.first }.map(&:last)
+      end
+
+
     end
   end
 end

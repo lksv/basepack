@@ -39,6 +39,9 @@ cs:
         column: "Sloupec %{idx}"
         start: "Spustit"
         encoding_from: "Encódovat z"
+      xml:
+        configuration: "Konfigurace XML importu"
+        items_xpath: "XPath k položkám"
 
     bulk_edit:
       title: "Hromadná změna %{count} položek"
