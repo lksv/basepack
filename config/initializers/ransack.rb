@@ -6,7 +6,7 @@ if defined? Ransack
     config.search_key = :f
 
     config.add_predicate 'one_of',
-      :arel_predicate => 'eq_any',
+      :arel_predicate => 'in',
       :compounds => false,
       :type => :string,
       :formatter => proc {|v| v.split(/\s*[,;]\s*/) }
