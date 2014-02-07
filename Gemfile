@@ -16,6 +16,7 @@ group :development do
 end
 
 group :test, :development do
+  gem "sqlite3"
   # types
   gem 'bootstrap-wysihtml5-rails'
   gem "acts-as-taggable-on"
