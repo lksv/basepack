@@ -8,13 +8,13 @@ describe "Basepack basic filter", js: true do
     before(:each) do
       employee1
       employee2
-      
+
       visit employees_path
       click_on "Filter"
       sleep 0.7
     end
-    
-    it "finds by name", focus: true do
+
+    it "finds by name" do
       fill_in "Filter", with: employee1.name
       click_on "Refresh"
 
