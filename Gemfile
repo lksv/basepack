@@ -33,6 +33,7 @@ group :test, :development do
   gem 'timecop'
   gem 'settingslogic'
   gem 'ransack'
+  gem 'delayed_job_active_record', "~> 4.0"
 
   gem 'poltergeist'
   gem 'jquery-rails'

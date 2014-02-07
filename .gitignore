@@ -17,6 +17,9 @@ tags
 /spec/dummy_app/log
 /spec/dummy_app/.bundle
 
+#Ignore Dragonfly
+/spec/dummy_app/public/system/
+
 # Ignore the default SQLite database.
 /spec/dummy_app/db/*.sqlite3
 /spec/dummy_app/db/*.sqlite3-journal

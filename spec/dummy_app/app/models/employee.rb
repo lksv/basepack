@@ -16,6 +16,8 @@
 #
 
 class Employee < ActiveRecord::Base
+  include Basepack::Import::Importable
+
   belongs_to :position, inverse_of: :employees
   belongs_to :position_category, class_name: "PositionCategory", inverse_of: :employees
 

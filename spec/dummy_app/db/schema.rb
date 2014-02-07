@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140201101408) do
+ActiveRecord::Schema.define(version: 20140207192024) do
 
   create_table "accounts", force: true do |t|
     t.integer  "account_number"
@@ -21,6 +21,22 @@ ActiveRecord::Schema.define(version: 20140201101408) do
   end
 
   add_index "accounts", ["employee_id"], name: "index_accounts_on_employee_id"
+
+  create_table "delayed_jobs", force: true do |t|
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
 
   create_table "employees", force: true do |t|
     t.string   "name"
@@ -43,6 +59,37 @@ ActiveRecord::Schema.define(version: 20140201101408) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "imports", force: true do |t|
+    t.integer  "user_id"
+    t.string   "klass",                                       null: false
+    t.string   "file_uid",                                    null: false
+    t.string   "file_name"
+    t.string   "file_mime_type"
+    t.integer  "file_size"
+    t.string   "report_uid"
+    t.string   "report_name"
+    t.string   "report_mime_type"
+    t.integer  "num_errors",       default: 0,                null: false
+    t.integer  "num_imported",     default: 0,                null: false
+    t.string   "state",            default: "not_configured", null: false
+    t.string   "action_name",      default: "import",         null: false
+    t.text     "configuration"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "imports", ["klass", "user_id"], name: "index_imports_on_klass_and_user_id"
+  add_index "imports", ["user_id"], name: "index_imports_on_user_id"
+
+  create_table "imports_importables", force: true do |t|
+    t.integer "import_id"
+    t.integer "importable_id"
+    t.string  "importable_type"
+  end
+
+  add_index "imports_importables", ["import_id"], name: "index_imports_importables_on_import_id"
+  add_index "imports_importables", ["importable_id"], name: "index_imports_importables_on_importable_id"
 
   create_table "position_categories", force: true do |t|
     t.string   "name"

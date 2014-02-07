@@ -12,7 +12,6 @@ require 'warden'
 require 'capybara/poltergeist'
 
 Rails.backtrace_cleaner.remove_silencers!
-Capybara.javascript_driver = :poltergeist
 
 #For debugging purposes:
 #http://www.jonathanleighton.com/articles/2012/poltergeist-0-6-0/
@@ -21,6 +20,7 @@ Capybara.javascript_driver = :poltergeist
 #    # page.driver.debug
 #    # page.save_screenshot 'page.jpg', full: true
 # end
+Capybara.javascript_driver = :poltergeist
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
