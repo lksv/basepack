@@ -23,7 +23,7 @@ describe "Basepack Basic New" do
     end
 
     it "shows non-required fields as \"Optional\"" do
-      expect(page).to have_selector(".employee_income .help-block", text: "Optional")
+      expect(page).to have_selector(".employee_income > .hint", text: "Optional")
     end
   end
 

@@ -25,7 +25,7 @@ let!(:employee) { FactoryGirl.create(:employee) }
     end
 
     it "shows non-required fields as \"Optional\"" do
-      expect(page).to have_selector(".employee_income .help-block", text: "Optional")
+      expect(page).to have_selector(".employee_income > .hint", text: "Optional")
     end
 
     it "displays Delete and Cancel links" do
