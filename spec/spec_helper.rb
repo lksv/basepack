@@ -18,7 +18,8 @@ Capybara.javascript_driver = :poltergeist
 #http://www.jonathanleighton.com/articles/2012/poltergeist-0-6-0/
 # Capybara.register_driver :poltergeist do |app|
 #   Capybara::Poltergeist::Driver.new(app, inspector: true)
-#    #page.driver.debug
+#    # page.driver.debug
+#    # page.save_screenshot 'page.jpg', full: true
 # end
 
 # Load support files
@@ -34,6 +35,10 @@ RSpec.configure do |config|
   config.infer_base_class_for_anonymous_controllers = false
   config.include Devise::TestHelpers, :type => :controller
   config.order = "random"
+  
+  # for focusing
+  config.filter_run :focus => true
+  config.run_all_when_everything_filtered = true
 
   config.before(:each) do
     DatabaseCleaner.strategy = (example.metadata[:js]) ? :truncation : :transaction

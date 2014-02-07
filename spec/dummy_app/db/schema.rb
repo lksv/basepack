@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140117153133) do
+ActiveRecord::Schema.define(version: 20140201101408) do
 
   create_table "accounts", force: true do |t|
     t.integer  "account_number"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20140117153133) do
     t.datetime "updated_at"
     t.string   "title"
     t.string   "phone"
+    t.integer  "position_category_id"
   end
 
   add_index "employees", ["position_id"], name: "index_employees_on_position_id"
@@ -43,10 +44,17 @@ ActiveRecord::Schema.define(version: 20140117153133) do
     t.datetime "updated_at"
   end
 
+  create_table "position_categories", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "positions", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position_category_id"
   end
 
   create_table "projects", force: true do |t|
@@ -55,6 +63,8 @@ ActiveRecord::Schema.define(version: 20140117153133) do
     t.integer  "employee_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "deadline"
+    t.string   "color"
   end
 
   add_index "projects", ["employee_id"], name: "index_projects_on_employee_id"
@@ -65,12 +75,31 @@ ActiveRecord::Schema.define(version: 20140117153133) do
     t.datetime "updated_at"
   end
 
+  create_table "taggings", force: true do |t|
+    t.integer  "tag_id"
+    t.integer  "taggable_id"
+    t.string   "taggable_type"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context",       limit: 128
+    t.datetime "created_at"
+  end
+
+  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id"
+  add_index "taggings", ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context"
+
+  create_table "tags", force: true do |t|
+    t.string "name"
+  end
+
   create_table "tasks", force: true do |t|
     t.string   "name"
     t.text     "description"
     t.integer  "project_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status"
+    t.integer  "completed_percents"
   end
 
   add_index "tasks", ["project_id"], name: "index_tasks_on_project_id"

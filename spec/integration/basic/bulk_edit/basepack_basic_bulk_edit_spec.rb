@@ -58,7 +58,7 @@ describe "Basepack Basic Bulk Edit" do
       fill_in "employee[name]", with: "John Smith"
       fill_in "employee[email]", with: "john.smith@gmail.com"
       fill_in "employee[income]", with: "1500"
-      fill_in_select('Skills', with: skill.to_label)
+      add_select2('Skills', with: skill.to_label)
       click_on "Save"
 
       expect(current_path).to eq employees_path
@@ -91,7 +91,7 @@ describe "Basepack Basic Bulk Edit" do
       visit bulk_edit_employees_path('f[id_lt]' => employee3.id)
 
       find('select[name="employee[bulk_edit][skill_ids]"]').find(:option, 'assign', {}).select_option
-      fill_in_select('Skills', with: skill.to_label)
+      add_select2('Skills', with: skill.to_label)
 
       click_on "Save"
 
@@ -110,7 +110,7 @@ describe "Basepack Basic Bulk Edit" do
       visit bulk_edit_employees_path('f[id_lt]' => employee3.id)
 
       find('select[name="employee[bulk_edit][skill_ids]"]').find(:option, 'delete', {}).select_option
-      fill_in_select('Skills', with: skill.to_label)
+      add_select2('Skills', with: skill.to_label)
 
       click_on "Save"
 
