@@ -19,8 +19,7 @@ group :test, :development do
   # types
   gem 'bootstrap-wysihtml5-rails'
   gem "acts-as-taggable-on"
-  
-  gem 'sqlite3'
+
   gem 'cancan'
   gem 'devise'
   gem 'rspec-rails'
@@ -35,7 +34,6 @@ group :test, :development do
   gem 'settingslogic'
   gem 'ransack'
 
-  gem "simple_form"
   gem 'poltergeist'
   gem 'jquery-rails'
   gem "jquery-turbolinks"
@@ -46,7 +44,6 @@ group :test, :development do
   gem 'launchy'
   gem "twitter-bootstrap-rails", "~> 2.2.8"
   gem "selenium-webdriver"
-  gem "simple_form"
 end
 
 # Declare any dependencies that are still in development here instead of in
