@@ -1,3 +1,6 @@
+# This class construct form for filtering an resource
+# For playing in console, you can instantiate by:
+# Basepack::Forms::Factories::QueryRailsAdmin.new(helper).new_form(Subscription, {scope: Subscription.all, auth_object: Ability.new(User.first)})
 module Basepack
   module Forms
     class Query < Forms::Base
@@ -154,12 +157,18 @@ module Basepack
         end)
       end
 
-      def enum_options
-        Hash[filterable_fields.map do |f|
-          if options = f.enum_options
-            [ f.name, options ]
+      def enum_options(fields = fields)
+        res = {}
+        fields.each do |f|
+          options = f.enum_options
+          if options and f.filterable?
+            #key f.name is not enought because of enum_options is called recursielly on assiciations
+            res[field_nested_name(f)] = options
+          elsif (f.association? and !nested_in and !f.polymorphic?)
+            res.update(f.nform.enum_options)
           end
-        end.compact]
+        end
+        res
       end
 
       def date_format
