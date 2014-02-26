@@ -29,7 +29,7 @@ module Basepack
       rule(:rparen)         { str(")") >> spaces? }
       rule(:not_op)         { spaces? >> stri('not').maybe.as(:not) >> spaces? }
 
-      rule(:operator)       { str('=') | str('!=') | str('>=') | str('<=') | str('>') | str('<') }
+      rule(:operator)       { str('=') | str('!=') | str('>=') | str('<=') | str('>') | str('<') | str('one_of') }
       rule(:str_op)         { stri('like') | stri('cont') | stri('start') | stri('end') }
       rule(:switch_op)      { stri('null') | stri('blank') }
       rule(:identifier)     { (match('[a-z_]') >> match('[a-z0-9_]').repeat).as(:identifier) }
@@ -73,6 +73,7 @@ module Basepack
       "notstart" => 'not_start',
       "end"      => 'end',
       "notend"   => 'not_end',
+      "one_of"   => 'one_of',
       "blank"    => 'blank',
       "notblank" => 'present',
       "null"     => 'null',
@@ -94,6 +95,7 @@ module Basepack
       'not_start'      => "not start",
       'end'            => "end",
       'not_end'        => "not end",
+      'one_of'         => "one_of",
       'blank'          => "is blank",
       'present'        => "is not blank",
       'null'           => "is null",
