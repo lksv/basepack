@@ -45,6 +45,9 @@ en:
 
     bulk_edit:
       title: "Bulk edit for %{count} items"
+      boolean_type:
+        check: 'Check'
+        uncheck: 'Uncheck'
 
     query:
       filter: 'Filter'

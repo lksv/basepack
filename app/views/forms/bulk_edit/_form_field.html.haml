@@ -1,0 +1,15 @@
+- if field.view_helper == :hidden_field
+  = form.input field.method_name, as: :hidden, input_html: field.html_attributes
+- elsif field.type == :boolean
+  = form.input field.method_name,
+      label: field.label,
+      hint: field.help,
+      required: field.required?,
+      input_html: field.html_attributes,
+      collection: [[I18n.t(:'basepack.bulk_edit.boolean_type.check'), 't'], [I18n.t(:'basepack.bulk_edit.boolean_type.uncheck'), 'f']]
+- else
+  = form.input field.method_name,
+      label: field.label,
+      hint: field.help,
+      required: field.required?,
+      input_html: field.html_attributes

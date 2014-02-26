@@ -45,6 +45,9 @@ cs:
 
     bulk_edit:
       title: "Hromadná změna %{count} položek"
+      boolean_type:
+        check: 'Zaškrtnout'
+        uncheck: 'Odškrtnout'
 
     query:
       filter: 'Filtr'

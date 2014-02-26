@@ -675,7 +675,7 @@ module Basepack
     #
     def resource_build_bulk_params
       _params = params[resource_request_name] || params[resource_instance_name]
-      bulk_params = _params.blank? ? {} : _params[:bulk_edit]
+      bulk_params = _params.blank? ? {} : (_params[:bulk_edit] || {})
       bulk_params.slice(*permitted_params[resource_instance_name].keys)
     end
     protected :resource_build_bulk_params

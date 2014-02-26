@@ -50,6 +50,45 @@ describe "Basepack Basic Bulk Edit" do
       expect(page).to have_content("Bulk edit for 2 items")
     end
 
+    context "boolean type" do
+      it "updates boolean type to specified value" do
+        employee1.bonus = false
+        employee1.save!
+
+        visit bulk_edit_employees_path
+        select 'Check', from: "employee[bonus]"
+        click_on "Save"
+        expect(current_path).to eq employees_path
+        employee1.reload
+        expect(employee1.bonus).to be_true
+
+        visit bulk_edit_employees_path
+        select 'Uncheck', from: "employee[bonus]"
+        click_on "Save"
+        expect(current_path).to eq employees_path
+        employee1.reload
+        expect(employee1.bonus).to be_false
+      end
+
+      it "should not update boolean type if not changed" do
+        employee1.update_attribute(:bonus, true)
+        employee2.update_attribute(:bonus, false)
+        employee3.update_attribute(:bonus, nil)
+
+        visit bulk_edit_employees_path
+        fill_in "employee[income]", with: "1500"
+        click_on "Save"
+
+        employee1.reload
+        employee2.reload
+        employee3.reload
+
+        expect(employee1.bonus).to be_true
+        expect(employee2.bonus).to be_false
+        expect(employee3.bonus).to be_nil
+      end
+    end
+
     it "take filter params and show number of edited items", js: true do
       skill = FactoryGirl.create(:skill)
 
