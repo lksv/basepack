@@ -408,6 +408,7 @@ module Basepack
     # on expanded nodes
     def load_tree_nodes(options = {}, &block)
       if params[:parent_id]
+        #parent = end_of_association_chain.accessible_by(current_ability, action_name).find(params[:parent_id])
         children_ids = resource_class.find(params[:parent_id]).child_ids
         collection = collection_without_pagination.where(id: children_ids)
       else

@@ -272,7 +272,7 @@ describe "Basepack basic list" do
       end
     end
 
-    it "sorts by position", js: true, focus: true do
+    it "sorts by position", js: true do
       tree
       project1.update_attribute(:position, 1)
       project2.update_attribute(:position, 2)
@@ -310,7 +310,13 @@ describe "Basepack basic list" do
     end
 
     it "correctly filters contains", js: true  do
-      #TODO: this test works but implementation is broken
+      pending 'future work'
+      #NEW FEATURE REQUIRED:
+      # show tree accoring the filter, e.g.
+      # for the collection find the upperset - parents of all items from the filter
+      # change load_tree_nodes to use only items form such collection.
+
+      # e.g. If I filter for sub-sub-item, I can see this item nested in the tree.
       visit projects_path('f[name_cont]' => '1-2-3')
 
       expect(page).to have_content(project123.to_label)
