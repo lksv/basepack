@@ -39,6 +39,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'bootbox-rails', '~>0.1' #v0.2 is for Bootstrap 3
   spec.add_dependency 'font-awesome-rails', ['~> 3.0']
   spec.add_dependency 'coffee-rails', '~> 4.0'
+  spec.add_dependency 'jquery-cookie-rails'
+  spec.add_dependency 'fancytree-rails', "~> 0.0.2"
 
   spec.add_development_dependency 'bundler', '~> 1.0'
   spec.add_development_dependency "sqlite3"
