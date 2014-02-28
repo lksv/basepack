@@ -23,7 +23,7 @@ describe "Basepack Basic New" do
     end
 
     it "shows non-required fields as \"Optional\"" do
-      expect(page).to have_selector(".employee_income > .hint", text: "Optional")
+      expect(page).to have_selector(".employee_income .help-block", text: "Optional")
     end
   end
 
@@ -169,9 +169,9 @@ describe "Basepack Basic New" do
       category_with_positions1
       category_with_positions2
       visit new_employee_path
-      
+
       find("#s2id_employee_position_category_id .select2-chosen").click
-      
+
       expect(page).to have_content(category_with_positions1.name)
       expect(page).to have_content(category_with_positions1.name)
     end
@@ -208,7 +208,7 @@ describe "Basepack Basic New" do
         click_on "Bold"
         page.execute_script("editor.setValue('<b>This text is bold</b>')")
         expect(page).to have_no_content("<b>This text is bold</b>")
-        
+
         click_on "Save"
         expect(page).to have_content("This text is bold")
       end
@@ -218,18 +218,19 @@ describe "Basepack Basic New" do
       it "displays date picker" do
         visit new_project_path
         find('.hasDatepicker').click
-        within("#ui-datepicker-div") do 
+        within("#ui-datepicker-div") do
           click_on "1"
         end
 
         click_on "Save"
+        sleep 100
         created_project = Project.last
-        
+
         expect(page).to have_content(I18n.l created_project.deadline, format: :long)
         expect(Date.today.beginning_of_month).to eq created_project.deadline
       end
 
-      it "displays time picker" do        
+      it "displays time picker" do
         visit new_project_path
         find('.hasTimepicker').click
         page.execute_script %Q{ $('a.ui-datepicker-next').trigger("click") } # move one month forward 

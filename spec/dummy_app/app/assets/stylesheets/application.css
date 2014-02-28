@@ -12,5 +12,5 @@
  *= require basepack
  *= require basepack_and_overrides
  *= require bootstrap-wysihtml5
- *= require_tree .
+ *= require fancytree/skin-lion/ui.fancytree
  */

@@ -49,6 +49,10 @@ en:
         check: 'Check'
         uncheck: 'Uncheck'
 
+    tree_list:
+      update_tree: 
+        error: "Cannot manipulate with tree node %{name}: %{msg}."
+
     query:
       filter: 'Filter'
       add_filter: 'Add Filter'

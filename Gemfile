@@ -41,11 +41,14 @@ group :test, :development do
   gem "jquery-turbolinks"
   gem "turbolinks"
   gem "bootbox-rails"
-  gem 'sass-rails', '~> 4.0.0'
-  gem 'bootstrap-sass', '~> 2.2'
   gem 'launchy'
   gem "twitter-bootstrap-rails", "~> 2.2.8"
   gem "selenium-webdriver"
+  gem "simple_form"
+  gem 'ancestry'
+  gem 'jquery-cookie-rails'
+  gem 'fancytree-rails', "~> 0.0.2"
+  gem 'bootstrap-modal-rails'
 end
 
 # Declare any dependencies that are still in development here instead of in

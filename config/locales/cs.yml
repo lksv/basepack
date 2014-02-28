@@ -49,6 +49,10 @@ cs:
         check: 'Zaškrtnout'
         uncheck: 'Odškrtnout'
 
+    tree_list:
+      update_tree: 
+        error: "Manipulace s uzlem stromu '%{name}' se nezdařila: %{msg}."
+
     query:
       filter: 'Filtr'
       add_filter: 'Přidat filtr'

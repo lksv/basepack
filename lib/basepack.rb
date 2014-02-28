@@ -4,6 +4,7 @@ require 'basepack/sections/query'
 require 'basepack/sections/import'
 require 'basepack/sections/bulk_edit'
 require 'basepack/rails_admin/fields_types/phone'
+require 'basepack/sections/tree_list'
 
 module Basepack
   def self.setup
@@ -78,6 +79,13 @@ module Basepack
     end
 
     if defined? RailsAdmin
+
+      RailsAdmin::Config::Sections::List.class_eval do
+        register_instance_option :partial do
+          'forms/list'
+        end
+      end
+
       RailsAdmin::Config::Fields::Association.class_eval do
         alias pretty_value! pretty_value
 

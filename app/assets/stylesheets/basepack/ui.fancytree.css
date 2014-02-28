@@ -1,0 +1,14 @@
+ul.fancytree-container {
+  border: 0px !important;
+}
+
+span.fancytree-icon {
+  display: none !important;
+}
+
+.fancytree-treefocus span.fancytree-selected span.fancytree-title,
+.fancytree-treefocus span.fancytree-active span.fancytree-title {
+  background-color: #CCC !important;
+  outline: 0px !important;
+  color: black !important;
+}

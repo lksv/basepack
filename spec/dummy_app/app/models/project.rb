@@ -8,6 +8,8 @@
 #  employee_id :integer
 #  created_at  :datetime
 #  updated_at  :datetime
+#  ancestry    :string(255)
+#  position    :integer
 #  deadline    :datetime
 #  color       :string(255)
 #
@@ -17,21 +19,14 @@ class Project < ActiveRecord::Base
   has_many :tasks, inverse_of: :project
 
   acts_as_taggable
-  
-  # rails_admin do
-  #   show do
-  #     field :tags
-  #   end
 
-  #   edit do
-  #     field :description, :wysihtml5
-  #     field :deadline, :datetime
-  #     field :tag_list do
-  #       partial 'tag_list_with_suggestions'
-  #     end
-  #     # field :color, :colorpicker
-  #     exclude_fields :base_tags, :tags
-  #     include_all_fields
-  #   end
-  # end
+  has_ancestry
+
+  before_validation :strip_ancestry
+
+  private
+
+  def strip_ancestry
+    self.ancestry = nil if self.ancestry == ''
+  end
 end

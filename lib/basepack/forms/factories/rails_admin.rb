@@ -3,6 +3,8 @@ module Basepack
     module Factories
       class RailsAdmin < Factories::Base
 
+        attr_reader :section
+
         class Bindings
           def initialize(form, view)
             @form = form

@@ -253,18 +253,18 @@ describe "Basepack basic update" do
 
   context "with accepts_nested_attributes_for" do
     context 'without allow_destroy' do
-      it "igonres _destroy" do      
+      it "igonres _destroy" do
         employee_with_projects
 
         page.driver.submit :put, "/employee_with_nesteds/#{employee_with_projects.id}", { 
-          employee_with_nested: { 
-            name: "updated name", 
+          employee_with_nested: {
+            name: "updated name",
             projects_attributes: {
               "1" => { id: employee_with_projects.projects[1].id, name: "destroy project", "_destroy" => true } 
             }
-          } 
+          }
         }
-        
+
         employee_with_projects.reload
         expect(page.driver.status_code).to eq 200
         expect(employee_with_projects.name).to eq "updated name"

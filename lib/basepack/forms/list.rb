@@ -13,8 +13,9 @@ module Basepack
         @query_form.view = view if @query_form
       end
 
-      def default_partial
-        'forms/list'
+      def partial
+        section = factory.section
+        Basepack::Utils.model_config(resource_class).send(section).partial
       end
 
       def collection
@@ -25,6 +26,10 @@ module Basepack
         collection.each_with_index do |res, i|
           with_resource(res, res, i, &block)
         end
+      end
+
+      def collection_without_pagination
+        collection.offset(nil).limit(nil)
       end
 
       render :sort_link do |field|
