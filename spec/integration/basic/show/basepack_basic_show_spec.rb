@@ -326,7 +326,7 @@ describe "Basepack Basic Show" do
         RailsAdmin.config Employee do
           show do
             # set phone type for phone field
-            field :phone, :phone do 
+            field :phone, :phone do
               # set czech country code
               cc "420"
             end
@@ -335,14 +335,14 @@ describe "Basepack Basic Show" do
       end
 
       it "shows formatted phone with czech prefix" do
-        employee.update(phone: "721312712")        
+        employee.update(phone: "721312712")
         visit employee_path(:id => employee.id)
 
         expect(page).to have_content("+420 721 312 712")
       end
 
-      it "shows formatted phone with czech prefix entered as a full" do
-        employee.update(phone: "420721312712")        
+      it "shows formatted phone with czech prefix entered as a full", js:true do
+        employee.update(phone: "420721312712")
         visit employee_path(:id => employee.id)
 
         expect(page).to have_content("+420 721 312 712")

@@ -233,18 +233,24 @@ module Basepack
         #{resource_class.model_name.human(count: destroyed_count)}"
 
       if not_destroyed_count == 0
-        flash[:success] = t("admin.flash.successful",
-          name: destroyed_message, 
-          action: t("admin.actions.delete.done"))
+        flash[:success] = t("basepack.flash.successful",
+          name: destroyed_message,
+          action: t("basepack.actions.delete.done"),
+          default: :'admin.flash.successful'
+        )
       else
         message = ", #{not_destroyed_count} 
           #{resource_class.model_name.human(count: not_destroyed_count)}"
 
-        flash[:error] = t("admin.flash.successful",
-          name: destroyed_message, 
-          action: t("admin.actions.delete.done"))
-        flash[:error] << t("admin.flash.error", name: message,
-          action: t("admin.actions.delete.done"))
+        flash[:error] = t("basepack.flash.successful",
+          name: destroyed_message,
+          action: t("admin.actions.delete.done"),
+          default: :'admin.flash.successful'
+        )
+        flash[:error] << t("basepack.flash.error", name: message,
+          action: t("admin.actions.delete.done"),
+          default: :'admin.flash.successful'
+        )
       end
 
       redirect_to collection_url
@@ -501,19 +507,19 @@ module Basepack
     protected
 
     def message_edit_done(name = resource_config.label)
-      t("admin.flash.successful", :name => name, :action => t("admin.actions.edit.done"))
+      t("basepack.flash.successful", :name => name, :action => t("admin.actions.edit.done"), default: :'admin.flash.successful')
     end
 
     def message_new_done(name = resource_config.label)
-      t("admin.flash.successful", :name => name, :action => t("admin.actions.new.done"))
+      t("basepack.flash.successful", :name => name, :action => t("admin.actions.new.done"), default: :'admin.flash.successful')
     end
 
     def message_destroy_done(name = resource_config.label)
-      t("admin.flash.successful", :name => name, :action => t("admin.actions.delete.done"))
+      t("basepack.flash.successful", :name => name, :action => t("admin.actions.delete.done"), default: :'admin.flash.successful')
     end
 
     def message_bulk_edit_done(name = resource_config.label)
-      t("admin.flash.successful", :name => name, :action => t("basepack.actions.bulk_edit.done"))
+      t("basepack.flash.successful", :name => name, :action => t("basepack.actions.bulk_edit.done"), default: :'admin.flash.successful')
     end
 
     def message_bulk_edit_fail(model_label_plural = resource_config.label_plural)
