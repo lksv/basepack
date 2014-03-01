@@ -148,15 +148,16 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
       multiple: options.multiple
       escapeMarkup: (m) ->
         m
-      ajax:
-        url: options.remote_source
-        dataType: 'json'
-        data: (term, page) ->
-          params = { query: term, page: page, per: 20 } # TODO - per into Settings
-          $.extend(params, options.remote_source_params)
-          params
-        results: (data, page) ->
-          { more: data.length == (options.remote_source_params.per || 20), results: data }
+      data:[{id:0,text:'enhancement'},{id:1,text:'bug'},{id:2,text:'duplicate'},{id:3,text:'invalid'},{id:4,text:'wontfix'}]
+      #ajax:
+      #  url: options.remote_source
+      #  dataType: 'json'
+      #  data: (term, page) ->
+      #    params = { query: term, page: page, per: 20 } # TODO - per into Settings
+      #    $.extend(params, options.remote_source_params)
+      #    params
+      #  results: (data, page) ->
+      #    { more: data.length == (options.remote_source_params.per || 20), results: data }
       initSelection: (element, callback) ->
         if options.multiple
           Basepack.Form.Plugins.FilteringSelect.select2InitSelectionMultiple(element, callback, options, $el)
