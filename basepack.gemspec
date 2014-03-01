@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'kaminari'
   spec.add_dependency "simple_form"
   spec.add_dependency "nested_form"
-  spec.add_dependency "phony"
+  spec.add_dependency "phony", '~> 2.1.4'
 
   # assets
   spec.add_dependency 'sass-rails', '~> 4.0'

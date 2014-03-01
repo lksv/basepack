@@ -22,7 +22,7 @@ module RailsAdmin
                 value.html_safe
               end
             end
-          end 
+          end
 
           register_instance_option :cc do
             nil
@@ -50,7 +50,7 @@ module RailsAdmin
 
           def normalized_value
             options = {}
-            options[:cc] = cc if cc.present? 
+            options[:cc] = cc if cc.present?
             options[:ndc] = ndc if ndc.present?
             Phony.normalize(value, options)
           end
