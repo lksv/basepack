@@ -9,7 +9,7 @@ module Basepack
           :type_css_class, :css_class, :associated_model_config, :polymorphic?, :association,
           :visible?, :active?, :read_only?, :enum, :abstract_model, :export_value,
           :filterable?, :queryable?, :searchable, :sortable, :sort_reverse, :virtual?,
-          :options_source, :options_source_params, :partial, :partial_show,
+          :options_source, :options_source_params, :precached_options, :partial, :partial_show,
           :view_helper, :required?, :html_attributes, :nested_form, :inverse_of, :multiple?,
           :associated_primary_key, :optional?, :editable?, :foreign_key, :allowed_methods,
           :errors, :cache_method, :delete_method, :orderable, :inline_add, :inline_edit,

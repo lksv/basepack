@@ -97,6 +97,29 @@ module Basepack
         p_key = field.associated_primary_key || :id
 
         options = (field.html_attributes || {}).dup
+
+        precached_options = field.precached_options
+        if precached_options == true
+          #TODO: needs to refactor
+          # * code duplication with Controller's#options
+          # * authorize!(:options, association_klass) is missing
+          # * filter params handling is ugly
+          association_klass = field.association[:model_proc].call()
+
+          query_form = view.query_form_for(
+            association_klass,
+            association_klass.all.accessible_by(view.current_ability, :options),
+            params: Rack::Utils.parse_nested_query(field.options_source_params.to_param).with_indifferent_access
+          )
+          precached_options = query_form.collection.map do |object|
+            primary_key = resource_class.primary_key
+            {
+              id: object.send(primary_key),
+              text: ERB::Util.html_escape(object.to_details_label)
+            }
+          end
+        end
+
         options[:value] = value.map {|v| v.send(p_key) }.join(',')
         options[:data] ||= {}
         options[:data].reverse_merge!(
@@ -107,6 +130,7 @@ module Basepack
             required:       field.required?,
             remote_source:  field.options_source,
             remote_source_params: field.options_source_params || {},
+            precached_options: precached_options,
             init:           Hash[value.map {|v| [v.send(p_key), view.html_escape(v.to_label)] }],
           }
         )

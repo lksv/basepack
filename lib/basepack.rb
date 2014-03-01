@@ -115,6 +115,10 @@ module Basepack
           {}
         end
 
+        register_instance_option :precached_options do
+          nil
+        end
+
         register_instance_option :partial_show do
           nil
         end

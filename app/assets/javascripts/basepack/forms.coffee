@@ -136,7 +136,7 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
       },
       options
     )
-    $el.select2
+    select_options =
       createSearchChoice: (term, data) ->
         if options.create_search_choice
           {id:term, text:term}
@@ -148,7 +148,17 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
       multiple: options.multiple
       escapeMarkup: (m) ->
         m
-      ajax:
+      initSelection: (element, callback) ->
+        if options.multiple
+          Basepack.Form.Plugins.FilteringSelect.select2InitSelectionMultiple(element, callback, options, $el)
+        else
+          Basepack.Form.Plugins.FilteringSelect.select2InitSelection(element, callback, options, $el)
+
+
+    if options.precached_options
+      select_options.data = options.precached_options
+    else
+      select_options.ajax =
         url: options.remote_source
         dataType: 'json'
         data: (term, page) ->
@@ -157,11 +167,8 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
           params
         results: (data, page) ->
           { more: data.length == (options.remote_source_params.per || 20), results: data }
-      initSelection: (element, callback) ->
-        if options.multiple
-          Basepack.Form.Plugins.FilteringSelect.select2InitSelectionMultiple(element, callback, options, $el)
-        else
-          Basepack.Form.Plugins.FilteringSelect.select2InitSelection(element, callback, options, $el)
+
+    $el.select2 select_options
 
   @select2InitSelection: (element, callback, options, $el) ->
     id = element.val()
