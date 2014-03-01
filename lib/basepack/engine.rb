@@ -7,6 +7,8 @@ require 'bootstrap-modal-rails'
 require 'underscore-rails'
 require 'underscore-string-rails'
 require 'rails-i18n'
+require 'jquery-cookie-rails'
+require 'fancytree-rails'
 
 module Basepack
   class Engine < ::Rails::Engine
