@@ -16,6 +16,7 @@ describe "Basepack basic filter", js: true do
 
     it "finds by name" do
       fill_in "Filter", with: employee1.name
+      sleep 0.1
       click_on "Refresh"
 
       expect(page).to have_css("tbody tr", :count => 1)
@@ -25,6 +26,7 @@ describe "Basepack basic filter", js: true do
 
     it "finds by email" do
       fill_in "Filter", with: employee2.email
+      sleep 0.1
       click_on "Refresh"
 
       expect(page).to have_css("tbody tr", :count => 1)
@@ -35,6 +37,7 @@ describe "Basepack basic filter", js: true do
     it "finds by datetime" do
       employee1.update(created_at: Date.yesterday)
       fill_in "Filter", with: employee1.created_at
+      sleep 0.1
       click_on "Refresh"
 
       expect(page).to have_css("tbody tr", :count => 1)

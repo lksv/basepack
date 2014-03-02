@@ -119,7 +119,7 @@ describe "Basepack basic list" do
       find_node_expander(project1).click
       expect(page).to have_content(project12.to_label)
       find_node_expander(project12).click
-      expect(page).to have_no_content(project122.to_label)
+      expect(page).to have_content(project122.to_label)
 
       find_node_expander(project1).click
       expect(page).to have_no_content(project12.to_label)
