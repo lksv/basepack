@@ -76,9 +76,9 @@ describe "Basepack basic filter", js: true do
      FactoryGirl.create(:project, name: "Third", description:  "Description of third")
      visit projects_path
      click_on "Filter"
-     sleep 0.7
+     sleep 0.8
      click_on "Modify query"
-     sleep 0.7
+     sleep 1
    end
 
    it "query cont on attribute" do
