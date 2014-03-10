@@ -111,7 +111,7 @@ module Basepack
             association_klass.all.accessible_by(view.current_ability, :options),
             params: Rack::Utils.parse_nested_query(field.options_source_params.to_param).with_indifferent_access
           )
-          precached_options = query_form.collection.map do |object|
+          precached_options = query_form.collection_without_pagination.map do |object|
             primary_key = resource_class.primary_key
             {
               id: object.send(primary_key),
