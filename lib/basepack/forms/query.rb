@@ -213,12 +213,7 @@ module Basepack
             filterql_options: @filterql_options,
           }
         )
-
-        # TODO: is correct to set all included association as references?
-        # is here some way how to list what associations are really used in the query
-        # (in the where statement)
-
-        @collection = @collection.includes(@collection_includes).references(@collection_includes) if @collection_includes
+        @collection = @collection.includes(@collection_includes) if @collection_includes
       end
     end
   end
