@@ -25,6 +25,8 @@ cs:
           comma: "<čárka> ','"
           semicolon: "<středník> ';'"
           tab: "<tabulátor>"
+        encoding_to: "Encódovat do"
+        encoding_to_help: "Nechte prázdné pro výchozí ('%{name}')"
       confirmation: "Export to %{name}"
 
     import:

@@ -25,6 +25,8 @@ en:
           comma: "<comma> ','"
           semicolon: "<semicolon> ';'"
           tab: "<tabs>"
+        encoding_to: "Encodeing To"
+        encoding_to_help: "Leave blank for default ('%{name}')"
       confirmation: "Export to %{name}"
 
     import:

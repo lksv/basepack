@@ -102,10 +102,11 @@ module Basepack
           fields = form.fields_from_params(params[:schema])
           csv_options = params[:csv_options] || {}
           options = {encoding: 'UTF-8', col_sep: csv_options[:col_sep].presence || Basepack::Settings.export.default_col_sep}
-          header = csv_options[:skip_header] == 'true' ? '' : CSV.generate_line(form.csv_header(fields), options)
+          encoding_to = csv_options[:encoding_to].presence || Basepack::Settings.export.default_encoding_to
+          header = csv_options[:skip_header] == 'true' ? '' : CSV.generate_line(form.csv_header(fields), options).encode(encoding_to)
 
           send_export_data(header: header) do |object, i|
-            CSV.generate_line(form.csv_row_for_resource(object, fields), options)
+            CSV.generate_line(form.csv_row_for_resource(object, fields), options).encode(encoding_to)
           end
         end
       end

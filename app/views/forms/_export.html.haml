@@ -35,13 +35,13 @@
 
     %fieldset
       %legend= t('basepack.export.options_for', default: [:'admin.export.options_for'], :name => 'csv')
-      -#.control-group
-      -#  - guessed_encoding = (Rails.configuration.database_configuration[Rails.env]['encoding'].presence rescue 'UTF-8') || 'UTF-8'
-      -#  %label.control-label{:for => "csv_options_encoding_to"}= t('basepack.export.csv.encoding_to', default: [:'admin.export.csv.encoding_to'])
-      -#  .controls
-      -#    -# from http://books.google.com/support/partner/bin/answer.py?answer=30990 :
-      -#    = select_tag 'csv_options[encoding_to]', options_for_select(["", "UTF-8", "UTF-16LE", "UTF-16BE", "UTF-32LE", "UTF-32BE", "UTF-7", "ISO-8859-1", "ISO-8859-15", "IBM-850", "MacRoman", "Windows-1252", "ISO-8859-3", "IBM-852", "ISO-8859-2", "MacCE", "Windows-1250", "IBM-855", "ISO-8859-5", "ISO-IR-111", "KOI8-R", "MacCyrillic", "Windows-1251", "CP-866", "KOI-U", "MacUkranian", "GB2312", "GBK", "GB18030", "HZ", "ISO-2022-CN", "Big5", "Big5-HKSCS", "EUC-TW", "EUC-JP", "ISO-2022-JP", "Shift_JIS", "EUC-KR", "UHC", "JOHAB", "ISO-2022-KR"])
-      -#    %p.help-block= t('basepack.export.csv.encoding_to_help', default: [:'admin.export.csv.encoding_to_help'], :name => guessed_encoding)
+      .control-group
+        %label.control-label{:for => "csv_options_encoding_to"}= t('basepack.export.csv.encoding_to', default: [:'admin.export.csv.encoding_to'])
+        .controls
+          - encoding_list = Encoding.name_list.sort!
+          - encoding_list = ['UTF-8'] + (encoding_list - ['UTF-8']) if encoding_list.include?('UTF-8')
+          = select_tag 'csv_options[encoding_to]', options_for_select([''] + encoding_list)
+          %p.help-block= t('basepack.export.csv.encoding_to_help', default: [:'admin.export.csv.encoding_to_help'], :name => Basepack::Settings.export.default_encoding_to)
 
       .control-group
         %label.control-label{:for => "csv_options_skip_header"}= t('basepack.export.csv.skip_header', default: [:'admin.export.csv.skip_header'])

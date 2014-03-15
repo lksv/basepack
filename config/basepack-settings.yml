@@ -5,6 +5,7 @@ defaults: &defaults
     title: false
   export:
     default_col_sep: ';'
+    default_encoding_to: 'UTF-8'
   filters:
     model_name: null  # for enabling saved filter set to 'Filter' model for instance
   bulk_edit:
