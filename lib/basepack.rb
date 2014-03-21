@@ -160,6 +160,20 @@ module Basepack
         end
       end
 
+      RailsAdmin::Config::Fields::Types::Text.class_eval do
+        register_instance_option :show_with_pre do
+          true
+        end
+
+        register_instance_option :pretty_value do
+          if show_with_pre and formatted_value.presence
+            bindings[:view].content_tag :pre, formatted_value
+          else
+            formatted_value
+          end
+        end
+      end
+
       #RailsAdmin::Config::Fields::Types::Enum.class_eval do
       #  register_instance_option :pretty_value do
       #    v = bindings[:object].send(name)
