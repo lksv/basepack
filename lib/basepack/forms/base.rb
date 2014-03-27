@@ -124,7 +124,12 @@ module Basepack
       end
 
       def show_fields(*field_names)
-        field_names.each {|name| @fields_hash[name].try :visible, true }
+        field_names.each {|name| @fields_hash[name].try :visible=, true }
+      end
+
+      def show_only_fields(*field_names)
+        visible_fields.each { |field| hide_field(field.name) }
+        show_fields(*field_names)
       end
 
       def group(attributes = nil)
@@ -186,7 +191,7 @@ module Basepack
           end
 
           if nform = f.nform and nparams = new_params[f.method_name]
-            # nested_form with accepts_nested_attributes_for needs :id and 
+            # nested_form with accepts_nested_attributes_for needs :id and
             # :_destroy params in some cases
 
             nested_allowed = []
