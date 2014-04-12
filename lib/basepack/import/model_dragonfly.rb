@@ -171,7 +171,8 @@ module Basepack
         end
       end
 
-      def import_data(current_ability)
+      def import_data(user_for_ability)
+        current_ability = Ability.new(user_for_ability)
         start_processing do |import|
           import.current_ability = current_ability
           import.send("import_data_#{import.file_type}")

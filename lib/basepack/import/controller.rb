@@ -28,7 +28,7 @@ module Basepack
             elsif request.patch?
               @import_actions.patch do |import_resource|
                 # run import
-                import_resource.import_data(current_ability) if import_resource.state == "not_started"
+                import_resource.import_data(current_ability.user) if import_resource.state == "not_started"
                 redirect_to polymorphic_path([name, route_prefix, association_chain, resource_class].flatten,
                                              import_id: import_resource.id),
                             notice: message_edit_done(import_form.show_form.label)
