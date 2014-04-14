@@ -272,7 +272,14 @@ module Basepack
       end
 
       def save_object(object)
-        status = object.errors.empty? ? object.save : false
+
+        begin
+          status = object.errors.empty? ? object.save : false
+        rescue => err #catch the case when custom validation raise an error
+          status = false
+          object.errors.add(:base, "Raise Internal Error: #{err}")
+        end
+
         if status
           self.num_imported += 1
           self.importables.build(importable: object)
