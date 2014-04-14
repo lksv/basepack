@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "parslet"
   spec.add_dependency "cancan", "~> 1.6"
   spec.add_dependency 'settingslogic'
+  spec.add_dependency 'bootstrap-wysihtml5-rails' #for wysihtml5 field
 
   spec.add_dependency 'rails-i18n'
   spec.add_dependency "select2-rails"

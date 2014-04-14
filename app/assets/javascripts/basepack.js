@@ -15,4 +15,5 @@
 //= require bootbox
 //= require underscore
 //= require underscore.string
+//= require bootstrap-wysihtml5
 //= require_tree ./basepack

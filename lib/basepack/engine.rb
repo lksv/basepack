@@ -9,6 +9,7 @@ require 'underscore-string-rails'
 require 'rails-i18n'
 require 'jquery-cookie-rails'
 require 'fancytree-rails'
+require 'bootstrap-wysihtml5-rails'
 
 module Basepack
   class Engine < ::Rails::Engine
