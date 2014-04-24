@@ -106,7 +106,7 @@ module Basepack
           header = csv_options[:skip_header] == 'true' ? '' : CSV.generate_line(form.csv_header(fields), options).encode(encoding_to)
 
           send_export_data(header: header) do |object, i|
-            CSV.generate_line(form.csv_row_for_resource(object, fields), options).encode(encoding_to)
+            CSV.generate_line(form.csv_row_for_resource(object, fields), options).encode(encoding_to, invalid: :replace, undef: :replace)
           end
         end
       end
