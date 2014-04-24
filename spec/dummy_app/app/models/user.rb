@@ -25,4 +25,5 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   has_many :imports, inverse_of: :user
+  has_many :export_templates, inverse_of: :user
 end

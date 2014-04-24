@@ -6,6 +6,8 @@ defaults: &defaults
   export:
     default_col_sep: ';'
     default_encoding_to: 'UTF-8'
+  export_template:
+    model_name: "ExportTemplate"
   filters:
     model_name: null  # for enabling saved filter set to 'Filter' model for instance
   bulk_edit:

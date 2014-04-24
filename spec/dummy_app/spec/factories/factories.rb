@@ -15,11 +15,11 @@ FactoryGirl.define do
     factory :employee_with_projects do
       projects  { FactoryGirl.build_list(:project_with_tasks, 2) }
     end
-    
+
     factory :employee_with_skills do
       skills    { FactoryGirl.build_list(:skill, 2) }
     end
-    
+
     # factory :employee_with_account do
     #   account { FactoryGirl.build(:account) }
     # end
@@ -56,5 +56,13 @@ FactoryGirl.define do
 
   factory :skill do
     sequence(:name)   { |n| "skill#{n}" }
+  end
+
+  factory :export_template do
+    user nil
+    name "MyString"
+    class_type "MyString"
+    schema_template "MyText"
+    active false
   end
 end

@@ -175,6 +175,30 @@ module Basepack
 
     # [GET,POST] /resources/export
     def export
+      export_model_name = Basepack::Settings.export_template.model_name
+      export_model_class = export_model_name.constantize
+
+      if export_model_name.present? and params[:export_template_name].present?
+        @schema = params[:schema]
+        export = export_model_class.new(
+          name:         params[:export_template_name],
+          class_type:  resource_class.to_s,
+          active: true,
+          schema_template: @schema
+        )
+
+        export.assign_attributes(current_ability.attributes_for(:create, export_model_class))
+        if export.save
+          flash.now[:notice] = message_new_done(Basepack::Utils.model_config(export_model_class).label)
+        else
+          flash.now[:error] = I18n.t('basepack.export.export_template_error')
+        end
+
+        render and return
+      end
+
+      @schema = export_model_class.find_by(id: params[:export_template_id]).try(:schema_template) || []
+
       if format = params[:json] && :json || params[:csv] && :csv || params[:xml] && :xml
         request.format = format
         index
@@ -230,7 +254,7 @@ module Basepack
 
       destroyed_count = ret.count
       not_destroyed_count = ids.count - destroyed_count
-      destroyed_message = "#{destroyed_count} 
+      destroyed_message = "#{destroyed_count}
         #{resource_class.model_name.human(count: destroyed_count)}"
 
       if not_destroyed_count == 0
@@ -240,7 +264,7 @@ module Basepack
           default: :'admin.flash.successful'
         )
       else
-        message = ", #{not_destroyed_count} 
+        message = ", #{not_destroyed_count}
           #{resource_class.model_name.human(count: not_destroyed_count)}"
 
         flash[:error] = t("basepack.flash.successful",
@@ -259,7 +283,7 @@ module Basepack
 
     # Bulk_edit shows form for bulk editing items (edit multiple items at one)
     # Forms look like normal edit form, but for the fields where you can set
-    # several values (has_and_belongs_to_many, has_many with through, tags, etc.) 
+    # several values (has_and_belongs_to_many, has_many with through, tags, etc.)
     # the form shows possibilites for add/delete items as well. The particular fields
     # partials are defined in app/views/forms/bulk_edit basepack directiry.
     #
@@ -287,8 +311,8 @@ module Basepack
     #    @bulk_edit = OpenStruct.new(fields)
     #  end
     #
-    #  For customizing particular behaviour for field action on the model you 
-    #  can define methods with naming "bulk_edit_<field_name>=", as 
+    #  For customizing particular behaviour for field action on the model you
+    #  can define methods with naming "bulk_edit_<field_name>=", as
     #  demonstrates following example:
     #
     #  def bulk_edit_tag_list=(action, new_value)
@@ -339,7 +363,7 @@ module Basepack
     # * +parent_id+ - New parent of actual node
     # === Sorting
     # Sorting is used if Node respons to position method
-    # Updates nested tree after drag & drop action. 
+    # Updates nested tree after drag & drop action.
     # * +method+ - FancyTree drag & drop method ['over', 'before', 'after']
     # * +id2+ - Node id provided by fancytree depending on method
    def update_tree(options = {}, &block)
@@ -503,6 +527,11 @@ module Basepack
     def filters
       collection #just for authorize resource
       redirect_to polymorphic_path(Basepack::Settings.filters.model_name.constantize, 'f[filter_type_eq]' => resource_class)
+    end
+
+    def export_templates
+      collection #just for authorize resource
+      redirect_to polymorphic_path(Basepack::Settings.export_template.model_name.constantize, 'f[class_type_eq]' => resource_class)
     end
 
     protected

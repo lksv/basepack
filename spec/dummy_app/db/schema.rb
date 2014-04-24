@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140207192024) do
+ActiveRecord::Schema.define(version: 20140424092542) do
 
   create_table "accounts", force: true do |t|
     t.integer  "account_number"
@@ -59,6 +59,19 @@ ActiveRecord::Schema.define(version: 20140207192024) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "export_templates", force: true do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.string   "class_type"
+    t.text     "schema_template"
+    t.boolean  "active",          default: false, null: false
+    t.integer  "position"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "export_templates", ["user_id"], name: "index_export_templates_on_user_id"
 
   create_table "imports", force: true do |t|
     t.integer  "user_id"
@@ -110,10 +123,10 @@ ActiveRecord::Schema.define(version: 20140207192024) do
     t.integer  "employee_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "ancestry"
-    t.integer  "position"
     t.datetime "deadline"
     t.string   "color"
+    t.string   "ancestry"
+    t.integer  "position"
   end
 
   add_index "projects", ["ancestry"], name: "index_projects_on_ancestry"

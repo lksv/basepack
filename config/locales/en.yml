@@ -25,9 +25,13 @@ en:
           comma: "<comma> ','"
           semicolon: "<semicolon> ';'"
           tab: "<tabs>"
-        encoding_to: "Encodeing To"
+        encoding_to: "Encoding To"
         encoding_to_help: "Leave blank for default ('%{name}')"
       confirmation: "Export to %{name}"
+      export_template_error: "Export template can not be saved"
+      save_export_template: "Save chosen columns"
+      enter_export_template_name: "Please enter export template name"
+      export_template_list: "List of saved template exports"
 
     import:
       new_import: "New Import"
@@ -52,7 +56,7 @@ en:
         uncheck: 'Uncheck'
 
     tree_list:
-      update_tree: 
+      update_tree:
         error: "Cannot manipulate with tree node %{name}: %{msg}."
 
     query:

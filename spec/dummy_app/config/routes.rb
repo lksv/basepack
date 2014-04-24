@@ -15,6 +15,7 @@ Dummy::Application.routes.draw do
 
     get    'taggings',    :on => :collection
     get    'filters',     :on => :collection
+    get    'export_templates',     :on => :collection
 
     get    'diff',        :on => :member
     post   'merge',       :on => :member
@@ -28,6 +29,7 @@ Dummy::Application.routes.draw do
     post 'load_tree_nodes', on: :collection
     get  'load_tree_nodes', on: :collection
   end
+  resources :export_templates, concerns: [:resourcable]
 
   resources :employees,
     :employee_with_nesteds,

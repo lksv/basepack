@@ -4,24 +4,26 @@
     \:
     %b= export_form.collection.total_count
 
-  = form_tag form.path, method: 'post', class: 'form-horizontal denser' do
+  = form_tag form.path, method: 'post', class: 'form-horizontal denser', id: "export_template-form" do
     = hidden_field_tag "send_data", "all"
     = form_hash_to_hidden_fields(form.query_form.params)
     = hidden_field_tag "return_to", params[:return_to] if params[:return_to].present?
+    - if Basepack::Settings.export_template.model_name and can?(:create, Basepack::Settings.export_template.model_name.constantize)
+      = hidden_field_tag 'export_template_name'
 
     %fieldset{:id => 'fields_to_export'}
       %div.control-group
         %div.controls
           %label.checkbox{:for => 'check_all'}
             = 'Vybrat všechny pole'
-            = check_box_tag 'check_all', 'all', true, data: {toggle: "checkboxes", target: "input[name^='schema[]']"}
+            = check_box_tag 'check_all', 'all', false, data: {toggle: "checkboxes", target: "input[name^='schema[]']"}
       %legend= t('basepack.export.select', default: [:'admin.export.select'])
       .control-group
         %label.control-label{"data-toggle" => 'tooltip', title: t('basepack.export.click_to_reverse_selection', default: [:'admin.export.click_to_reverse_selection']), :onclick => 'jQuery(this).siblings(".controls").find("input").click()'}= t('basepack.export.fields_from', default: [:'admin.export.fields_from'], :name => resource_config.label_plural.downcase)
         .controls
           - form.visible_fields.select {|f| !f.association? || f.polymorphic? }.each do |field|
             %label.checkbox{for: "schema_#{field.name}"}
-              = check_box_tag "schema[]", field.name, true, { id: "schema_#{field.name}" }
+              = check_box_tag "schema[]", field.name, @schema.include?(field.name.to_s), { id: "schema_#{field.name}" }
               = field.label
 
       - form.visible_fields.select {|f| f.association? && !f.polymorphic? }.each do |field|
@@ -30,7 +32,8 @@
           .controls
             - field.nform.visible_fields.reject {|f| f.association? }.each do |afield|
               %label.checkbox{:for => "schema_#{field.name}_#{afield.name}"}
-                = check_box_tag "schema[][#{field.name}][]", afield.name, true, { id: "schema_#{field.name}_#{afield.name}" }
+                - field_checked = @schema.find { |f| (Hash === f) and Array.wrap(f[field.name.to_s]).include?(afield.name.to_s) }
+                = check_box_tag "schema[][#{field.name}][]", afield.name, field_checked, { id: "schema_#{field.name}_#{afield.name}" }
                 = afield.label
 
     %fieldset
@@ -61,6 +64,24 @@
 
     .form-actions
       .pull-right
+        - if Basepack::Settings.export_template.model_name and can?(:create, Basepack::Settings.export_template.model_name.constantize)
+          = button_tag class: 'btn', id: 'export_template-add', title: I18n.t('basepack.export.save_export_template') do
+            %i.icon-plus
+            =I18n.t('basepack.export.save_export_template')
+          :javascript
+            jQuery(function($) {
+              $("#export_template-add").click(function(e) {
+                e.preventDefault();
+
+                bootbox.prompt(#{I18n.t('basepack.export.enter_export_template_name').to_json}, function(result) {
+                  if (result) {
+                    $('#export_template-form input[name=export_template_name]').val(result);
+                    $('#export_template-form').submit();
+                  }
+                });
+
+              });
+            });
         %button.btn.btn-primary{:type => "submit", :name => 'csv'}
           %i.icon-white.icon-ok
           = t("basepack.export.confirmation", default: :"admin.export.confirmation", :name => 'csv')

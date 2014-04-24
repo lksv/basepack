@@ -28,6 +28,10 @@ cs:
         encoding_to: "Encódovat do"
         encoding_to_help: "Nechte prázdné pro výchozí ('%{name}')"
       confirmation: "Export to %{name}"
+      export_template_error: "Šablonu exportu nelze uložit"
+      save_export_template: "Uložit vybrané sloupce"
+      enter_export_template_name: "Prosím vyplňte název šablony"
+      export_template_list: "Seznam uložených šablon"
 
     import:
       new_import: "Nový import"
@@ -52,7 +56,7 @@ cs:
         uncheck: 'Odškrtnout'
 
     tree_list:
-      update_tree: 
+      update_tree:
         error: "Manipulace s uzlem stromu '%{name}' se nezdařila: %{msg}."
 
     query:

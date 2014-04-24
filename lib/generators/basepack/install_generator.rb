@@ -112,6 +112,7 @@ module Basepack
       delete 'bulk_delete', :on => :collection
 
       get    'filters',     :on => :collection
+      get    'export_templates', :on => :collection
       get    'taggings',     :on => :collection
       #patch  'list_columns', :on => :collection
       #put    'list_columns', :on => :collection
@@ -125,6 +126,7 @@ module Basepack
 end
 
   resources :filters, concerns: :resourcable
+  resources :export_templates, concerns: :resourcable
 
   # Uncomment if you are going to use tags (you also need get "acts-as-taggable-on")
   #
@@ -167,6 +169,10 @@ RUBY
         copy_file 'filter.rb', 'app/models/filter.rb'
         copy_file 'filters_controller.rb', 'app/controllers/filters_controller.rb'
 
+        copy_migrate 'create_export_templates'
+        copy_file 'export_template.rb', 'app/models/export_template.rb'
+        copy_file 'export_templates_controller.rb', 'app/controllers/export_templates_controller.rb'
+
         ability_model_file = 'app/models/ability.rb'
         if File.exists?(ability_model_file)
           insert_into_file(ability_model_file, <<-EOF,
@@ -176,12 +182,16 @@ RUBY
     # Everybody can see others saved filter, but only author can mangage them.
     can :read, Filter
     can :manage, Filter, :user_id => user.id if user
+
+    can :read, ExportTemplate
+    can :manage, ExportTemplate, :user_id => user.id if user
 EOF
           :after => "def initialize(user)\n")
         end
         user_model_file =  'app/models/user.rb'
         if File.exists?(user_model_file)
           insert_into_file user_model_file, "  has_many :filters, inverse_of: :user\n", :after => "class User < ActiveRecord::Base\n"
+          insert_into_file user_model_file, "  has_many :export_templates, inverse_of: :user\n", :after => "class User < ActiveRecord::Base\n"
         end
       end
 
