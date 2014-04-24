@@ -13,12 +13,12 @@
       %ul.dropdown-menu.pull-right.text-left{role: "menu", 'aria-labelledby' => "dropdownMenu"}
         %li.nav-header
           %small
-            %a{href: polymorphic_path([:export_templates, association_chain, resource_class].flatten)}
+            %a{href: polymorphic_path([:export_templates, route_prefix, association_chain, resource_class].flatten, url_params)}
               %i.icon-folder-open-alt
               = I18n.t('basepack.export.export_template_list')
         - export_templates.each do |export_template|
           %li
-            %a{href: polymorphic_path([:export, association_chain, resource_class].flatten, export_template_id: export_template.id)}= export_template.name
+            %a{href: polymorphic_path([:export, route_prefix, association_chain, resource_class].flatten, url_params.merge(export_template_id: export_template.id))}= export_template.name
 -  else
   = link_to url, class: classes do
     %i.icon-share
