@@ -1,22 +1,24 @@
 - classes = 'btn'
 
 - if Basepack::Settings.export_template.model_name and can?(:create, Basepack::Settings.export_template.model_name.constantize)
-  = link_to url, class: classes do
-    %i.icon-share
-    = Basepack::Utils.translate(resource_class, :export, :menu)
-  - export_templates = Basepack::Settings.export_template.model_name.constantize.active.where(class_type: resource_class.to_s).to_a
-  - if export_templates.present?
-    %button{type: "button", class: classes + ' dropdown-toggle', 'data-toggle' => "dropdown"}
-      %span{class: "caret"}
-    %ul.dropdown-menu.text-left{role: "menu", 'aria-labelledby' => "dropdownMenu"}
-      %li.nav-header
-        %small
-          %a{href: polymorphic_path([:export_templates, association_chain, resource_class].flatten)}
-            %i.icon-folder-open-alt
-            = I18n.t('basepack.export.export_template_list')
-      - export_templates.each do |export_template|
-        %li
-          %a{href: polymorphic_path([:export, association_chain, resource_class].flatten, export_template_id: export_template.id)}= export_template.name
+  .span
+  .btn-group
+    = link_to url, class: classes do
+      %i.icon-share
+      = Basepack::Utils.translate(resource_class, :export, :menu)
+    - export_templates = Basepack::Settings.export_template.model_name.constantize.active.where(class_type: resource_class.to_s).to_a
+    - if export_templates.present?
+      %button{type: "button", class: classes + ' dropdown-toggle', 'data-toggle' => "dropdown"}
+        %span{class: "caret"}
+      %ul.dropdown-menu.pull-right.text-left{role: "menu", 'aria-labelledby' => "dropdownMenu"}
+        %li.nav-header
+          %small
+            %a{href: polymorphic_path([:export_templates, association_chain, resource_class].flatten)}
+              %i.icon-folder-open-alt
+              = I18n.t('basepack.export.export_template_list')
+        - export_templates.each do |export_template|
+          %li
+            %a{href: polymorphic_path([:export, association_chain, resource_class].flatten, export_template_id: export_template.id)}= export_template.name
 -  else
   = link_to url, class: classes do
     %i.icon-share
