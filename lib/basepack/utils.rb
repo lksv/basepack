@@ -8,7 +8,8 @@ module Basepack
     end
 
     def self.detect_models
-      ([Rails.application] + Rails::Engine::Railties.engines).map do |app|
+      #([Rails.application] + Rails::Engine::Railties.engines).map do |app|
+      ([Rails.application] + Rails::Engine.subclasses.collect(&:instance)).map do |app|
         app.paths['app/models'].to_a.map do |load_path|
           Dir.glob(app.root.join(load_path)).map do |load_dir|
             Dir.glob(load_dir + "/**/*.rb").map do |filename|
