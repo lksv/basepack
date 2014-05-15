@@ -74,11 +74,10 @@ class Basepack.QueryForm
     operator_name = "f[c][" + index + "][p]"
 
     if field_template
-      console.log(field_template)
       control = _.template(field_template)
         label: field_label,
         type: field_type,
-        value: field_value || {},
+        value: field_value || "",
         predicate: field_predicate,
         index: index,
         name: value_name,
