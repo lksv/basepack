@@ -141,3 +141,7 @@ input[type="checkbox"][class*="span"] {
   }
 }
 
+/* overwite datepicker z-index because it is smaller than bootstrap modal */
+#ui-datepicker-div {
+  z-index: 1200 !important;
+}
