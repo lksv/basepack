@@ -122,7 +122,7 @@ module Basepack
 
         options[:value] = value.map {|v| v.send(p_key) }.join(',')
         options[:data] ||= {}
-        options[:data].reverse_merge!(
+        options[:data] = {
           filteringselect: true,
           options: {
             multiple:       field.multiple,
@@ -133,7 +133,7 @@ module Basepack
             precached_options: precached_options,
             init:           Hash[value.map {|v| [v.send(p_key), view.html_escape(v.to_label)] }],
           }
-        )
+        }.deep_merge!(options[:data] || {})
         options.reverse_merge!(@builder_default_options[:defaults][:input_html]) if @builder_default_options[:defaults]
         simple_form.hidden_field field.method_name, options
       end
