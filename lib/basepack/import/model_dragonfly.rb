@@ -274,10 +274,10 @@ module Basepack
       def save_object(object)
 
         begin
-          status = object.errors.empty? ? object.save : false
+          status = object.errors.empty? ? object.save! : false
         rescue => err #catch the case when custom validation raise an error
           status = false
-          object.errors.add(:base, "Raise Internal Error: #{err}")
+          object.errors.add(:base, "Raise Internal Error: #{err}") #err.backtrace
         end
 
         if status
