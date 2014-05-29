@@ -104,7 +104,7 @@ module Basepack
           # * code duplication with Controller's#options
           # * authorize!(:options, association_klass) is missing
           # * filter params handling is ugly
-          association_klass = field.association[:model_proc].call()
+          association_klass = field.association.klass
 
           query_form = view.query_form_for(
             association_klass,

@@ -654,7 +654,7 @@ module Basepack
     def collection_includes
       resource_config.fields.select do |f|
         f.type.in?([:belongs_to_association, :has_one_association]) && !f.polymorphic?
-      end.map {|f| f.association[:name] }
+      end.map {|f| f.association.name }
     end
 
     def filterql_options

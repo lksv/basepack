@@ -123,10 +123,10 @@ ActiveRecord::Schema.define(version: 20140424092542) do
     t.integer  "employee_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "deadline"
-    t.string   "color"
     t.string   "ancestry"
     t.integer  "position"
+    t.datetime "deadline"
+    t.string   "color"
   end
 
   add_index "projects", ["ancestry"], name: "index_projects_on_ancestry"
