@@ -1,10 +1,13 @@
 source "https://rubygems.org"
-ruby '2.0.0'
+#ruby '2.1'
 
 # Declare your gem's dependencies in basepack.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
 gemspec
+
+#FIXME: forked version, waiting for #366 to be releaed. After that remove this line and use basepack.gemspec
+gem 'inherited_resources', github: 'lksv/inherited_resources', branch: '#305_fetching_namespaced_model', ref: '93640c35200'
 
 group :development do
   gem 'annotate'
@@ -41,7 +44,7 @@ group :test, :development do
   gem "turbolinks"
   gem "bootbox-rails"
   gem 'launchy'
-  gem "twitter-bootstrap-rails", "~> 2.2.8"
+  gem "twitter-bootstrap-rails", github: 'lksv/twitter-bootstrap-rails' #forked version - needs 95de3b0e (Fixed for Rails 4.1 and Ruby 2.1) to be releaed
   gem "selenium-webdriver"
   gem "simple_form"
   gem 'ancestry'

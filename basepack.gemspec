@@ -13,13 +13,13 @@ Gem::Specification.new do |spec|
   spec.version        = Basepack::VERSION
 
   # if you add a dependency, please maintain alphabetical order
-  spec.add_dependency 'rails', '~> 4.0'
+  spec.add_dependency 'rails', '~> 4.1'
   spec.add_dependency 'rails_admin', '>= 0.6.2'
   spec.add_dependency 'underscore-rails'
   spec.add_dependency 'underscore-string-rails'
   spec.add_dependency 'ejs'
   spec.add_dependency 'bootstrap-modal-rails'
-  spec.add_dependency 'inherited_resources'
+  #spec.add_dependency 'inherited_resources' #FIXME: forked version included to Gemfile, waiting for #366 to be releaed
   spec.add_dependency 'haml-rails'
   spec.add_dependency "parslet"
   spec.add_dependency "cancan", "~> 1.6"
@@ -28,7 +28,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rails-i18n'
   spec.add_dependency "select2-rails"
-  spec.add_dependency 'ransack'
+  spec.add_dependency "polyamorous" #, :github => "activerecord-hackery/polyamorous"
+  spec.add_dependency 'ransack', '~> 1.2.3'
   spec.add_dependency 'kaminari'
   spec.add_dependency "simple_form"
   spec.add_dependency "nested_form"
