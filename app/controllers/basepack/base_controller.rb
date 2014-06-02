@@ -594,6 +594,7 @@ module Basepack
     # for InheritedResources
     def build_resource
       get_resource_ivar || begin
+        puts method_for_build.inspect
         object = end_of_association_chain.send(method_for_build)
         set_resource_ivar(object) # must be first - edit_form (called from resource_params) depends on it
         object.assign_attributes(current_ability.attributes_for(action_name.to_sym, resource_class)) # CanCan TODO - also for nested forms
