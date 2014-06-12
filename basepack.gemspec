@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.version        = Basepack::VERSION
 
   # if you add a dependency, please maintain alphabetical order
-  spec.add_dependency 'rails', '~> 4.1'
+  spec.add_dependency 'rails', '~> 4'
   spec.add_dependency 'rails_admin', '>= 0.6.2'
   spec.add_dependency 'underscore-rails'
   spec.add_dependency 'underscore-string-rails'
