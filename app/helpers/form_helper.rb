@@ -46,7 +46,7 @@ module FormHelper
       content_tag(:span, "data-toggle" => "tooltip", "data-placement" => "top", "data-delay" => "500",
           title: field.label # field.help.present? ? "#{field.label} (#{field.help})" : field.label
       ) do
-        field.pretty_value.presence || "-"
+        field.pretty_value.presence.to_s || "-"
       end
     end
   end
