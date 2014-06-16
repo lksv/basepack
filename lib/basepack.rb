@@ -4,6 +4,7 @@ require 'basepack/sections/query'
 require 'basepack/sections/import'
 require 'basepack/sections/bulk_edit'
 require 'basepack/rails_admin/fields_types/phone'
+require 'basepack/rails_admin/fields_types/currency'
 require 'basepack/sections/tree_list'
 
 module Basepack
