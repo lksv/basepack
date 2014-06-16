@@ -8,6 +8,7 @@ gemspec
 
 #FIXME: forked version, waiting for #366 to be releaed. After that remove this line and use basepack.gemspec
 gem 'inherited_resources', github: 'lksv/inherited_resources', branch: '#305_fetching_namespaced_model', ref: '93640c35200'
+gem 'rails_admin', github: 'lksv/rails_admin', branch: 'cherrypick_2010', ref: '9595e19098c81c'
 
 group :development do
   gem 'annotate'

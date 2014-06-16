@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
 
   # if you add a dependency, please maintain alphabetical order
   spec.add_dependency 'rails', '~> 4'
-  spec.add_dependency 'rails_admin', '>= 0.6.2'
+  #spec.add_dependency 'rails_admin', '>= 0.6.2' #FIXME: forked version included to Gemfile, waiting for #2010 to be merged and released
   spec.add_dependency 'underscore-rails'
   spec.add_dependency 'underscore-string-rails'
   spec.add_dependency 'ejs'
