@@ -3,7 +3,7 @@
 //= require jquery_ujs
 //= require jquery.ui.all
 //= require fancytree
-//= require fancytree/jquery.fancytree.gridnav.js
+// x= xrequire fancytree/jquery.fancytree.gridnav.js
 //= require jquery_nested_form
 //= require rails_admin/jquery.ui.timepicker
 //= require rails_admin/ra.datetimepicker

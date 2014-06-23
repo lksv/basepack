@@ -1,3 +1,10 @@
+## vr1.0.0-0
+
+ * support rails 4.1
+ * ability to save export settings
+ * upgrave version of dependant packages
+ * ...lot of fixes
+
 ## v0.1.0
 
 * fix generator

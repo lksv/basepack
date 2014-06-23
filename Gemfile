@@ -50,7 +50,7 @@ group :test, :development do
   gem "simple_form"
   gem 'ancestry'
   gem 'jquery-cookie-rails'
-  gem 'fancytree-rails', "~> 0.0.2"
+  gem 'fancytree-rails', "~> 2.1.0-0"
   gem 'bootstrap-modal-rails'
 end
 
