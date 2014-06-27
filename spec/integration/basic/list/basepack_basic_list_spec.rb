@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Basepack basic list" do
+describe "Basepack basic list", type: :request do
   # subject { page }
 
   let(:employee1) { FactoryGirl.create :employee }
@@ -306,8 +306,8 @@ describe "Basepack basic list" do
         end
       end
 
-      employee1.projects.build(name: 'first project') 
-      employee1.projects.build(name: 'second project') 
+      employee1.projects.build(name: 'first project')
+      employee1.projects.build(name: 'second project')
       employee1.save!
     end
 

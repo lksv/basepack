@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Basepack Basic Export" do
+describe "Basepack Basic Export", type: :request do
   let(:employee) { FactoryGirl.create(:employee) }
   let(:export_template) { FactoryGirl.create(:export_template,
   	class_type: "Employee",

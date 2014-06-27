@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Basepack Basic Edit" do
+describe "Basepack Basic Edit", type: :request do
 let!(:employee) { FactoryGirl.create(:employee) }
 
   describe "without association" do
@@ -181,14 +181,14 @@ let!(:employee) { FactoryGirl.create(:employee) }
             field :status do
               visible true
               html_attributes do
-              { 
-                data: { 
+              {
+                data: {
                   "dynamic-fields" => [
                     { condition: ["Postponed", "Done"], field_actions: { completed_percents: { visible: false }} },
                     { condition: ["In progress"], field_actions: { completed_percents: { visible: true  }} },
-                  ]   
-                }   
-              }   
+                  ]
+                }
+              }
               end
             end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Basepack Basic New" do
+describe "Basepack Basic New", type: :request do
   describe "GET /employees/new without association" do
     before(:each) do
       RailsAdmin.config Employee do
@@ -105,14 +105,14 @@ describe "Basepack Basic New" do
               field :status do
                 visible true
                 html_attributes do
-                { 
-                  data: { 
+                {
+                  data: {
                     "dynamic-fields" => [
                       { condition: ["Postponed", "Done"], field_actions: { completed_percents: { visible: false }} },
                       { condition: ["In progress"], field_actions: { completed_percents: { visible: true  }} },
-                    ]   
-                  }   
-                }   
+                    ]
+                  }
+                }
                 end
               end
 
@@ -127,12 +127,13 @@ describe "Basepack Basic New" do
       # save_and_open_page
       fill_in "Status", with: "Postponed"
       fill_in "Name", with: "Test"
-      # find("#employee_name").click      
+      # find("#employee_name").click
       expect(page).to have_no_content('Completed percents')
     end
 
     it "shows field" do
       pending "basepack helper"
+      fail
       visit new_task_path
       fill_in "Status", with: "In progress"
       fill_in "Name", with: "Test showing percents"
@@ -153,7 +154,7 @@ describe "Basepack Basic New" do
           end
 
           html_attributes do
-          { data: { 
+          { data: {
             # set project's field as dependent select box
             "dependant-filteringselect" => "field=position_category_id",
 
@@ -178,17 +179,19 @@ describe "Basepack Basic New" do
 
     it "selecting category limits positions" do
       pending "needs basepack helper"
+      fail
     end
 
     it "shows no position when no category is choosen" do
       pending "needs basepack helper"
+      fail
     end
   end
 
   describe "types", js: true do
     describe "wysihtml5" do
       before(:each) do
-        RailsAdmin.config Project do 
+        RailsAdmin.config Project do
           edit do
             field :description, :wysihtml5
             field :name
@@ -198,6 +201,7 @@ describe "Basepack Basic New" do
       end
 
       it "displays wysihtml5 basic elements correctly" do
+        save_and_open_page
         expect(page).to have_selector(:link_or_button, "Normal text")
         expect(page).to have_selector(:link_or_button, "Bold")
         expect(page).to have_selector(:link_or_button, "Italic")
@@ -233,7 +237,7 @@ describe "Basepack Basic New" do
       it "displays time picker" do
         visit new_project_path
         find('.hasTimepicker').click
-        page.execute_script %Q{ $('a.ui-datepicker-next').trigger("click") } # move one month forward 
+        page.execute_script %Q{ $('a.ui-datepicker-next').trigger("click") } # move one month forward
         page.execute_script %Q{ $("a.ui-state-default:contains('15')").trigger("click") } # click on day 15
 
         click_on "Save"
@@ -243,7 +247,7 @@ describe "Basepack Basic New" do
 
     describe "tags", js: true do
       before(:each) do
-        RailsAdmin.config Project do 
+        RailsAdmin.config Project do
           show do
             field :tags
           end
@@ -262,7 +266,7 @@ describe "Basepack Basic New" do
         visit new_project_path
         expect(page).to have_selector(".icon-tags")
         # expect(page).to have_select2("Tag list")
-      
+
         add_select2 "Tag list", with: "first tag, second"
         click_on "Save"
 

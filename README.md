@@ -1,15 +1,15 @@
 Basepack
 =======
 [![Gem Version](https://badge.fury.io/rb/basepack.png)](http://badge.fury.io/rb/basepack)
-[![Build Status](https://api.travis-ci.org/lksv/basepack.png?branch=master)](http://travis-ci.org/lksv/base_pack)
+[![Build Status](https://api.travis-ci.org/lksv/basepack.png?branch=master)](http://travis-ci.org/lksv/basepack)
 [![Dependency Status](https://gemnasium.com/lksv/basepack.png)](https://gemnasium.com/lksv/basepack)
 
 **Basepack** is a Ruby on Rails framework for quick creation of information
-systems. 
+systems.
 
 **Basepack** dramatically helps you to start your new project.
 There are out of the box form fields like: date (datepicker), datetime, html5
-wysiwig, tags, file upload and others. Further more there is support for 
+wysiwig, tags, file upload and others. Further more there is support for
 dynamic field hiding depending on state of other fields as well as
 options of selectbox content modifications dependant on other fields.
 
@@ -42,7 +42,7 @@ See project [wiki](https://github.com/lksv/basepack/wiki).
 
 ## Demo
 
-*Currently [zorec](https://github.com/zorec) is preparing 
+*Currently [zorec](https://github.com/zorec) is preparing
 [basepace_example application](https://github.com/zorec/basepack_example)*
 
 The running application will be available at [http://basepack-example.herokuapp.com/](http://basepack-example.herokuapp.com/)
@@ -61,12 +61,12 @@ And then run:
 
     rails g basepack:install
 
-The generator will install several gems. Also, generator asks to delete 
+The generator will install several gems. Also, generator asks to delete
 `app/views/layouts/application.html.erb` because differend .haml version will be created.
 If you don't know what to answer then answer 'yes' to generator's question.
 
 In a bigger project do not forget to change ability in `app/models/ability.rb`. By
-default, the generator adds ```can :manage, :all``` to enable anybody to perform any action on any object. 
+default, the generator adds ```can :manage, :all``` to enable anybody to perform any action on any object.
 See more on [CanCan wiki](https://github.com/ryanb/cancan/wiki/Defining-Abilities).
 
 Migrate your database and start the server:
@@ -84,15 +84,15 @@ E.g.
     rails g scaffold Project name short_description description:text start:date finish:date
     rails g scaffold Task name description:text project:references user:references
 
-Then 
+Then
 ```rake db:migrate```
 ```rails s```
 
 Notice that:
 1. Generated controllers inherits form ResourcesController.
-2. Files for views are not generated (directories appp/views/projects 
-and appp/views/tasks are empty), but all RESTful actions are working correctly. 
-It is because views inherit default structure from controller inheritance) 
+2. Files for views are not generated (directories appp/views/projects
+and appp/views/tasks are empty), but all RESTful actions are working correctly.
+It is because views inherit default structure from controller inheritance)
 and you can easily override these defaults by creating appropriate files.
 
 ## Basic usage
@@ -119,15 +119,15 @@ class Project < ActiveRecord::Base
       field :description, :wysihtml5
       field :start
       field :finish
-     end 
+     end
 
      show do
        field :name
        field :description
        field :start
        field :finish
-     end 
-  end 
+     end
+  end
 end
 ```
 
@@ -144,11 +144,11 @@ Add folowing line to ```app/models/user``` file:
    has_many tasks, inverse_of: user
 ```
 
-Pleas note that ```inverse_of``` option is included on association. It is 
-necessary for correct functioning of **Basepack**, see 
-[Rails documentation](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations) 
+Pleas note that ```inverse_of``` option is included on association. It is
+necessary for correct functioning of **Basepack**, see
+[Rails documentation](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Bi-directional+associations)
 and [RailsAdmin
-wiki](https://github.com/sferik/rails_admin/wiki/Associations-basics#inverse_of-avoiding-edit-association-spaghetti-issues) 
+wiki](https://github.com/sferik/rails_admin/wiki/Associations-basics#inverse_of-avoiding-edit-association-spaghetti-issues)
 for explaination.
 
 
@@ -158,9 +158,9 @@ ProjectsController < ResourcesController < Basepack::BaseController < InheritedR
 ```
 
 
-If you are not familiar with [InheritedResources](https://github.com/josevalim/inherited_resources), take a look at it.  
+If you are not familiar with [InheritedResources](https://github.com/josevalim/inherited_resources), take a look at it.
 
-You do NOT need to define permitted parameters anymore. It is defined by RailsAdmin DSL, more precisely by what you set as visible in edit action. 
+You do NOT need to define permitted parameters anymore. It is defined by RailsAdmin DSL, more precisely by what you set as visible in edit action.
 So file ```app/models/project.rb```:
 
 ```ruby
@@ -174,7 +174,7 @@ class Project < ActiveRecord::Base
       field :description, :wysihtml5
       field :start
       field :finish
-     end 
+     end
    end
 end
 ```
@@ -205,7 +205,7 @@ Althoug you can use **Basepack** without knowing anything of the
 background architecture it is recommended to get to know at least with:
 [InheritedResources](https://github.com/josevalim/inherited_resources),
 [CanCan](https://github.com/ryanb/cancan.git) and
-[Device](https://github.com/plataformatec/devise). 
+[Device](https://github.com/plataformatec/devise).
 
 **Basepack** was also
 inspired by [RailsAdmin](https://github.com/sferik/rails_admin) and

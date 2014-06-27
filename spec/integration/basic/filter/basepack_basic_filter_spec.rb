@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Basepack basic filter", js: true do
+describe "Basepack basic filter", type: :request, js: true do
   let(:employee1) { FactoryGirl.create :employee }
   let(:employee2) { FactoryGirl.create :employee }
 
@@ -179,7 +179,7 @@ describe "Basepack basic filter", js: true do
       end
       find(".additional-fieldset").click
       find('.hasDatepicker').click
-      within("#ui-datepicker-div") do 
+      within("#ui-datepicker-div") do
         click_on "1"
       end
 

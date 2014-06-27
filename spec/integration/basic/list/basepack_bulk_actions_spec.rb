@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Bulk actions" do
+describe "Bulk actions", type: :request do
   let(:task1) { FactoryGirl.create :task }
   let(:task2) { FactoryGirl.create :task }
 
@@ -33,7 +33,7 @@ describe "Bulk actions" do
         visit tasks_path
 
         find(:css, "input[type=checkbox]#check_all").set(true)
-        expect(page).to have_selector("input[name^='bulk_ids[]']:checked", 
+        expect(page).to have_selector("input[name^='bulk_ids[]']:checked",
           count: tasks.count)
       end
     end
@@ -71,7 +71,7 @@ describe "Bulk actions" do
           task1
           visit tasks_path
 
-          expect(page).to_not have_selector(:link_or_button, 
+          expect(page).to_not have_selector(:link_or_button,
             "Delete selected")
         end
 
@@ -121,7 +121,7 @@ describe "Bulk actions" do
 
       expect(page.driver.status_code).to eq 200
       expect(page).not_to have_selector("#check_all")
-      expect(page).not_to have_selector("input[name^='bulk_ids[]']", 
+      expect(page).not_to have_selector("input[name^='bulk_ids[]']",
         count: 1)
     end
   end

@@ -1,11 +1,10 @@
 require 'spec_helper'
 
-describe "Basepack basic list" do
+describe "Basepack basic list", type: :request do
   # subject { page }
 
   describe "import" do
     it "imports an file" do
-      sleep 10
       visit employees_path
       click_link "Import"
       path = File.join(::Rails.root, "../../spec/fixtures/employees.csv")

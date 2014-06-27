@@ -8,7 +8,7 @@ def find_node_expander(node)
   find_node(node).find('span.fancytree-expander')
 end
 
-describe "Basepack basic list" do
+describe "Basepack basic list", type: :request do
 
   let(:ability) { Object.new.extend(CanCan::Ability) }
 
@@ -27,7 +27,7 @@ describe "Basepack basic list" do
   let(:project123) { FactoryGirl.create(:project, name: 'Project1-2-3.', parent: project12) }
 
   let(:tree) do
-    [project1, project2, project11, project12, project13, project21, 
+    [project1, project2, project11, project12, project13, project21,
      project22, project121, project122, project123]
   end
 

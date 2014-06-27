@@ -3,7 +3,6 @@ ENV['SKIP_RAILS_ADMIN_INITIALIZER'] = 'false'
 
 require File.expand_path("../dummy_app/config/environment.rb",  __FILE__)
 require 'rspec/rails'
-require 'rspec/autorun'
 require 'factory_girl_rails'
 require 'faker'
 require 'capybara/rspec'

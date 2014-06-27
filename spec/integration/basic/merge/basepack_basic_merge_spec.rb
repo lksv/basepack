@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Basepack basic merge" do
+describe "Basepack basic merge", type: :request do
   # subject { page }
 
   describe "diff" do
@@ -12,7 +12,7 @@ describe "Basepack basic merge" do
   end
 
   describe "merge" do
-    
+
   end
 
 end

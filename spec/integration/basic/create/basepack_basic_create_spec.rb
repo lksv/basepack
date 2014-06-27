@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "RailsAdmin Basic Create" do
+describe "RailsAdmin Basic Create", type: :request do
 
   describe "create without association" do
 
@@ -28,7 +28,7 @@ describe "RailsAdmin Basic Create" do
       visit new_employee_path
       fill_in "employee[name]", with: "John Smith"
       fill_in "employee[email]", with: "john.smith@gmail.com"
-      add_select2 'Position', with: position.to_label 
+      add_select2 'Position', with: position.to_label
       click_on "Save"
 
       @created_employee = Employee.last
@@ -53,15 +53,15 @@ describe "RailsAdmin Basic Create" do
 
     it "adds project" do
       click_on "Save"
-      
+
       created_employee = Employee.last
-      expect(created_employee.project_ids).to include(project1.id) 
+      expect(created_employee.project_ids).to include(project1.id)
     end
 
     it "adds projects" do
       add_select2 "Projects", with: project2.to_label
       click_on "Save"
-      
+
       created_employee = Employee.last
       expect(created_employee.project_ids).to eq [project1.id, project2.id]
     end
@@ -71,7 +71,7 @@ describe "RailsAdmin Basic Create" do
       remove_select2 "Projects", with: project1.to_label
 
       click_on "Save"
-      
+
       created_employee = Employee.last
       expect(created_employee.project_ids).to be_empty
     end
@@ -94,15 +94,15 @@ describe "RailsAdmin Basic Create" do
 
     it "adds skill" do
       click_on "Save"
-      
+
       created_employee = Employee.last
-      expect(created_employee.skill_ids).to include(skill1.id) 
+      expect(created_employee.skill_ids).to include(skill1.id)
     end
 
     it "adds skills" do
       add_select2 "Skills", with: skill2.to_label
       click_on "Save"
-      
+
       created_employee = Employee.last
       expect(created_employee.skill_ids).to eq [skill1.id, skill2.id]
     end
@@ -112,7 +112,7 @@ describe "RailsAdmin Basic Create" do
       remove_select2 "Skills", with: skill1.to_label
 
       click_on "Save"
-      
+
       created_employee = Employee.last
       expect(created_employee.skill_ids).to be_empty
     end
@@ -158,8 +158,7 @@ describe "RailsAdmin Basic Create" do
       ApplicationController.any_instance.stub(:current_ability).and_return(ability)
       expect {
         page.driver.submit :post, "/employees", { employee: { name: "created employee", email: "foo@bar.com"} }
-      }.to_not change(Employee, :count).by(1)
-      expect(page.driver.status_code).to_not eq 200
+      }.to change(Employee, :count).by(0)
     end
   end
 

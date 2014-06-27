@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe "Basepack Basic Bulk Edit" do
+describe "Basepack Basic Bulk Edit", type: :request do
   describe "GET /employees/bulk_edit edit form" do
     before(:each) do
       RailsAdmin.config Employee do
@@ -60,14 +60,14 @@ describe "Basepack Basic Bulk Edit" do
         click_on "Save"
         expect(current_path).to eq employees_path
         employee1.reload
-        expect(employee1.bonus).to be_true
+        expect(employee1.bonus).to be_truthy
 
         visit bulk_edit_employees_path
         select 'Uncheck', from: "employee[bonus]"
         click_on "Save"
         expect(current_path).to eq employees_path
         employee1.reload
-        expect(employee1.bonus).to be_false
+        expect(employee1.bonus).to be_falsy
       end
 
       it "should not update boolean type if not changed" do
@@ -83,8 +83,8 @@ describe "Basepack Basic Bulk Edit" do
         employee2.reload
         employee3.reload
 
-        expect(employee1.bonus).to be_true
-        expect(employee2.bonus).to be_false
+        expect(employee1.bonus).to be_truthy
+        expect(employee2.bonus).to be_falsy
         expect(employee3.bonus).to be_nil
       end
     end

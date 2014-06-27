@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Basepack Basic Destroy" do
+describe "Basepack Basic Destroy", type: :request do
   let(:employee) { FactoryGirl.create(:employee) }
 
   describe "destroy from show" do
@@ -25,8 +25,8 @@ describe "Basepack Basic Destroy" do
     context "when not destroyed" do
       it "redirects back to the object" do
         pending "It should redirect to show page when object can not be destroyed and display failure flash messages"
-        # currently it is displaying successful message even when object wasn't destroyed!! 
-        
+        # currently it is displaying successful message even when object wasn't destroyed!!
+
         # show some error in base
         Employee.any_instance.stub(:errors).and_return(['error'])
         allow_any_instance_of(Employee).to receive(:destroy_hook).and_return false

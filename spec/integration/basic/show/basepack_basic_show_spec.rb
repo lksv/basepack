@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Basepack Basic Show" do
+describe "Basepack Basic Show", type: :request do
   # subject { page }
   let(:employee) { FactoryGirl.create :employee }
   let(:ability) { Object.new.extend(CanCan::Ability) }
@@ -198,8 +198,8 @@ describe "Basepack Basic Show" do
         field :projects
       end
 
-      employee.projects.build(name: 'first project') 
-      employee.projects.build(name: 'second project') 
+      employee.projects.build(name: 'first project')
+      employee.projects.build(name: 'second project')
       employee.save!
     end
 
