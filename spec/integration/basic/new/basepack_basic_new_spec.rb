@@ -201,7 +201,7 @@ describe "Basepack Basic New", type: :request do
       end
 
       it "displays wysihtml5 basic elements correctly" do
-        save_and_open_page
+        #save_and_open_page
         expect(page).to have_selector(:link_or_button, "Normal text")
         expect(page).to have_selector(:link_or_button, "Bold")
         expect(page).to have_selector(:link_or_button, "Italic")
