@@ -20,6 +20,7 @@ group :development do
 end
 
 group :test, :development do
+  gem 'rails', '~> 4.1.4'
   gem "sqlite3"
   # types
   gem "acts-as-taggable-on"
