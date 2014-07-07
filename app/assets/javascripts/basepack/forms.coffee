@@ -281,10 +281,82 @@ class Basepack.Form.Plugins.HiddeningFilteringSelect extends Basepack.Form.Plugi
         group.show()
 
 ###*
+ * @name DynamicRemoteField automatically re-renders field(s) depending on the change of other field
+
+ * @description takes all elements with data-dynamic-remote-field which identifies select on which value change
+ this element (with data-dynamic-remote-field attribute) is rerendered with values of remote  call
+
+ NOTE: parameters are brought from html data attributes
+ * @param {String} data-dynamic-remote-field identification of the field which changes are watched
+ * @param {String} dependant-param additional parameter that is send to remote
+ * @param {Object} options contains url adress (remote_sourece key) to which ajax request is made to obtain data (html template)
+
+ * @returns {html} returns html template
+
+ * @example on the field gift_packages following html data attribues are added
+
+  * this is haml
+  .accordion{:data=>{
+    "dynamic-remote-field"=>"#subscription_order_order_template_id",
+    "dependant-param"=>"subscription_order[order_template_id]",
+    "options"=>"{\"remote_source\":\"/subscription_orders/gift_packages_partial\"}"}
+  }
+    %div.content Custom content
+
+  * this is the order_template field definition in meta data
+  field :order_template do
+    help ''
+    param = "f[main_magazine_magazine_group_id_eq]"
+    options_source_params do
+      { param => bindings[:object].magazine_group.try(:id) || -1,
+        'f[offerable]' => true,
+        'f[s]' => 'price asc'
+      }
+    end
+    html_attributes do
+      {
+        data: {
+          "dependant-filteringselect" => "#subscription_order_magazine_group_id",
+          "dependant-param" => param,
+          :placeholder => "Vyberte, prosím"
+        }
+      }
+    end
+  end
+ ###
+
+class Basepack.Form.Plugins.DynamicRemoteField extends Basepack.Form.Plugin
+  bind: ->
+    # bind to fields with html attributes
+    plugin = @
+    @form.find('[data-dynamic-remote-field]').each ->
+      that = $(@)
+      group = that.parents('.control-group:first')
+
+      # on change make new ajax request
+      dependsOn = that.findExtended(that.data('dynamic-remote-field'))
+      dependsOn.on 'change', (e) ->
+        options = _.clone(that.data('options'))
+        if e.val != "" and e.val?
+          options.remote_source_params = _.clone(options.remote_source_params) || {}
+          options.remote_source_params[that.data('dependantParam')] = e.val
+          plugin.ajax options, group
+
+  ajax: (options, group) ->
+    $.ajax(options.remote_source,
+      data: $.extend({}, options.remote_source_params)
+      dataType: "html"
+    ).done (data) ->
+      # reload(rerender) form with new data
+      group.html(data)
+    .fail ->
+      group.html('<div class="alert alert-error">Could not load data from server. We are sorry.</div>')
+
+###*
  * Dynamically show/hide fields based on other field value.
 
  * takes all elements with data-dynamic-fields and use this data attribute as an configuration:
-   @param{data-dynamic-fields} array of actions. Each action is a hash with keys: 
+   @param{data-dynamic-fields} array of actions. Each action is a hash with keys:
    condition - condition which should be met (Stirng: field has to equal, Array: field has to match one of item of array)
    field_actions - hash. Keys are other fields on which are taken action.
 
@@ -320,7 +392,7 @@ class Basepack.Form.Plugins.DynamicFields extends Basepack.Form.Plugin
               field = that.findExtended("field=" + field_name)
               if field and field_options.visible == true or field_options.visible == false
                 fieldDom = $(field).parents(".control-group")
-                if field_options.visible 
+                if field_options.visible
                   fieldDom.show() #slideDown()
                 else
                   fieldDom.hide() #slideUp()
@@ -334,9 +406,7 @@ class Basepack.Form.Plugins.Select2 extends Basepack.Form.Plugin
 
 class Basepack.Form.Plugins.Orderable extends Basepack.Form.Plugin
   update_sort_order: ->
-    console.log('volam update_sort_order')
     @form.find('.fields').each (idx,fields) ->
-      console.log('updatuji: ' + idx)
       $(fields).find('input[name$="[position]"]').val(idx+1)
 
   bind: ->
