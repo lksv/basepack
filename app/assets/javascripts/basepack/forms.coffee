@@ -177,6 +177,7 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
         id:   id
         text: options.init[id]
       )
+      $el.trigger('filtering-select-ready')
     else
       $.ajax(options.remote_source,
         data: $.extend({ f: { id_eq: id }}, options.remote_source_params)
@@ -188,6 +189,8 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
           $.each data, (i, object) ->
             callback(object)
             $el.select2("data", object, true) if id != object.id
+
+        $el.trigger('filtering-select-ready')
 
   @select2InitSelectionMultiple: (element, callback, options, $el) ->
     data = []
@@ -202,12 +205,14 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
 
      if _.isEmpty(ids_for_ajax)
        callback(data)
+       $el.trigger('filtering-select-ready')
      else
        $.ajax(options.remote_source,
          data: $.extend({ f: { id_eq: ids_for_ajax }}, options.remote_source_params)
          dataType: "json"
        ).done (d) ->
          callback(data.concat(d))
+         $el.trigger('filtering-select-ready')
 
 
 class Basepack.Form.Plugins.FilteringMultiSelect extends Basepack.Form.Plugin
@@ -245,18 +250,23 @@ class Basepack.Form.Plugins.RemoveOnCollapse extends Basepack.Form.Plugin
         $target.appendTo(parent)
 
 class Basepack.Form.Plugins.DependantFilteringSelect extends Basepack.Form.Plugin
+  # should be more than filteringSelect because this must happen before trigger
+  @priority: 200
+
   bind: ->
     @form.find('[data-dependant-filteringselect]').each ->
       that = $(@)
       dependsOn = that.findExtended(that.data('dependantFilteringselect'))
-      dependsOn.on 'change', (e) ->
-        options = _.clone(that.data('options'))
-        if e.val != "" and e.val?
-          options.remote_source_params = _.clone(options.remote_source_params)
-          options.remote_source_params[that.data('dependantParam')] = e.val
-        that.val(null) # to prevent "initSelection" query when select2 is redefined
-        Basepack.Form.Plugins.FilteringSelect.select2 that, options
-        that.val(that.data('dependantDefaultvalue')).trigger('change').trigger('remoteSourceParamsChange', options)
+
+      dependsOn.on 'filtering-select-ready', () ->
+        dependsOn.on 'change', (e) ->
+          options = _.clone(that.data('options'))
+          if e.val != "" and e.val?
+            options.remote_source_params = _.clone(options.remote_source_params)
+            options.remote_source_params[that.data('dependantParam')] = e.val
+          that.val(null) # to prevent "initSelection" query when select2 is redefined
+          Basepack.Form.Plugins.FilteringSelect.select2 that, options
+          that.val(that.data('dependantDefaultvalue')).trigger('change').trigger('remoteSourceParamsChange', options)
 
 class Basepack.Form.Plugins.HiddeningFilteringSelect extends Basepack.Form.Plugin
   bind: ->
