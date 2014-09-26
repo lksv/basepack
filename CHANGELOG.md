@@ -1,4 +1,9 @@
-## vr1.0.0-0
+## v1.0.0
+
+ * fix dependency field initialization
+ * add DynamicRemoteField plugin
+
+## v1.0.0-0
 
  * support rails 4.1
  * ability to save export settings
