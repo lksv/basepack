@@ -57,6 +57,7 @@ class Basepack.Form
     @plugins = []
 
     if @$container.length # don't waste time otherwise
+      # instanciate and store plugins in order of their priorities
       plugins = _.sortBy Basepack.Form.Plugins, (p) ->
         -p.priority
       for klass in plugins
@@ -72,6 +73,7 @@ class Basepack.Form
 Basepack.Form.Plugins = {}
 
 class Basepack.Form.Plugin
+  # default priority
   @priority: 100
   constructor: (form) ->
     @form = form
@@ -154,7 +156,6 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
         else
           Basepack.Form.Plugins.FilteringSelect.select2InitSelection(element, callback, options, $el)
 
-
     if options.precached_options
       select_options.data = options.precached_options
     else
@@ -162,13 +163,17 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
         url: options.remote_source
         dataType: 'json'
         data: (term, page) ->
-          params = { query: term, page: page, per: 20 } # TODO - per into Settings
+          params = { query: term, page: page, per: 20 } # TODO - move 'per' into Settings
           $.extend(params, options.remote_source_params)
           params
         results: (data, page) ->
           { more: data.length == (options.remote_source_params.per || 20), results: data }
 
     $el.select2 select_options
+
+    # initSelection is not called when no initial value is provided
+    # that means 'filtering-select-ready' is not triggered therefore we must trigger it now
+    $el.trigger('filtering-select-ready') unless $el.val()
 
   @select2InitSelection: (element, callback, options, $el) ->
     id = element.val()
