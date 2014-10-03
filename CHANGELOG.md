@@ -1,3 +1,7 @@
+## v1.0.1
+
+ * fix dependency field initialization (7239904)
+
 ## v1.0.0
 
  * fix dependency field initialization
