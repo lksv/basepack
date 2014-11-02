@@ -13,6 +13,7 @@ module Basepack
         app.paths['app/models'].to_a.map do |load_path|
           Dir.glob(app.root.join(load_path)).map do |load_dir|
             Dir.glob(load_dir + "/**/*.rb").map do |filename|
+              next if filename =~ /concerns/
               # app/models/module/class.rb => module/class.rb => module/class => Module::Class
               filename.reverse.chomp("#{app.root.join(load_dir)}/".reverse).reverse.chomp('.rb').camelize
             end
