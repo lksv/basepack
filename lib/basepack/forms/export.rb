@@ -41,6 +41,8 @@ module Basepack
             f = nfields
             if f.polymorphic?
               schema[:methods] << f.method_name << f.association.foreign_type
+            elsif f.virtual?
+              schema[:methods] << f.method_name
             else
               schema[:only] << f.name
             end
