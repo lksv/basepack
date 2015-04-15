@@ -159,7 +159,7 @@ module Basepack
 
       def enum_options(fields = fields)
         res = {}
-        fields.each do |f|
+        Arrya.wrap(fields).each do |f|
           options = f.enum_options
           if options and f.filterable?
             #key f.name is not enought because of enum_options is called recursielly on assiciations
