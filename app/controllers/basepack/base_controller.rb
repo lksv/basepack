@@ -82,8 +82,14 @@ module Basepack
 
         format.json do
           schema = export_form.schema_from_params(params[:schema])
+          # form = export_form
+          # fields = form.fields_from_params(params[:schema])
+          # fields_name =  fields.map { |f| f.method_name }
           send_export_data(header: '[', footer: ']') do |object, i|
             "#{',' if i > 0}#{object.to_json(schema)}"
+            # data = form.csv_row_for_resource(object, fields)
+            #"#{',' if i > 0}" +
+            #  "#{fields_name.zip(data).to_h.to_json}"
           end
         end
 

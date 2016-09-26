@@ -163,11 +163,11 @@ class Basepack.Form.Plugins.FilteringSelect extends Basepack.Form.Plugin
         url: options.remote_source
         dataType: 'json'
         data: (term, page) ->
-          params = { query: term, page: page, per: 20 } # TODO - move 'per' into Settings
+          params = { query: term, page: page, per: 200 } # TODO - move 'per' into Settings
           $.extend(params, options.remote_source_params)
           params
         results: (data, page) ->
-          { more: data.length == (options.remote_source_params.per || 20), results: data }
+          { more: data.length == (options.remote_source_params.per || 200), results: data }
 
     $el.select2 select_options
 
@@ -355,6 +355,8 @@ class Basepack.Form.Plugins.DynamicRemoteField extends Basepack.Form.Plugin
         if e.val != "" and e.val?
           options.remote_source_params = _.clone(options.remote_source_params) || {}
           options.remote_source_params[that.data('dependantParam')] = e.val
+          remoteFieldName = $(this).attr('name')
+          options.remote_source_params.remote_field_name = remoteFieldName
           plugin.ajax options, group
 
   ajax: (options, group) ->

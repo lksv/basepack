@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'bootstrap-wysihtml5-rails' #for wysihtml5 field
 
   spec.add_dependency 'rails-i18n'
-  spec.add_dependency "select2-rails"
+  spec.add_dependency "select2-rails", '~> 3.5.2'
   spec.add_dependency "polyamorous" #, :github => "activerecord-hackery/polyamorous"
   spec.add_dependency 'ransack', '~> 1.2.3'
   spec.add_dependency 'kaminari'
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "phony", '~> 2.1.4'
 
   # assets
-  spec.add_dependency 'sass-rails', '~> 4.0'
+  spec.add_dependency 'sass-rails', '> 4.0'
   spec.add_dependency 'bootstrap-sass', '~> 2.2'
   spec.add_dependency 'bootbox-rails', '~>0.1' #v0.2 is for Bootstrap 3
   spec.add_dependency 'font-awesome-rails', ['~> 3.0']
